@@ -40,7 +40,7 @@
   #phone{right:calc(12px + env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px))}
   #pbtn{right:calc(24px + env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px))}
   .am-camera{right:calc(12px + env(safe-area-inset-right,0px));bottom:calc(238px + env(safe-area-inset-bottom,0px))}
-  .am-camera-quick{padding:2px;gap:0}.am-camera button{min-width:44px;min-height:44px}.am-camera-options{width:min(196px,calc(100vw - 164px));padding:6px}
+  .am-camera-quick{padding:2px;gap:0}.am-camera button{min-width:44px;min-height:44px}.am-camera-options{width:min(196px,calc(100vw - 180px));padding:6px}
   .am-map-head{padding:12px 14px 10px}.am-map-head h2{font-size:23px}.am-landmarks{padding:10px;gap:6px}.am-landmarks button{padding:6px 9px;font-size:11px!important}.am-map-foot{padding:10px}.am-map-foot span{max-width:175px}
   body.touch .abtn.big{bottom:calc(120px + env(safe-area-inset-bottom,0px))}body.touch .abtn.small{bottom:calc(120px + env(safe-area-inset-bottom,0px))}
   .am-mission{width:180px;padding:12px}.am-mission h2{font-size:20px;margin:8px 0}.am-mission p{display:none}.am-mission-footer{margin-top:7px;padding-top:8px}.am-enhanced .chip{max-width:44vw}.am-enhanced .tip{bottom:calc(245px + env(safe-area-inset-bottom,0px));max-width:45vw;font-size:10px;padding:8px 10px}
