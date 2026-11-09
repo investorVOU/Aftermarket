@@ -1,0 +1,11 @@
+const H=require('./harness.js');let pass=0,fail=0;const ok=(c,m)=>{console.log((c?'PASS ':'FAIL ')+m);c?pass++:fail++;};H.maxFrames=1e9;
+const W=H.load(808,true);const {Sim,Eco,Input,CamRig}=W;const T=Sim.Talk,wait=ms=>new Promise(r=>setTimeout(r,ms));const key=async(k,ms=110)=>{Input.key(true,k);await wait(ms);Input.key(false,k);await wait(40);};
+(async()=>{await wait(350);Sim.npcs.forEach(n=>n.vis=false);
+ Sim.player.x=21;Sim.player.z=-29.2;await wait(150);const n1=W.getNear();ok(n1&&/Inspect Greenfield Farm/.test(n1.n()),'at the barn: prompt "'+(n1&&n1.n())+'"');
+ await key('f');ok(W.getUI().open==='farm','F opens the farm panel (goods, crops, cattle)');await key('Escape');ok(W.getUI().open===null,'Esc closes it');
+ Sim.player.x=-4;Sim.player.z=14.3;Eco.player.inv.maize=3;const mc=Eco.player.cash;await wait(150);await key('f');ok(Eco.player.inv.maize===0&&Eco.player.cash===mc+3*350,'F at the market stall sells carried maize at wholesale, once');
+ const pl=Sim.Agri.plots[4];Sim.player.x=pl.cx;Sim.player.z=pl.cz;await wait(150);const pn=W.getNear();ok(pn&&/plot/.test(pn.n()),'standing in a field shows the plot inspection: "'+(pn&&pn.n())+'"');
+ Sim.player.x=2;Sim.player.z=-36;await wait(150);const cn=W.getNear();ok(cn&&/condition/.test(cn.n()),'near the cattle: "'+(cn&&cn.n())+'"');
+ const m=Sim.npcs[24];m.vis=true;m.x=-4;m.z=14;m.talking=false;m.wait=9999;m.dest=null;m.phase='work';Sim.player.x=-5;Sim.player.z=14;await wait(150);await key('f');ok(T.cur&&T.cur.id===24&&/Adaeze Obi/.test(W.Dlg.state().name),'F talks to farm manager Adaeze Obi (same dialogue system)');await key('Escape');
+ await wait(200);ok(Sim.truck&&Sim.ship&&Sim.tractor&&Sim.npcs.length===29,'loop still running with truck, ship, tractor and 29 NPCs, no exceptions');
+ console.log(`\n${pass} passed, ${fail} failed`);process.exit(fail?1:0);})();

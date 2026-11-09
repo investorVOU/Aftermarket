@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: aftermarket
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: node server/index.cjs
+    healthCheckPath: /api/health
+    numInstances: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 22.22.2
+      - key: GAME_MODE
+        value: connected
+      - key: HOST
+        value: 0.0.0.0
+      - key: NEAR_NETWORK
+        value: testnet
+      - key: NEAR_SETTLEMENT_ENABLED
+        value: "false"
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        value: https://ytfioiujcitikvgbfxwg.supabase.co
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: SUPABASE_SECRET_KEY
+        sync: false

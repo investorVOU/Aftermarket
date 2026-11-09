@@ -1,0 +1,10 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.tooling/
+.local/
+contracts/**/target/
+game/client.bundle.js
+supabase/.temp/
+*.log
