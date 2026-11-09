@@ -33,7 +33,7 @@ The organizer guide explicitly says the track integrations are hints, not mandat
 3. **Persistence:** four migrations committed to the actual Supabase project. Seven game tables have RLS; server commits allowed, authenticated/anonymous writes denied. Data API schema access checked. No fake user account or play session was created.
 4. **Simulation:** fixed-step server engine, persistent jobs, offline catch-up and week preview are implemented and checked.
 5. **NEAR:** compiled contract, relayer/outbox, metadata, storage, testnet verification and guarded mainnet deployment scripts exist. Live deployment and full MPC social linking remain partial.
-6. **UX:** original island/characters/phone preserved; onboarding, objective card, map, market, feedback and realistic handset launcher added. DOM tests cover onboarding, API trading, market opening and error feedback. Real visual/device QA remains open.
+6. **UX:** original island/characters preserved. Phone now floats at the bottom right with native responsive content, Hide/Close controls and a Map app. The map opens on demand, supports waypoint selection and cancellation, and does not rotate the game camera. Camera controls include proportional zoom, rotation, tilt and reset. DOM/API checks cover those interactions. Local Chrome rendering and layout bounds were checked at desktop, portrait mobile, narrow mobile and landscape sizes; physical-device and deployed-browser QA remain open.
 
 ## Deployment modes
 
@@ -47,4 +47,6 @@ Ordinary game-credit/item trades do not need cross-chain liquidity. Intents is d
 
 ## Still required
 
-Repository publication and Render account access; Supabase email/Google callback configuration and a real cross-device play session; funded testnet account/controller and keys; approved NEAR Auth credentials and linking implementation; actual chain verification; browser/device QA; public demo video/post and final human-confirmed submission before 14 November 2026, 23:59 UTC.
+Repository published at https://github.com/investorVOU/Aftermarket. Still required: successful remote Render deployment after the port-binding fix; Supabase email/Google callback configuration and a real cross-device play session; funded testnet account/controller and keys; approved NEAR Auth credentials and linking implementation; external-transfer indexing/import-export; actual testnet verification and mainnet deployment; physical-device QA; public demo video/post and final human-confirmed submission before 14 November 2026, 23:59 UTC.
+
+`npm run near:preflight` currently reports missing account IDs, signing key, wallet master key and verified deployed testnet build. No mainnet transaction has been signed. Track alignment and implemented economic features are not a claim that every submission/release step is complete.

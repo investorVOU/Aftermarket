@@ -2,6 +2,16 @@
 
 The Node simulation and outbox worker use a persistent process. Deploy the whole application as one Render **Web Service**, using the root `render.yaml`. A single ordinary Vercel Function is not this backend's hosting model; moving to Vercel would require a separate simulation/worker service or an architectural change.
 
+## Fixing the November 9 port-scan timeout
+
+The supplied logs show a local development server listening on `localhost:8080`. Render requires `0.0.0.0` and its assigned `PORT`. The server now detects Render, defaults to connected mode, respects `PORT`, and binds publicly even if an old `HOST=127.0.0.1` value was copied. An explicit `GAME_MODE=development` on a hosted service fails with a clear configuration error rather than exposing local identities.
+
+For the existing manually created service, set `GAME_MODE=connected` and `HOST=0.0.0.0`. Set `SUPABASE_URL=https://ytfioiujcitikvgbfxwg.supabase.co`, the publishable key and `DATABASE_URL` in Render's Environment panel. A Supabase secret key is needed if using the Data API instead of direct SQL. Keep `NEAR_SETTLEMENT_ENABLED=false` until real chain verification is complete. Remove a copied localhost `APP_ORIGIN`; Render's own public URL is used automatically, or set your exact custom HTTPS origin. Never upload the local `.env` file to GitHub.
+
+Use build `npm ci && npm run build`, start `node server/index.cjs`, and health path `/api/health`. Redeploy the latest commit. The startup line should show `http://0.0.0.0:<PORT> | connected`, followed by the actual chain mode. A health response with `configured:false` means the process is reachable but the required service variables still need configuration.
+
+Local verification of the new hosted branch bound to `0.0.0.0:18086` and returned HTTP 200 with `configured:true`, `mode:connected` and `network:offchain`. This is not a claim that the remote Render deploy has succeeded.
+
 ## Initial playable cloud deployment
 
 Repository: https://github.com/investorVOU/Aftermarket

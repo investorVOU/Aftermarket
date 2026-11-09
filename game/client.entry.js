@@ -1,4 +1,5 @@
 import {createClient} from '@supabase/supabase-js';
+import {setupNavigation} from './navigation.js';
 
 const A=globalThis.AftermarketApp;
 if(!A)throw new Error('The island renderer could not start.');
@@ -6,7 +7,7 @@ const {Game:G,Net:N,Input,Phone,UI,CamRig}=A,{Eco:E,Sim:S,Bus}=G;
 const money=n=>'$'+(n/100).toFixed(2);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let auth,session,sequence=0,lastApplied=0,chainInfo,settlement=[],polling=false,commandQueue=Promise.resolve(),isDevelopment=false;
-let waypoint=null;
+
 const shell=document.createElement('div');shell.id='game-shell';shell.innerHTML=`
   <header class="am-topbar"><a class="am-brand" href="/" aria-label="Aftermarket home"><span class="am-mark">A<span>↗</span></span><span>AFTERMARKET<small>SUPPLY & SURVIVAL</small></span></a>
     <div class="am-session"><span id="am-connection" class="am-connection">Connecting</span><span class="am-mainnet">NEAR MAINNET</span></div>
@@ -14,14 +15,21 @@ const shell=document.createElement('div');shell.id='game-shell';shell.innerHTML=
     <button class="am-icon-button" id="am-menu" aria-label="Open island market">☷</button>
   </header>
   <aside class="am-mission"><div class="am-eyebrow">YOUR NEXT MOVE <span id="am-progress">01 / 04</span></div><h2 id="am-goal">Make your first sale.</h2><p id="am-goal-copy">Gather timber in the Northern Forest, then bring it to Oak & Iron.</p><button id="am-guide" class="am-link">Show me the way <span>↗</span></button><div class="am-mission-footer"><span id="am-pack">0 timber in your pack</span><span id="am-saved">Sign in to save</span></div></aside>
-  <div class="am-map-wrap"><canvas id="am-map" width="380" height="240" aria-label="Island map with player and destination"></canvas><div><span id="am-location">HARBOUR ROAD</span><button id="am-recenter" aria-label="Recenter camera">⌖</button></div></div>
-  <footer class="am-footer"><span id="am-news">A new day. A town full of possibilities.</span><div><kbd>WASD</kbd> Move <kbd>F</kbd> Interact <kbd>P</kbd> Phone <kbd>C</kbd> Recenter</div></footer>
+  <section id="am-map-panel" class="am-map-panel" role="dialog" aria-modal="false" aria-labelledby="am-map-title" hidden>
+    <header class="am-map-head"><div><span class="am-eyebrow">FIND YOUR NEXT MOVE</span><h2 id="am-map-title">Your island.</h2></div><button type="button" id="am-close-map" class="am-icon-button" aria-label="Close island map">×</button></header>
+    <canvas id="am-map" width="880" height="540" aria-label="Island map. Tap a location to mark a waypoint. Landmark buttons are below."></canvas>
+    <div id="am-landmarks" class="am-landmarks" aria-label="Choose a destination"></div>
+    <footer class="am-map-foot"><div><b id="am-map-destination">Explore the island</b><span id="am-map-distance" aria-live="polite">Tap the map or choose a landmark</span></div><button type="button" id="am-clear-waypoint" disabled>Clear marker</button></footer>
+  </section>
+  <nav id="am-camera" class="am-camera" aria-label="Camera controls"><div class="am-camera-quick"><button type="button" id="am-zoom-in" aria-label="Zoom in" title="Zoom in (+)">+</button><button type="button" id="am-zoom-out" aria-label="Zoom out" title="Zoom out (−)">−</button><button type="button" id="am-camera-reset" aria-label="Reset camera and follow player" title="Reset view (R)">⌖</button></div><details id="am-camera-more"><summary>Camera <span aria-hidden="true">⌃</span></summary><div class="am-camera-options"><button type="button" id="am-orbit-left" aria-label="Rotate camera left">↶ Left</button><button type="button" id="am-orbit-right" aria-label="Rotate camera right">Right ↷</button><button type="button" id="am-tilt-up" aria-label="Raise camera angle">↑ Raise</button><button type="button" id="am-tilt-down" aria-label="Lower camera angle">↓ Lower</button><small>Drag to orbit · Pinch or scroll to zoom<br>Shift-drag / two fingers to pan</small></div></details></nav>
+  <footer class="am-footer"><span id="am-news">A new day. A town full of possibilities.</span><div><kbd>WASD</kbd> Move <kbd>F</kbd> Interact <kbd>P</kbd> Phone <kbd>M</kbd> Map <kbd>R</kbd> Reset view</div></footer>
   <aside id="am-market" class="am-drawer" hidden><div class="am-drawer-head"><div><span class="am-eyebrow">THE ISLAND EXCHANGE</span><h2>Follow the market.</h2></div><button id="am-close-market" class="am-icon-button" aria-label="Close market">×</button></div><p class="am-muted">Supply changes. Prices respond. Find your opening.</p><div id="am-quotes"></div><div class="am-demo"><span class="am-eyebrow">WATCH THE ECONOMY MOVE</span><h3>Seven days. One minute.</h3><p>Accelerate this island to see supply, demand and merchant treasuries change. Progress is saved.</p><button id="am-demo">Start economy preview ↗</button><small id="am-demo-status">Trading pauses during the preview.</small></div><div class="am-chain"><span class="am-eyebrow">YOUR NEAR WALLET</span><code id="am-wallet">Sign in to create your wallet</code><div id="am-settlement"></div><p>Items settle on NEAR mainnet. Game cash is a game credit. Gas is sponsored.</p></div><button id="am-signout" class="am-link">Save & sign out ↗</button></aside>
   <div id="am-toast" role="status" aria-live="polite"></div>
   <section id="am-welcome" class="am-welcome"><div class="am-welcome-copy"><span class="am-eyebrow">WELCOME TO AFTERMARKET</span><h1>A small island.<br>A living economy.<br><em>Your next move.</em></h1><p>Gather, trade, and build a business in a town that keeps moving. Every shortage is someone's opportunity.</p><div class="am-welcome-tags"><span>29 islanders</span><span>Player-owned markets</span><span>A world that remembers</span></div></div><form id="am-login" class="am-login"><span class="am-eyebrow">YOUR ISLAND IS WAITING</span><h2>Start something<br>of your own.</h2><p>Sign in to keep your progress and bring your inventory on-chain.</p><label for="am-email">Email address</label><input id="am-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required><button id="am-login-button" type="submit">Email me a sign-in link ↗</button><button id="am-google" type="button" class="am-secondary" hidden>Continue with Google</button><div id="am-login-status" role="status" aria-live="polite">Checking the island connection…</div><small>A managed wallet is created for you. No wallet setup or gas prompts during play.</small></form></section>`;
 document.body.appendChild(shell);document.body.classList.add('am-enhanced');
 const $=id=>document.getElementById(id);
 const toast=message=>{const el=$('am-toast');el.textContent=message;el.classList.add('visible');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('visible'),4500);};
+const navigation=setupNavigation({document,window,Sim:S,Input,CamRig,Phone,Net:N,Bus,toast});
 function setConnection(text,ok=false){$('am-connection').textContent=text;$('am-connection').classList.toggle('online',ok);}
 async function api(route,body){const headers={Authorization:`Bearer ${session?.access_token}`};if(body)headers['Content-Type']='application/json';const response=await fetch('/api/'+route,{method:body?'POST':'GET',headers,body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(15000)});const data=await response.json();if(!response.ok)throw Object.assign(new Error(data.error||'Connection interrupted.'),{status:response.status});return data;}
 function apply(data){
@@ -66,20 +74,13 @@ function update(){
   $('am-goal').textContent=goals[step][0];$('am-goal-copy').textContent=goals[step][1];$('am-progress').textContent=`0${step+1} / 04`;$('am-guide').dataset.target=goals[step][2].join(',');
   if(N.demo?.active){$('am-news').textContent=`Economy preview · ${N.demo.secondsRemaining}s remaining · 49× island time`;N.blocked=true;}else{if(N.online)N.blocked=!$('am-welcome').hidden;$('am-news').textContent=E.log[0]||'A new day. A town full of possibilities.';}
   $('am-demo').textContent=N.demo?.active?'Return to normal time':'Start economy preview ↗';
-  if(!$('am-market').hidden)renderQuotes();drawMap();
+  if(!$('am-market').hidden)renderQuotes();navigation.draw();
 }
 function renderQuotes(){const root=$('am-quotes');root.replaceChildren();const labels={timber:'Timber Supply · timber',workshop:'Oak & Iron · buys timber',furniture:'Oak & Iron · furniture',maize:'Greenfield · maize',cassava:'Greenfield · cassava',milk:'Greenfield · milk'};
   for(const [id,q]of Object.entries(E.merchants||{})){const row=document.createElement('article');row.className='am-quote';row.innerHTML=`<div><span>${esc(labels[id]||id)}</span><b>${money(q.price)} <small class="${q.trend}">${q.trend==='rising'?'↗':q.trend==='falling'?'↘':'→'}</small></b></div><p title="${esc(q.reason)}">${esc(q.reason)}</p>`;if(q.closed){const b=document.createElement('button');b.textContent='Invest $20 to reopen';b.addEventListener('click',()=>N.command('invest',{business:q.biz}));row.appendChild(b);}root.appendChild(row);}
 }
-function drawMap(){const c=$('am-map'),ctx=c.getContext('2d'),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);const map=(x,z)=>[(x+105)/220*W,(z+80)/135*H];ctx.fillStyle='#122d3a';ctx.fillRect(0,0,W,H);ctx.fillStyle='#74836a';
-  for(let x=-100;x<110;x+=3)for(let z=-78;z<55;z+=3)if(S.Geo.dShore(x,z)>0){const [a,b]=map(x,z);ctx.fillRect(a,b,W/220*3.3,H/135*3.3);}
-  ctx.strokeStyle='#c9c1a5';ctx.lineWidth=2;for(const road of S.Roads.defs){ctx.beginPath();road.cl.forEach(([x,z],i)=>{const [a,b]=map(x,z);i?ctx.lineTo(a,b):ctx.moveTo(a,b);});ctx.stroke();}
-  for(const [x,z,label]of [[-24,9,'T'],[24,4,'W'],[8,9,'P'],[21,-36,'F']]){const [a,b]=map(x,z);ctx.fillStyle='#f2ead9';ctx.fillRect(a-4,b-4,8,8);ctx.font='bold 13px sans-serif';ctx.fillText(label,a+6,b+3);}
-  if(waypoint){const [a,b]=map(...waypoint);ctx.strokeStyle='#f8d18c';ctx.lineWidth=2;ctx.beginPath();ctx.arc(a,b,9,0,Math.PI*2);ctx.stroke();}
-  const [x,z]=map(S.player.x,S.player.z);ctx.fillStyle='#e8b677';ctx.beginPath();ctx.arc(x,z,6,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
-}
-$('am-menu').addEventListener('click',()=>{$('am-market').hidden=false;renderQuotes();renderSettlement();});$('am-close-market').addEventListener('click',()=>{$('am-market').hidden=true;});
-$('am-recenter').addEventListener('click',()=>CamRig.recenter());$('am-guide').addEventListener('click',()=>{waypoint=$('am-guide').dataset.target.split(',').map(Number);toast('Destination marked on your island map.');drawMap();});
+$('am-menu').addEventListener('click',()=>{navigation.setMap(false,{focus:false});Phone.minimize();Input.reset();$('am-market').hidden=false;renderQuotes();renderSettlement();});$('am-close-market').addEventListener('click',()=>{$('am-market').hidden=true;});
+$('am-guide').addEventListener('click',()=>{const [x,z]=$('am-guide').dataset.target.split(',').map(Number);navigation.setWaypoint(x,z,'Your next objective');});
 $('am-demo').addEventListener('click',()=>N.command(N.demo?.active?'demoStop':'demoStart'));
 $('am-signout').addEventListener('click',async()=>{N.blocked=true;N.movement={x:0,z:0};try{await api('sync',{x:0,z:0});await auth.auth.signOut();location.reload();}catch(e){toast(e.message);}});
 $('am-login').addEventListener('submit',async ev=>{ev.preventDefault();if(isDevelopment||!auth)return;const button=$('am-login-button');button.disabled=true;const {error}=await auth.auth.signInWithOtp({email:$('am-email').value,options:{emailRedirectTo:location.origin}});$('am-login-status').textContent=error?error.message:'Check your email. Your sign-in link brings you back to the island.';button.disabled=false;});

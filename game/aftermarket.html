@@ -53,13 +53,13 @@ body.touch .ncard button{min-height:44px;min-width:44px;font-size:14px}
 body.compact .dlg{left:0;right:0;bottom:0;transform:none;width:auto;border-radius:16px 16px 0 0;max-height:68vh;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));overflow:auto}
 body.compact .dlg .pt{width:56px;height:56px}body.compact .dlg .dt{max-height:22vh;font-size:15px}body.compact .dlg .dopt{max-height:32vh}body.compact .dlg .dopt button{min-height:46px;font-size:15px}
 body.compact.landscape .dlg{left:auto;right:0;width:min(58vw,520px);border-radius:16px 0 0 0;max-height:78vh}
-#pbtn{position:fixed;right:calc(10px + env(safe-area-inset-right,0px));top:44%;width:46px;height:46px;border-radius:14px;border:1px solid rgba(201,242,90,.35);background:linear-gradient(145deg,#2f6b45,#143324);color:#d5f56e;box-shadow:0 3px 14px rgba(0,0,0,.45);z-index:7;display:flex;align-items:center;justify-content:center;touch-action:manipulation;cursor:pointer;padding:0}
-#pbtn svg{width:24px;height:24px}#pbtn i{position:absolute;top:-4px;right:-4px;width:12px;height:12px;border-radius:50%;background:#c9f25a;border:2px solid #143324;display:none}
+#pbtn{position:fixed;right:calc(22px + env(safe-area-inset-right,0px));bottom:calc(28px + env(safe-area-inset-bottom,0px));width:44px;height:68px;border-radius:11px;border:1px solid #c8c5be;background:linear-gradient(100deg,#d7d5ce,#757b80 10%,#16191d 16%,#292b30 88%,#c0bfba);box-shadow:0 7px 22px #0b171a70;z-index:14;display:flex;align-items:center;justify-content:center;touch-action:manipulation;cursor:pointer;padding:3px}
+#pbtn svg{width:30px;height:60px;border-radius:8px;overflow:hidden}#pbtn i{position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:#e76657;border:2px solid #252a2b;display:none}
 body.talking #pbtn,body.phone-open #pbtn{display:none}
 body.phone-open .tip,body.phone-open .joy,body.phone-open .abtn.big,body.phone-open .abtn.small{display:none!important}
-#phone{position:fixed;right:calc(8px + env(safe-area-inset-right,0px));bottom:calc(8px + env(safe-area-inset-bottom,0px));width:300px;height:640px;z-index:9;transform-origin:100% 100%;transform:translateX(125%) scale(var(--s,.8));opacity:0;pointer-events:none;transition:transform .45s cubic-bezier(.22,1,.36,1),opacity .3s ease;font-family:-apple-system,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;color:#17201b;touch-action:none;user-select:none}
-#phone.on{transform:translateX(0) scale(var(--s,.8));opacity:1;pointer-events:auto}
-.ph-ctl{position:absolute;top:-38px;right:6px;display:flex;gap:8px}.ph-ctl button{width:42px;height:30px;border-radius:15px;border:0;background:rgba(18,26,22,.85);color:#d5f56e;font-size:15px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+#phone{position:fixed;right:calc(18px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));width:272px;height:490px;z-index:22;transform:translateY(calc(100% + 80px));opacity:0;visibility:hidden;pointer-events:none;transition:transform .25s ease,opacity .2s ease,visibility .25s;font-family:-apple-system,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;color:#17201b;touch-action:none;user-select:none}
+#phone.on{transform:translateY(0);opacity:1;visibility:visible;pointer-events:auto}
+.ph-ctl{position:absolute;top:-48px;left:0;right:0;display:flex;justify-content:space-between;gap:8px}.ph-ctl button{min-width:76px;min-height:44px;padding:0 12px;border-radius:12px;border:1px solid #d2d1bf55;background:#202e29;color:#f3eadc;font:600 12px system-ui;cursor:pointer;box-shadow:0 2px 8px #0005}
 .ph-body{position:absolute;inset:0;border-radius:50px;background:linear-gradient(145deg,#33373a,#0c0e0d 60%);padding:10px;box-shadow:0 0 0 1.5px #565c59 inset,0 0 0 3px #101211,0 22px 60px rgba(0,0,0,.6)}
 .ph-body:before,.ph-body:after{content:"";position:absolute;left:-3px;width:3px;border-radius:2px;background:#3a3f3d}.ph-body:before{top:110px;height:44px}.ph-body:after{top:170px;height:44px}
 .ph-screen{position:relative;width:100%;height:100%;border-radius:41px;overflow:hidden;background:#0f2a1c;color:#fff}.ph-screen.light .ph-status{color:#17201b}
@@ -136,7 +136,7 @@ const Input=(()=>{
  const K={},acc={yaw:0,pitch:0,zoom:0,px:0,pz:0},q={phone:0,act1:0,act2:0,cancel:0,recenter:0,track:0,talk:0,choice:0,pick:null},pb={d:0,mx:0,my:0};
  const I={mx:0,mz:0,yaw:0,pitch:0,zoom:0,panx:0,panz:0,act1:0,act2:0,cancel:0,recenter:0,track:0,talk:0,choice:0,pick:null};
  const joy={id:null,x:0,y:0,cx:0,cy:0,R:60},P=new Map(),S={mode:COARSE?'touch':'desktop',sens:1,I,K,joy,P,acc,ui:null,w:1200,h:800};
- const GK=new Set(['w','a','s','d','q','e','f','g','c','t','home','+','=','-','_','escape','arrowup','arrowdown','arrowleft','arrowright',' ','p','1','2','3','4','5','6','7','8','9']);
+ const GK=new Set(['r','w','a','s','d','q','e','f','g','c','t','home','+','=','-','_','escape','arrowup','arrowdown','arrowleft','arrowright',' ','p','1','2','3','4','5','6','7','8','9']);
  GK.add('p');const now=()=>typeof performance!=='undefined'?performance.now():Date.now();
  S.classes=(w,h,touch)=>{const c=[],m=Math.min(w,h);if(touch)c.push('touch');if(m<600)c.push('compact');if(touch&&m>=600)c.push('tablet');c.push(h>w?'portrait':'landscape');return c;};
  S.apply=()=>{if(typeof document==='undefined'||!document.body||!document.body.classList)return;const L=document.body.classList;['touch','compact','tablet','portrait','landscape'].forEach(c=>L.remove(c));S.classes(S.w,S.h,S.mode==='touch').forEach(c=>L.add(c));};
@@ -144,18 +144,20 @@ const Input=(()=>{
  S.setMode=m=>{if(m!==S.mode){S.mode=m;S.apply();}};
  // keyboard (never intercepts typing in inputs)
  S.key=(down,k,tgt,rep)=>{if(tgt&&/INPUT|TEXTAREA|SELECT/.test(tgt.tagName||''))return false;k=k.toLowerCase();if(!GK.has(k))return false;K[k]=down?1:0;
-  if(down&&!rep){if(k==='f')q.act1=1;else if(k==='g')q.act2=1;else if(k==='escape')q.cancel=1;else if(k==='c'||k==='home')q.recenter=1;else if(k==='t')q.track=1;else if(k==='p')q.phone=1;else if(/^[1-9]$/.test(k))q.choice=+k;S.setMode('desktop');}return true;};
+  if(down&&!rep){if(k==='f')q.act1=1;else if(k==='g')q.act2=1;else if(k==='escape')q.cancel=1;else if(k==='c'||k==='home')q.recenter=1;else if(k==='r')q.reset=1;else if(k==='t')q.track=1;else if(k==='p')q.phone=1;else if(/^[1-9]$/.test(k))q.choice=+k;S.setMode('desktop');}return true;};
  // pointers on the 3D view: mouse (drag=orbit, shift/middle-drag=pan, click=pick), touch (1 finger=orbit, 2 fingers=pinch zoom+pan, tap=pick)
  const base=()=>{const v=[...P.values()];if(v.length===2&&v[0].type==='touch'){pb.d=Math.hypot(v[0].x-v[1].x,v[0].y-v[1].y);pb.mx=(v[0].x+v[1].x)/2;pb.my=(v[0].y+v[1].y)/2;}else pb.d=0;};
  S.ptr=(t,e)=>{
   if(t==='down'){P.set(e.id,{x:e.x,y:e.y,sx:e.x,sy:e.y,t0:now(),type:e.type,btn:e.btn||0,shift:!!e.shift,moved:0});S.setMode(e.type==='touch'?'touch':'desktop');if(P.size>=2)for(const p of P.values())p.moved=99;base();return;}
   const p=P.get(e.id);if(!p)return;
   if(t==='move'){const dx=e.x-p.x,dy=e.y-p.y;
-   if(p.type==='touch'&&P.size>=2){p.x=e.x;p.y=e.y;const v=[...P.values()],d=Math.hypot(v[0].x-v[1].x,v[0].y-v[1].y),mx=(v[0].x+v[1].x)/2,my=(v[0].y+v[1].y)/2;if(pb.d>0){acc.zoom+=(pb.d-d)*.0035;acc.px+=-(mx-pb.mx)*.04;acc.pz+=-(my-pb.my)*.04;}pb.d=d;pb.mx=mx;pb.my=my;return;}
+   if(p.type==='touch'&&P.size>=2){p.x=e.x;p.y=e.y;const v=[...P.values()],d=Math.hypot(v[0].x-v[1].x,v[0].y-v[1].y),mx=(v[0].x+v[1].x)/2,my=(v[0].y+v[1].y)/2;if(pb.d>0){acc.zoom+=Math.log(pb.d/Math.max(1,d));acc.px+=-(mx-pb.mx)*.04;acc.pz+=-(my-pb.my)*.04;}pb.d=d;pb.mx=mx;pb.my=my;return;}
    p.x=e.x;p.y=e.y;p.moved=Math.max(p.moved,Math.hypot(e.x-p.sx,e.y-p.sy));
    if(p.type==='touch'||(p.btn===0&&!p.shift)||p.btn===2){acc.yaw-=dx*.0055*S.sens;acc.pitch+=dy*.004*S.sens;}else{acc.px+=-dx*.04;acc.pz+=-dy*.04;}}
-  else if(t==='up'){if(p.moved<6&&now()-p.t0<400&&P.size===1)q.pick={x:e.x,y:e.y};P.delete(e.id);base();}};
- S.wheel=dy=>{acc.zoom+=Math.sign(dy)*.08;};
+  else if(t==='cancel'){P.delete(e.id);base();}
+  else if(t==='up'){if(p.btn===0&&!p.shift&&p.moved<6&&now()-p.t0<400&&P.size===1)q.pick={x:e.x,y:e.y};P.delete(e.id);base();}};
+ S.wheel=(dy,mode=0)=>{const pixels=dy*(mode===1?16:mode===2?S.h:1);if(Number.isFinite(pixels))acc.zoom+=clamp(pixels*.0008,-.22,.22);};
+ S.reset=()=>{for(const k in K)K[k]=0;for(const k in acc)acc[k]=0;for(const k in q)q[k]=k==='pick'?null:0;P.clear();joy.id=null;joy.x=joy.y=0;I.mx=I.mz=I.yaw=I.pitch=I.zoom=I.panx=I.panz=0;};
  // virtual joystick (its own element, so it works at the same time as camera dragging)
  S.joyDown=(id,x,y)=>{if(joy.id!==null)return;joy.id=id;S.joyMove(id,x,y);};
  S.joyMove=(id,x,y)=>{if(id!==joy.id)return;let dx=(x-joy.cx)/joy.R,dy=(y-joy.cy)/joy.R;const m=Math.hypot(dx,dy);if(m>1){dx/=m;dy/=m;}const mg=Math.min(1,m);if(mg<.12){joy.x=joy.y=0;}else{const k=(mg-.12)/.88/mg;joy.x=dx*k*(m>1?m:1);joy.y=dy*k*(m>1?m:1);}};
@@ -164,7 +166,7 @@ const Input=(()=>{
  S.frame=dt=>{let mx=(K.d||K.arrowright?1:0)-(K.a||K.arrowleft?1:0),mz=(K.s||K.arrowdown?1:0)-(K.w||K.arrowup?1:0);const l=Math.hypot(mx,mz);if(l>1){mx/=l;mz/=l;}
   mx+=joy.x;mz+=joy.y;const l2=Math.hypot(mx,mz);if(l2>1){mx/=l2;mz/=l2;}I.mx=mx;I.mz=mz;
   I.yaw=acc.yaw+((K.e?1:0)-(K.q?1:0))*1.8*dt;I.pitch=acc.pitch;I.zoom=acc.zoom+((K['-']||K._?1:0)-(K['+']||K['=']?1:0))*.9*dt;I.panx=acc.px;I.panz=acc.pz;acc.yaw=acc.pitch=acc.zoom=acc.px=acc.pz=0;
-  I.act1=q.act1;I.act2=q.act2;I.cancel=q.cancel;I.recenter=q.recenter;I.track=q.track;I.pick=q.pick;I.talk=q.talk;I.choice=q.choice;I.phone=q.phone;q.phone=0;q.act1=q.act2=q.cancel=q.recenter=q.track=q.talk=q.choice=0;q.pick=null;};
+  I.act1=q.act1;I.act2=q.act2;I.cancel=q.cancel;I.recenter=q.recenter;I.track=q.track;I.pick=q.pick;I.talk=q.talk;I.choice=q.choice;I.phone=q.phone;I.reset=q.reset||0;q.reset=0;q.phone=0;q.act1=q.act2=q.cancel=q.recenter=q.track=q.talk=q.choice=0;q.pick=null;};
  // DOM wiring + touch controls (built once; hidden unless body.touch)
  let cf='',cg='',ct='',cc=null,U=null;
  S.ctx=(fl,gl)=>{if(!U)return;if(fl!==cf){cf=fl;U.bF.style.display=fl?'flex':'none';U.bF.textContent=fl.length>26?fl.slice(0,24)+'…':fl;}if(gl!==cg){cg=gl;U.bG.style.display=gl?'flex':'none';U.bG.textContent=gl?'G':'';}};
@@ -185,11 +187,11 @@ const Input=(()=>{
  S.attach=canvas=>{S.build();const T=e=>e.pointerType==='mouse'?'mouse':'touch';
   canvas.addEventListener('pointerdown',e=>{try{canvas.setPointerCapture(e.pointerId);}catch(_){}S.ptr('down',{id:e.pointerId,x:e.clientX,y:e.clientY,type:T(e),btn:e.button,shift:e.shiftKey});});
   canvas.addEventListener('pointermove',e=>S.ptr('move',{id:e.pointerId,x:e.clientX,y:e.clientY}));
-  ['pointerup','pointercancel'].forEach(t=>canvas.addEventListener(t,e=>S.ptr('up',{id:e.pointerId,x:e.clientX,y:e.clientY})));
-  canvas.addEventListener('contextmenu',e=>e.preventDefault());canvas.addEventListener('wheel',e=>{e.preventDefault();S.wheel(e.deltaY);},{passive:false});
-  addEventListener('keydown',e=>{if(S.key(true,e.key,e.target,e.repeat))e.preventDefault();});addEventListener('keyup',e=>{S.key(false,e.key,e.target);});
+  ['pointerup','pointercancel','lostpointercapture'].forEach(t=>canvas.addEventListener(t,e=>S.ptr(t==='pointerup'?'up':'cancel',{id:e.pointerId,x:e.clientX,y:e.clientY})));
+  canvas.addEventListener('contextmenu',e=>e.preventDefault());canvas.addEventListener('wheel',e=>{e.preventDefault();S.wheel(e.deltaY,e.deltaMode);},{passive:false});
+  addEventListener('keydown',e=>{if(S.key(true,e.key,e.target,e.repeat))e.preventDefault();});addEventListener('keyup',e=>{S.key(false,e.key,null);},true);
   if(typeof document!=='undefined'&&document.addEventListener)document.addEventListener('gesturestart',e=>e.preventDefault());
-  addEventListener('blur',()=>{for(const k in K)K[k]=0;joy.id=null;joy.x=joy.y=0;P.clear();});S.apply();};
+  addEventListener('blur',()=>S.reset());S.apply();};
  return S;})();
 // ===== WORLD: renderer, coast, terrain =====
 const R=new THREE.WebGLRenderer({antialias:!COARSE});R.setSize(innerWidth,innerHeight);R.setPixelRatio(Math.min(devicePixelRatio,COARSE?1.5:2));R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.05;document.body.appendChild(R.domElement);
@@ -448,10 +450,12 @@ const PL=makeChar({skin:0xd9a47c,hair:0x2a1b12,hs:'short',shirt:0xc0392b,pants:0
 let harvest=null;Input.attach(R.domElement);
 // ===== CAMERA RIG (presentation): orbit / zoom / pitch / pan with smoothing, terrain + building clearance, NPC tracking =====
 const CamRig=(()=>{
- const C={yaw:0,pitch:.69,zoom:1,gy:0,gp:.69,gz:1,px:0,pz:0,gpx:0,gpz:0,follow:null,occ:1,x:0,y:20,z:30,lx:0,ly:1.6,lz:0,init:0,FOV:48,PMIN:.3,PMAX:1.3,ZMIN:.45,ZMAX:1.9,PAN:16,R0:32};
- C.input=(I,dt)=>{C.gy+=I.yaw;C.gp=clamp(C.gp+I.pitch,C.PMIN,C.PMAX);C.gz=clamp(C.gz+I.zoom,C.ZMIN,C.ZMAX);
+ const C={yaw:0,pitch:.69,zoom:1,gy:0,gp:.69,gz:1,px:0,pz:0,gpx:0,gpz:0,follow:null,occ:1,x:0,y:20,z:30,lx:0,ly:1.6,lz:0,init:0,FOV:48,PMIN:.25,PMAX:1.38,ZMIN:.3,ZMAX:2.6,PAN:28,R0:32};
+ C.input=(I,dt)=>{C.gy+=I.yaw;C.gp=clamp(C.gp+I.pitch,C.PMIN,C.PMAX);C.gz=clamp(C.gz*Math.exp(I.zoom),C.ZMIN,C.ZMAX);
   if(I.panx||I.panz){const s=Math.sin(C.yaw),c=Math.cos(C.yaw);let nx=C.gpx+I.panx*c+I.panz*s,nz=C.gpz-I.panx*s+I.panz*c;const m=Math.hypot(nx,nz);if(m>C.PAN){nx*=C.PAN/m;nz*=C.PAN/m;}C.gpx=nx;C.gpz=nz;}};
  C.recenter=()=>{C.gpx=C.gpz=0;C.follow=null;};
+ C.adjust=({yaw=0,pitch=0,zoom=0}={})=>C.input({yaw,pitch,zoom,panx:0,panz:0},0);
+ C.reset=()=>{C.recenter();C.gy=C.yaw+Math.atan2(Math.sin(-C.yaw),Math.cos(-C.yaw));C.gp=.69;C.gz=1;};
  C.track=i=>{if(i!==null&&Sim.npcs[i])C.follow=i;};C.untrack=()=>{C.follow=null;};
  C.trackNearest=(x,z)=>{if(C.follow!==null){C.follow=null;return;}let b=null,bd=30;Sim.npcs.forEach((n,i)=>{if(!n.vis)return;const d=Math.hypot(n.x-x,n.z-z);if(d<bd){bd=d;b=i;}});if(b!==null)C.follow=b;};
  // fraction of the look→camera ray that is free; only terrain and large buildings occlude (trees, props and fences do not)
@@ -550,9 +554,9 @@ Bus.on('truck:delivered',d=>{});
 const Phone=(()=>{
  const P={open:false,app:'home',recent:[],feed:[],unseen:0,sw:false,touching:false,s:.8,st:{market:{tab:'buy'},msg:{c:null}},scroll:{},views:{},acc:0,acc2:0};
  const svg=p=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
- const IC={wallet:'<path d="M3 7.5h14.5A3.5 3.5 0 0 1 21 11v6.5a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7.5zM3 7.5 5.2 4h10.3"/><circle cx="16.8" cy="14.3" r="1.3"/>',market:'<path d="M3.5 9.5 5 4.5h14l1.5 5M4.5 9.5v10h15v-10M3.5 9.5a2.8 2.8 0 0 0 5.5 0 2.8 2.8 0 0 0 6 0 2.8 2.8 0 0 0 5.5 0M9.5 19.5v-5h5v5"/>',msg:'<path d="M4 5h16a1.5 1.5 0 0 1 1.500 1.500v9A1.500 1.500 0 0 1 20 17H10l-4.500 3.500V17H4a1.500 1.500 0 0 1-1.500-1.500v-9A1.500 1.500 0 0 1 4 5z"/>',biz:'<path d="M5 20V8l7-4 7 4v12M3.5 20h17M9 12h2M13 12h2M9 16h2M13 16h2"/>',contracts:'<path d="M7 3.5h8l4 4V20.500H7zM15 3.500v4h4M9.500 12h6M9.500 15.500h6"/>',activity:'<path d="M3 12h4l2.500-6 4 12 2.500-6H21"/>',settings:'<circle cx="12" cy="12" r="3.200"/><path d="M12 2.800v2.400M12 18.800v2.400M2.800 12h2.400M18.800 12h2.400M5.500 5.500l1.700 1.700M16.800 16.800l1.700 1.700M18.500 5.500l-1.700 1.700M7.200 16.800l-1.700 1.700"/>',near:'<path d="M6 19V5l12 14V5"/>',phone:'<defs><linearGradient id="iphone-wall" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#17234b"/><stop offset=".45" stop-color="#5153a8"/><stop offset="1" stop-color="#e9a2ba"/></linearGradient></defs><rect width="24" height="52" rx="5" fill="url(#iphone-wall)" stroke="none"/><path d="M-5 38C6 16 25 15 29 38" fill="#6485c7" opacity=".6" stroke="none"/><rect x="7" y="1.8" width="10" height="2.8" rx="1.4" fill="#080a10" stroke="none"/><circle cx="15.5" cy="3.2" r=".5" fill="#28405b" stroke="none"/><g fill="#fff" stroke="none" opacity=".85"><rect x="3" y="11" width="4" height="4" rx="1"/><rect x="10" y="11" width="4" height="4" rx="1"/><rect x="17" y="11" width="4" height="4" rx="1"/><rect x="3" y="18" width="4" height="4" rx="1"/><rect x="10" y="18" width="4" height="4" rx="1"/><rect x="17" y="18" width="4" height="4" rx="1"/><rect x="3" y="25" width="4" height="4" rx="1"/><rect x="10" y="25" width="4" height="4" rx="1"/><rect x="17" y="25" width="4" height="4" rx="1"/></g><rect x="2" y="40" width="20" height="7" rx="2" fill="#fff" opacity=".25" stroke="none"/><path d="M8 50h8" stroke="#fff" stroke-width=".8"/>'};
- const APPS={wallet:['Wallet','#3a8f5c','#173d2a','#c9f25a'],market:['Marketplace','#d5f56e','#8cc23a','#173d2a'],msg:['Messages','#4aa874','#1f5a3a','#f2f7e8'],biz:['Business','#3b4640','#1c2420','#c9f25a'],contracts:['Contracts','#e3eed0','#9dbd78','#173d2a'],activity:['Activity','#f1f8df','#b4d283','#173d2a'],settings:['Settings','#9aa39d','#58605b','#f4f6f1'],near:['NEAR','#2b2b2b','#000','#c9f25a']};
- const HOME=['biz','contracts','activity','settings','near'],DOCK=['wallet','market','msg'];
+ const IC={map:'<path d="M3 5l6-2 6 2 6-2v16l-6 2-6-2-6 2zM9 3v16M15 5v16"/>',wallet:'<path d="M3 7.5h14.5A3.5 3.5 0 0 1 21 11v6.5a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7.5zM3 7.5 5.2 4h10.3"/><circle cx="16.8" cy="14.3" r="1.3"/>',market:'<path d="M3.5 9.5 5 4.5h14l1.5 5M4.5 9.5v10h15v-10M3.5 9.5a2.8 2.8 0 0 0 5.5 0 2.8 2.8 0 0 0 6 0 2.8 2.8 0 0 0 5.5 0M9.5 19.5v-5h5v5"/>',msg:'<path d="M4 5h16a1.5 1.5 0 0 1 1.500 1.500v9A1.500 1.500 0 0 1 20 17H10l-4.500 3.500V17H4a1.500 1.500 0 0 1-1.500-1.500v-9A1.500 1.500 0 0 1 4 5z"/>',biz:'<path d="M5 20V8l7-4 7 4v12M3.5 20h17M9 12h2M13 12h2M9 16h2M13 16h2"/>',contracts:'<path d="M7 3.5h8l4 4V20.500H7zM15 3.500v4h4M9.500 12h6M9.500 15.500h6"/>',activity:'<path d="M3 12h4l2.500-6 4 12 2.500-6H21"/>',settings:'<circle cx="12" cy="12" r="3.200"/><path d="M12 2.800v2.400M12 18.800v2.400M2.800 12h2.400M18.800 12h2.400M5.500 5.500l1.700 1.700M16.800 16.800l1.700 1.700M18.500 5.500l-1.700 1.700M7.200 16.800l-1.700 1.700"/>',near:'<path d="M6 19V5l12 14V5"/>',phone:'<defs><linearGradient id="iphone-wall" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#17234b"/><stop offset=".45" stop-color="#5153a8"/><stop offset="1" stop-color="#e9a2ba"/></linearGradient></defs><rect width="24" height="52" rx="5" fill="url(#iphone-wall)" stroke="none"/><path d="M-5 38C6 16 25 15 29 38" fill="#6485c7" opacity=".6" stroke="none"/><rect x="7" y="1.8" width="10" height="2.8" rx="1.4" fill="#080a10" stroke="none"/><circle cx="15.5" cy="3.2" r=".5" fill="#28405b" stroke="none"/><g fill="#fff" stroke="none" opacity=".85"><rect x="3" y="11" width="4" height="4" rx="1"/><rect x="10" y="11" width="4" height="4" rx="1"/><rect x="17" y="11" width="4" height="4" rx="1"/><rect x="3" y="18" width="4" height="4" rx="1"/><rect x="10" y="18" width="4" height="4" rx="1"/><rect x="17" y="18" width="4" height="4" rx="1"/><rect x="3" y="25" width="4" height="4" rx="1"/><rect x="10" y="25" width="4" height="4" rx="1"/><rect x="17" y="25" width="4" height="4" rx="1"/></g><rect x="2" y="40" width="20" height="7" rx="2" fill="#fff" opacity=".25" stroke="none"/><path d="M8 50h8" stroke="#fff" stroke-width=".8"/>'};
+ const APPS={map:['Map','#47717b','#234b55','#f3eadc'],wallet:['Wallet','#3a8f5c','#173d2a','#c9f25a'],market:['Marketplace','#d5f56e','#8cc23a','#173d2a'],msg:['Messages','#4aa874','#1f5a3a','#f2f7e8'],biz:['Business','#3b4640','#1c2420','#c9f25a'],contracts:['Contracts','#e3eed0','#9dbd78','#173d2a'],activity:['Activity','#f1f8df','#b4d283','#173d2a'],settings:['Settings','#9aa39d','#58605b','#f4f6f1'],near:['NEAR','#2b2b2b','#000','#c9f25a']};
+ const HOME=['map','biz','contracts','activity','settings','near'],DOCK=['wallet','market','msg'];
  const row=(a,b,x='')=>`<div class="row"${x}><span>${a}</span><b>${b}</b></div>`,card=h=>`<div class="card">${h}</div>`,sec=t=>`<div class="sec">${t}</div>`;
  const hh=t=>{t=((t%24)+24)%24;return String(Math.floor(t)).padStart(2,'0')+':'+String(Math.floor(t%1*60)).padStart(2,'0');};
  const btn=(a,t,dis,cls='')=>`<button class="pb ${cls}" data-a="${a}"${dis?' disabled':''}>${t}</button>`;
@@ -581,38 +585,39 @@ const Phone=(()=>{
  P.render=a=>{a=a||P.app;if(a==='home'){P.homeUpdate();return;}const v=P.views[a];if(!v)return;v.title.textContent=a==='msg'&&P.st.msg.c!==null?Sim.npcs[P.st.msg.c].name:APPS[a][0];v.back.textContent='‹ '+(a==='msg'&&P.st.msg.c!==null?'Contacts':'Home');v.body.innerHTML=V[a]();v.body.scrollTop=P.scroll[a]||0;};
  P.homeUpdate=()=>{if(!P.w)return;P.w.cash.textContent=$(Eco.player.cash);P.w.time.textContent=hh(Sim.clock.h);P.w.sub.textContent=`${Eco.farm.name} · ${Eco.ts.inv.timber} timber at the yard`;};
  P.status=()=>{if(!P.sb)return;P.sb.t.textContent=hh(Sim.clock.h);const b=Math.max(21,100-Math.floor(Sim.time/200));P.sb.b.textContent=b+'%';P.sb.bi.style.width=Math.round(b*.16)+'px';};
- P.openApp=id=>{if(!P.views[id])return;P.app=id;P.recent=[id,...P.recent.filter(x=>x!==id)].slice(0,5);P.sw=false;P.show();P.render(id);};
+ P.openApp=id=>{if(id==='map'){P.minimize();Bus.emit('map:open');return;}if(!P.views[id])return;P.app=id;P.recent=[id,...P.recent.filter(x=>x!==id)].slice(0,5);P.sw=false;P.show();P.render(id);};
  P.back=()=>{if(P.app==='msg'&&P.st.msg.c!==null){P.st.msg.c=null;P.render('msg');return;}P.home();};
  P.home=()=>{P.app='home';P.sw=false;P.show();P.homeUpdate();};
  P.show=()=>{if(!P.el)return;for(const k in P.views)P.views[k].el.classList[k===P.app?'add':'remove']('on');P.home_.classList[P.app==='home'?'remove':'add']('back');P.sc.classList[P.app==='home'||P.sw?'remove':'add']('light');P.swEl.classList[P.sw?'add':'remove']('on');};
  P.switcher=()=>{P.sw=!P.sw;if(P.sw){P.swEl.cards.innerHTML=P.recent.length?P.recent.map(id=>`<div class="swc" data-o="${id}"><i style="background:linear-gradient(145deg,${APPS[id][1]},${APPS[id][2]});color:${APPS[id][3]}">${svg(IC[id])}</i><b>${APPS[id][0]}</b></div>`).join(''):'<p class="soon">No recent apps</p>';}P.show();};
- P.openPhone=()=>{if(Sim.Talk.cur)return false;if(UI.open)UI.close();P.open=true;P.unseen=0;if(Input.joy.id!==null)Input.joyUp(Input.joy.id);if(P.el){P.el.classList.add('on');document.body.classList.add('phone-open');P.dot.style.display='none';}P.status();P.show();P.render();return true;};
- P.minimize=()=>{P.open=false;if(P.el){P.el.classList.remove('on');document.body.classList.remove('phone-open');}};
+ P.openPhone=()=>{if(Sim.Talk.cur)return false;if(UI.open)UI.close();P.open=true;P.unseen=0;Input.reset();Bus.emit('phone:open');if(Input.joy.id!==null)Input.joyUp(Input.joy.id);if(P.el){P.el.classList.add('on');P.el.inert=false;P.el.setAttribute?.('aria-hidden','false');P.launcher?.setAttribute?.('aria-expanded','true');document.body.classList.add('phone-open');P.dot.style.display='none';}P.status();P.show();P.render();return true;};
+ P.minimize=()=>{P.open=false;if(P.el){P.el.classList.remove('on');P.el.inert=true;P.el.setAttribute?.('aria-hidden','true');P.launcher?.setAttribute?.('aria-expanded','false');document.body.classList.remove('phone-open');if(P.el.contains?.(document.activeElement))P.launcher?.focus?.();}};
  P.close=()=>{P.app='home';P.recent=[];P.sw=false;P.st.msg.c=null;P.show();P.minimize();};
  P.toggle=()=>{P.open?P.minimize():P.openPhone();};
- P.scaleFor=(w,h,touch)=>{const m=Math.min(w,h),compact=m<600,tablet=touch&&m>=600,width=compact?.6*w:tablet?.4*w:Math.min(300,.24*w);return clamp(Math.min(width/300,(h-16)/640),.5,1.25);};
- P.layout=(w,h)=>{P.s=P.scaleFor(w,h,Input.mode==='touch');if(P.el){if(P.el.style.setProperty)P.el.style.setProperty('--s',P.s);else P.el.style['--s']=P.s;}};
+ // Reflow at native CSS pixels so text and touch targets stay readable.
+ P.sizeFor=(w,h,touch)=>({width:Math.round(Math.min(touch?244:260,w-32)),height:Math.round(Math.min(500,h*.60,h-96))});
+ P.layout=(w,h)=>{const size=P.sizeFor(w,h,Input.mode==='touch');P.size=size;if(P.el){P.el.style.width=size.width+'px';P.el.style.height=size.height+'px';}};
  P.tick=dt=>{P.acc+=dt;if(P.acc<1.2)return;P.acc=0;if(!P.open)return;P.status();if(!P.touching&&P.app!=='settings'&&!(P.app==='msg'&&P.st.msg.c!==null))P.render();};
  Bus.on('notify',m=>{P.feed.unshift({t:Sim.clock.h,m});if(P.feed.length>60)P.feed.length=60;if(!P.open){P.unseen++;if(P.dot)P.dot.style.display='block';}});
  Bus.on('talk:open',()=>P.minimize());
  P.build=()=>{if(P.el||typeof document==='undefined')return;const mk=(c,par,h,t='div')=>{const e=document.createElement(t);e.className=c;if(h!==undefined)e.innerHTML=h;(par||document.body).appendChild(e);return e;};
-  const ib=mk('',null,svg(IC.phone).replace('0 0 24 24','0 0 24 52'),'button');ib.id='pbtn';ib.setAttribute&&ib.setAttribute('aria-label','Phone');P.dot=mk('',ib,'','i');ib.addEventListener('click',()=>P.toggle());
-  const el=P.el=mk('',null);el.id='phone';const ctl=mk('ph-ctl',el),mn=mk('',ctl,'—','button'),cl=mk('',ctl,'✕','button');mn.addEventListener('click',()=>P.minimize());cl.addEventListener('click',()=>P.close());
+  const ib=mk('',null,svg(IC.phone).replace('0 0 24 24','0 0 24 52'),'button');ib.id='pbtn';P.launcher=ib;ib.setAttribute?.('aria-controls','phone');ib.setAttribute?.('aria-expanded','false');ib.setAttribute&&ib.setAttribute('aria-label','Phone');P.dot=mk('',ib,'','i');ib.addEventListener('click',()=>P.toggle());
+  const el=P.el=mk('',null);el.id='phone';el.inert=true;el.setAttribute?.('role','dialog');el.setAttribute?.('aria-label','Island phone');el.setAttribute?.('aria-modal','false');el.setAttribute?.('aria-hidden','true');const ctl=mk('ph-ctl',el),mn=mk('',ctl,'− Hide','button'),cl=mk('',ctl,'Close ×','button');mn.setAttribute?.('aria-label','Minimize phone');cl.setAttribute?.('aria-label','Close phone');mn.addEventListener('click',()=>P.minimize());cl.addEventListener('click',()=>P.close());
   const body=mk('ph-body',el),sc=P.sc=mk('ph-screen',body);mk('ph-island',sc);
   const sb=mk('ph-status',sc),t=mk('',sb,'9:41','span'),r=mk('',sb,'<svg width="18" height="11" viewBox="0 0 18 11"><rect x="0" y="7" width="3" height="4" rx=".8" fill="currentColor"/><rect x="5" y="5" width="3" height="6" rx=".8" fill="currentColor"/><rect x="10" y="2.500" width="3" height="8.500" rx=".8" fill="currentColor"/><rect x="15" y="0" width="3" height="11" rx=".8" fill="currentColor"/></svg><svg width="16" height="11" viewBox="0 0 16 11" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round"><path d="M1.500 4a9.500 9.500 0 0 1 13 0M3.800 6.600a6 6 0 0 1 8.400 0"/><circle cx="8" cy="9" r="1" fill="currentColor"/></svg><em class="bat"><s></s></em><small></small>','span');
   {const bi=r.querySelector&&r.querySelector('s');P.sb={t,b:r.lastChild||{},bi:bi&&bi.style?bi:{style:{}}};}
   const home=P.home_=mk('ph-home',sc),wg=mk('wgt',home);P.w={cash:mk('',wg,'$0.00','b'),time:mk('',wg,'','em'),sub:mk('',wg,'','small')};wg.insertAdjacentHTML&&0;
   mk('lbl',wg,'Wallet','span');const grid=mk('grid',home);
-  const icon=(id,par)=>{const a=APPS[id],e=mk('ico',par,`<i style="background:linear-gradient(145deg,${a[1]},${a[2]});color:${a[3]}">${svg(IC[id])}${id==='near'?'<u>Items</u>':''}</i><span>${a[0]}</span>`);e.addEventListener('click',()=>P.openApp(id));return e;};
+  const icon=(id,par)=>{const a=APPS[id],e=mk('ico',par,`<i style="background:linear-gradient(145deg,${a[1]},${a[2]});color:${a[3]}">${svg(IC[id])}${id==='near'?'<u>Items</u>':''}</i><span>${a[0]}</span>`);e.setAttribute?.('role','button');e.setAttribute?.('tabindex','0');e.addEventListener('click',()=>P.openApp(id));e.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();ev.stopPropagation();P.openApp(id);}});return e;};
   HOME.forEach(id=>icon(id,grid));const dock=mk('dock',home);DOCK.forEach(id=>icon(id,dock));
-  Object.keys(APPS).forEach(id=>{const e=mk('ph-app',sc),nav=mk('ph-nav',e),back=mk('bk',nav,'‹ Home','button'),title=mk('tt',nav,APPS[id][0],'span');mk('sp',nav);const bd=mk('ph-scroll',e);back.addEventListener('click',()=>P.back());
+  Object.keys(APPS).filter(id=>id!=='map').forEach(id=>{const e=mk('ph-app',sc),nav=mk('ph-nav',e),back=mk('bk',nav,'‹ Home','button'),title=mk('tt',nav,APPS[id][0],'span');mk('sp',nav);const bd=mk('ph-scroll',e);back.addEventListener('click',()=>P.back());
    bd.addEventListener('scroll',()=>{P.scroll[id]=bd.scrollTop;});
    bd.addEventListener('click',ev=>{const c=ev.target.closest&&ev.target.closest('[data-a],[data-tab],[data-c],[data-t]');if(!c)return;const d=c.dataset||{};if(d.a!==undefined)P.act(d.a);else if(d.tab!==undefined){P.st.market.tab=d.tab;P.render('market');}else if(d.c!==undefined)P.msgOpen(+d.c);else if(d.t!==undefined)P.msgAsk(d.t);});
    bd.addEventListener('input',ev=>{if(ev.target&&ev.target.id==='ph-sens'){Input.sens=+ev.target.value;try{localStorage.setItem('am_sens',ev.target.value);}catch(_){}}});
    P.views[id]={el:e,body:bd,title,back};});
   const sw=P.swEl=mk('ph-sw',sc);sw.cards=mk('cards',sw);sw.cards.addEventListener('click',ev=>{const c=ev.target.closest&&ev.target.closest('[data-o]');if(c)P.openApp(c.dataset.o);});sw.addEventListener('click',ev=>{if(ev.target===sw)P.switcher();});
   const hi=mk('ph-hi',sc,'<s></s>');let y0=0,tl=0;hi.addEventListener('pointerdown',e=>{y0=e.clientY;});hi.addEventListener('pointerup',e=>{const dy=e.clientY-y0,now=Date.now();if(dy<-26){if(P.app==='home'&&!P.sw)P.minimize();else P.home();}else if(now-tl<380){P.switcher();}else P.home();tl=now;});
-  el.addEventListener('pointerdown',()=>{P.touching=true;});addEventListener('pointerup',()=>{P.touching=false;});
+  el.addEventListener('pointerdown',e=>{P.touching=true;Input.reset();e.stopPropagation();});el.addEventListener('keydown',e=>{if(e.key!=='Escape'&&e.key.toLowerCase()!=='p')e.stopPropagation();});addEventListener('pointerup',()=>{P.touching=false;});
   P.layout(Input.w,Input.h);P.status();P.homeUpdate();P.show();};
  return P;})();
 Phone.build();
@@ -636,7 +641,7 @@ function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.
   if(I.cancel){if(Sim.Talk.cur)Sim.Talk.close();else if(Phone.open)Phone.minimize();else if(UI.open)UI.close();else CamRig.recenter();}
   if(!UI.open&&!Sim.Talk.cur&&!Phone.open){if(I.act1)interact(1);if(I.act2)interact(2);}
   if(I.talk&&CamRig.follow!==null&&!Sim.Talk.cur&&!UI.open&&!Phone.open)Sim.Talk.open(CamRig.follow);if(I.choice&&Sim.Talk.cur)Sim.Talk.pick(I.choice-1);Dlg.sync();if(I.phone)Phone.toggle();Phone.tick(dt);
-  if(I.recenter)CamRig.recenter();if(I.track)CamRig.trackNearest(Sim.player.x,Sim.player.z);
+  if(I.reset)CamRig.reset();if(I.recenter)CamRig.recenter();if(I.track)CamRig.trackNearest(Sim.player.x,Sim.player.z);
   if(I.pick){const pi=CamRig.pick(I.pick.x,I.pick.y,innerWidth,innerHeight);if(pi!==null){if(CamRig.follow===pi&&Sim.Talk.canTalk(Sim.npcs[pi])&&!UI.open){if(!Sim.Talk.cur||Sim.Talk.cur.id!==pi)Sim.Talk.open(pi);}else CamRig.track(pi);}}
   CamRig.input(I,dt);
   let sp=0;Net.movement={x:0,z:0};

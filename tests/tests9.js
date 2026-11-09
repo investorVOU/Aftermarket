@@ -1,13 +1,13 @@
 const H=require('./harness.js');const {load,rand}=H;let pass=0,fail=0;const ok=(c,m)=>{console.log((c?'PASS ':'FAIL ')+m);c?pass++:fail++;};
 const W=load(21);const {Sim,Eco,Input}=W;const Ph=W.Phone,V=Ph.views;const html=a=>V[a].body.innerHTML;
 // layout / sizing
-const sc=(w,h,t)=>Ph.scaleFor(w,h,t),wid=(w,h,t)=>Math.round(300*sc(w,h,t));
-ok(Math.abs(wid(390,844,true)/390-.6)<.02,`phone portrait: ${wid(390,844,true)}px wide = ${(wid(390,844,true)/390*100).toFixed(0)}% of a 390px screen (target 60%)`);
-ok(wid(1280,720,false)<=300&&wid(1280,720,false)/1280<.25,`desktop: ${wid(1280,720,false)}px (${(wid(1280,720,false)/1280*100).toFixed(0)}% of width) — smaller overlay, centre stays clear`);
-ok(wid(820,1180,true)/820>.38&&wid(820,1180,true)/820<.45,`tablet portrait scales proportionally (${(wid(820,1180,true)/820*100).toFixed(0)}% of width)`);
-ok(300*sc(844,390,true)>=140&&640*sc(844,390,true)<=390,`phone landscape shrinks to fit height (${wid(844,390,true)}px wide, ${Math.round(640*sc(844,390,true))}px tall) — documented limitation`);
-ok([[390,844],[1280,720],[820,1180],[844,390]].every(([w,h])=>640*sc(w,h,true)<=h-8),'device height never exceeds the screen at any tested size (no clipping)');
-Ph.layout(390,844);ok(Math.abs(Ph.s-.78)<.02,'layout() applies the scale to the device');
+const size=(w,h,t)=>Ph.sizeFor(w,h,t);
+ok(size(390,844,true).width<=270&&size(390,844,true).height<844*.7,'portrait phone is compact without scaling its text or controls');
+ok(size(1280,720,false).width<1280/4&&size(1280,720,false).height<720*.7,'desktop phone leaves the centre of the world visible');
+ok(size(820,1180,true).width<820/3,'tablet phone does not grow to occupy the whole display');
+ok(size(844,390,true).width>=240&&size(844,390,true).height<=390-96,'landscape reflows with readable width and room for its close bar');
+ok([[320,568],[390,844],[1280,720],[820,1180],[844,390]].every(([w,h])=>size(w,h,true).width<=w-24&&size(w,h,true).height<=h-80),'phone and close bar fit all supported viewport sizes');
+Input.setMode('touch');Ph.layout(390,844);ok(Ph.el.style.width==='244px'&&Ph.el.style.height==='500px','layout sets native dimensions rather than shrinking touch targets');
 // state machine
 ok(!Ph.open&&Ph.app==='home','starts closed on the home screen');
 ok(Ph.openPhone()&&Ph.open&&H.body.classList.contains('phone-open'),'open: phone shown, gameplay-lock class applied');

@@ -39,6 +39,8 @@ Game cash is a **game credit**, not native NEAR, a stablecoin or a redeemable ca
 | Phone | P or handset icon | Handset icon |
 | Close | Esc | Close/minimise |
 
+The handset floats at the bottom right. Its Map app opens a closable island map; tap land or a named landmark to mark a waypoint. No permanent map covers the movement pad. The camera toolbar supports zoom, rotation, tilt and reset; **R** restores the default view, **C** follows the player and **M** opens/closes the map. Phone content reflows and scrolls at native text sizes in portrait and landscape.
+
 ## Supabase
 
 Project: `ytfioiujcitikvgbfxwg`. Keep `.env` private; `.env.example` documents the variables.
@@ -86,6 +88,8 @@ Configure a funded **testnet** contract account/controller, signing key and back
 npm run contract:deploy
 npm run contract:verify
 ```
+
+`npm run near:preflight` performs read-only release diagnostics without signing. Verification compares deployed testnet WASM bytes with the local build before saving evidence for mainnet deployment. Missing credentials, funding or verification cannot be treated as a completed release.
 
 Deployment refuses to overwrite existing code. Verification performs a real testnet mint and reads the final balance. Mainnet deployment requires a testnet verification record for the exact WASM hash, separate funded mainnet credentials and `NEAR_NETWORK=mainnet`. Accelerated simulation is disabled on mainnet. The operator pays actual gas/storage; unused storage funding is refunded.
 

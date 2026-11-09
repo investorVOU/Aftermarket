@@ -10,9 +10,8 @@ const {world,action}=require('./world.cjs');
 const State=require('../shared/state.js');
 const Rules=require('../shared/merchant-rules.js');
 const Simulation=require('./simulation.cjs');
-const env=process.env,root=path.join(__dirname,'..'),development=(env.GAME_MODE||'development')==='development';
+const env=process.env,root=path.join(__dirname,'..'),runtime=require('./runtime.cjs').runtime(env),{development}=runtime;
 const {DevelopmentStore,DevelopmentChain,OffchainChain}=require('./development.cjs');
-if(development&&env.HOST&&env.HOST!=='127.0.0.1')throw new Error('Development mode must bind to 127.0.0.1.');
 const store=development?new DevelopmentStore():new Store(env),chain=development?new DevelopmentChain():env.NEAR_SETTLEMENT_ENABLED==='true'?new Chain(env):new OffchainChain();
 const worlds=new Map(),tokens=new Map(),limits=new Map();
 const json=(res,status,data)=>{res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(data));};
@@ -108,7 +107,7 @@ const worker=setInterval(async()=>{
   settling=true;try{const job=await store.pending();if(job){try{const hash=await chain.settle(job.payload);await store.settlement(job.id,{status:'confirmed',transaction_hash:hash,error:null});}catch(e){await store.settlement(job.id,{error:'Mainnet settlement pending. Operator must check relayer balance, storage deposit and contract configuration.'});settlementRetryAt=Date.now()+30000;console.error('Settlement needs attention:',e.message);}}}catch(e){console.error('Settlement worker:',e.message);settlementRetryAt=Date.now()+30000;}finally{settling=false;}
 },4000);
 const cleanup=setInterval(()=>{const now=Date.now();for(const [key,value]of tokens)if(value.until<now)tokens.delete(key);for(const [key,value]of limits)if(now-value.start>60000)limits.delete(key);for(const [key,p]of worlds)p.then(w=>{if(!w.busy&&now-w.lastSeen>120000)worlds.delete(key);});},60000);
-if(require.main===module)server.listen(Number(env.PORT||8080),env.HOST||'127.0.0.1',()=>console.log(`AFTERMARKET http://localhost:${env.PORT||8080} | ${chain.publicConfig().network} | ${store.ready&&chain.ready?'configured':'waiting for .env configuration'}`));
+if(require.main===module)server.listen(runtime.port,runtime.host,()=>console.log(`AFTERMARKET http://${runtime.host}:${runtime.port} | ${runtime.mode} | ${chain.publicConfig().network} | ${store.ready&&chain.ready?'configured':'waiting for server environment configuration'}`));
 async function shutdown(){clearInterval(ticker);clearInterval(worker);clearInterval(cleanup);await Promise.all([...worlds.entries()].map(async([id,p])=>{const w=await p;await serial(w,()=>save({id},w)).catch(e=>console.error('Final save:',e.message));}));server.close();}
 process.once('SIGINT',()=>shutdown().then(()=>process.exit()));process.once('SIGTERM',()=>shutdown().then(()=>process.exit()));
 module.exports={server,shutdown};
