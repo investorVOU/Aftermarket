@@ -16,10 +16,32 @@ test('supply, demand and oversupply change explainable quotes',()=>{const low=Ru
 test('bankrupt buyers cannot purchase and investment funds recovery',()=>{const G=world(),E=G.Eco;E.ow.cash=0;E.player.inv.timber=3;assert.throws(()=>action(G,'sellTimber'),/closed/);assert.equal(E.player.inv.timber,3);action(G,'invest',{business:'ow'});assert.equal(E.player.cash,3000);assert.equal(E.ow.cash,2000);assert.equal(E.merchantProfiles.ow.state,'struggling');});
 test('gathering is range checked and completes once in simulation',()=>{const G=world(),S=G.Sim;assert.equal(S.startHarvest(0),false);const n=S.nodes[0];S.player.x=n.x+1.2;S.player.z=n.z;assert.equal(S.startHarvest(0),true);assert.equal(S.startHarvest(0),false);Simulation.advance(G,2.1);assert.equal(G.Eco.player.inv.timber,1);assert.equal(n.qty,n.max-1);});
 test('offline catch-up uses the same production and pricing rules',async()=>{const A=world(),B=world();Simulation.advance(A,20);await Simulation.catchUp(B,20);for(const name of ['ts','ow','farm','market']){assert.deepEqual(A.Eco[name].inv,B.Eco[name].inv);assert.equal(A.Eco[name].cash,B.Eco[name].cash);}assert.ok(Math.abs(B.Sim.time-20)<.001);});
+
+test('daily costs close an unprofitable merchant and real investment pays arrears before reopening',()=>{
+ const G=world(),B=G.Eco.ts;B.cash=500;G.Sim.time=420;Rules.update(G);
+ assert.equal(B.cash,0);assert.equal(B.arrears,8500);assert.equal(B.closed,true);assert.equal(G.Eco.merchants.timber.closed,true);
+ const before=G.Eco.player.cash,stock=B.inv.timber;assert.throws(()=>action(G,'buyTimber'),/closed/);assert.equal(G.Eco.player.cash,before);assert.equal(B.inv.timber,stock);
+ G.Eco.player.cash=12000;for(let i=0;i<5;i++)action(G,'invest',{business:'ts'});
+ assert.equal(B.arrears,0);assert.equal(B.cash,1500);assert.equal(B.closed,false);assert.equal(G.Eco.player.cash,2000);
+ assert.ok(G.Eco.economicEvents.some(e=>e.type==='merchant_reopened'));
+});
+test('operating bills survive restore and are not charged twice on the same day',()=>{
+ const G=world();G.Sim.time=420;Rules.update(G);const restored=world(State.capture(G,true)),cash=restored.Eco.ts.cash;Rules.update(restored);assert.equal(restored.Eco.ts.cash,cash);assert.equal(restored.Eco.overheadDay,1);
+});
+test('testnet settlement cannot be switched to mainnet by an environment typo',()=>{
+ assert.throws(()=>new Chain({NEAR_NETWORK:'mainnet'}),/testnet-only/);
+});
 test('snapshot restores methods, cargo, inventories and progress',()=>{const A=world();Simulation.advance(A,3);A.Eco.player.inv.ore=2;const B=world(State.capture(A,true));assert.equal(B.Eco.player.inv.ore,2);assert.equal(typeof B.Eco.player.note,'function');assert.equal(B.Sim.npcs.length,29);assert.equal(B.Sim.nodes.length,20);});
 test('crafting reserves ingredients, survives saving and can sell the finished item',()=>{const G=world(),S=G.Sim,E=G.Eco;S.player.x=24;S.player.z=7;E.player.inv.timber=3;assert.equal(S.startCraft('furniture'),true);assert.equal(E.player.inv.timber,0);assert.equal(E.player.cash,4800);const restored=world(State.capture(G,true));Simulation.advance(restored,8.1);assert.equal(restored.Eco.player.inv.furniture,1);restored.Eco.sellFurniture();assert.equal(restored.Eco.player.inv.furniture,0);assert.equal(restored.Eco.player.cash,9800);});
 test('SQLite development persistence survives reopening and rejects stale writes',async()=>{const directory=fs.mkdtempSync(path.join(os.tmpdir(),'aftermarket-')),file=path.join(directory,'save.sqlite');const id=crypto.randomUUID();let db=new DevelopmentStore(file);await db.save(id,0,{value:1},{},'local',null);db.close();db=new DevelopmentStore(file);assert.equal((await db.load(id)).snapshot.value,1);await assert.rejects(db.save(id,0,{value:2},{},'local',null),/conflict/);assert.equal((await db.load(id)).revision,1);db.close();});
 test('failed chain settlement propagates failure instead of claiming confirmation',async()=>{const chain=new Chain({NEAR_NETWORK:'testnet'});chain.account=async()=>({callFunctionRaw:async()=>{throw new Error('RPC unavailable');}});await assert.rejects(chain.settle({}),/RPC unavailable/);});
+
+test('replayed checkpoints do not replace an original mint receipt with a no-op transaction',async()=>{
+ const chain=new Chain({NEAR_NETWORK:'testnet'});let applied=true;
+ chain.account=async()=>({callFunctionRaw:async()=>({status:{SuccessValue:Buffer.from(JSON.stringify(applied)).toString('base64')},transaction:{hash:'actual-receipt'}})});
+ assert.equal(await chain.settle({}),'actual-receipt');applied=false;assert.equal(await chain.settle({}),null);
+ chain.account=async()=>({callFunctionRaw:async()=>({status:{Failure:{}},transaction:{hash:'failed-receipt'}})});await assert.rejects(chain.settle({}),/successful/);
+});
 test('wallet derivation is stable, distinct per merchant and independent of simulation randomness',()=>{const C=new Chain({NEAR_NETWORK:'testnet',NEAR_CONTRACT_ID:'items.testnet',NEAR_SIGNER_ID:'server.testnet',NEAR_SIGNER_PRIVATE_KEY:'placeholder-only-for-derivation',NEAR_WALLET_MASTER_KEY:'a'.repeat(64)});assert.match(C.wallet('alice'),/^[a-f0-9]{64}$/);assert.equal(C.wallet('alice'),C.wallet('alice'));assert.notEqual(C.wallet('alice'),C.wallet('alice','ts'));});
 
 process.env.GAME_MODE='development';process.env.HOST='127.0.0.1';

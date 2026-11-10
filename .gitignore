@@ -4,6 +4,7 @@ node_modules/
 !.env.example
 .tooling/
 .local/
+.deployments/
 contracts/**/target/
 game/client.bundle.js
 supabase/.temp/

@@ -11,7 +11,7 @@ export function setupNavigation({document,window,Sim,Input,CamRig,Phone,Net,Bus,
     panel.hidden=!open;
     document.body.classList.toggle('map-open',open);
     pressed=null;releaseInput();
-    if(open){Phone.minimize();$('am-market').hidden=true;draw();if(focus)$('am-close-map').focus();}
+    if(open){Phone.minimize();$('am-market').hidden=true;document.body.classList.remove('market-open');draw();if(focus)$('am-close-map').focus();}
     else if(focus&&panel.contains(document.activeElement))Phone.launcher?.focus?.();
   }
   function select(x,z,label='Custom destination') {

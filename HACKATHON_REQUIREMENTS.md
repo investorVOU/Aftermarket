@@ -1,52 +1,69 @@
-﻿# Track 09 - Games With Real Economies
+# Track 09 — Games With Real Economies
 
-Updated 9 November 2026. **Implemented locally**, **verified in live Supabase**, and **deployed on-chain** are separate states. A checked implementation is not a claim of live chain deployment.
+Updated November 10, 2026. Implementation, local verification, live testnet evidence
+and a public hosted deployment are different states.
 
-Sources: [organizer guide](docs/HACKATHON.md), [track example](https://github.com/nearai/near-hackathon-prompt-examples/blob/main/tracks/09-games.md), [NEAR Builders](https://nearbuilders.org/build).
-
-The organizer guide explicitly says the track integrations are hints, not mandatory event integrations, and testnet projects are eligible. The expanded AFTERMARKET brief independently asks for NEP-245 and NEAR social authentication, so both remain project targets.
+Sources: [live organizer rules](https://nearhackathon.com/HACKATHON.md),
+[track example](https://github.com/nearai/near-hackathon-prompt-examples/blob/main/tracks/09-games.md),
+and [NEAR Builders](https://nearbuilders.org/build). Testnet entries are eligible.
+Track integrations are hints; this project deliberately uses NEP-245 and managed
+frictionless authentication. It does not claim NEAR Auth/MPC or Intents.
 
 | Requirement | Status and evidence |
 |---|---|
-| [x] Functional core game loop | Gather, trade, contracts, business management, furniture crafting and gold/furniture sales. Original suites now 321/321. Visual WebGL/device QA remains open. |
-| [x] Autonomous NPC merchants | Constrained purchasing, production, transport, stock-based decisions, financial states and legitimate capital support. |
-| [ ] NPC wallets/account identities | Stable managed Ed25519 derivation verified locally. No live NPC token wallet or chain settlement yet. Off-chain play is explicitly labelled. |
-| [x] NPC inventories | Independent business inventories, caps, treasuries and histories. |
-| [x] Dynamic pricing | Readable stock/target/demand policy with bounded integer prices. |
-| [x] Supply and demand | Actual production, consumption, shortages, oversupply and NPC-to-NPC trades. |
-| [ ] Persistent player-owned on-chain assets | Supabase schema and persistence access rules are live and verified; on-chain ownership awaits actual deployment/settlement. Development saves survive restart. |
-| [x] Player-owned businesses | Acquisition, stocking, prices, capital, upgrades and reputation. Database persistence implemented; actual authenticated cross-device play needs verification. |
-| [x] NPC-to-NPC economy | Forestry to yard; port to yard; yard/post to workshop; farm to market. |
-| [x] Offline economy | Server ticks without a browser; persisted timestamps drive catch-up after eviction/downtime. Same fixed-step engine is covered by checks. |
-| [ ] NEAR social login | Supabase email/Google UI and server verification are implemented. NEAR Auth SDK adapter is scaffolded; approved credentials, ownership-link proof, asset migration and live callback verification remain open. |
-| [x] NEP-245 contract implementation | Rust compiles to WASM; six checks execute the compiled code for authorization, replay, mint/burn, transfers, metadata, storage and callbacks. These use an emulated host, not a deployed chain. |
-| [x] Readable pricing rules | shared/merchant-rules.js. |
-| [x] Decision explanations | Actual rule explanations appear in the market UI. |
-| [x] Week preview | 49x uses normal economic rules. A benchmark advanced 2,940 seconds (seven island days), executed 923 NPC trades and 26 crop harvests in about 4.2 CPU seconds. Mainnet acceleration is disabled. |
-| [x] Tests and documentation | Build/syntax lint; original suites; backend/API, PostgreSQL/RLS and DOM-network checks; compiled-WASM checks. Live/browser limitations are documented. |
-| [ ] Working complete deployed demonstration | Local development DOM/API flow verified. Render deployment, real social login, testnet receipts and final demonstration remain open. |
+| [x] Functional core loop | Gather → reserve ingredients → craft → sell; real API and final testnet balances verified in `docs/LIVE_GAME_EVIDENCE.json`. Contracts and Trading Post management remain playable. |
+| [x] Autonomous NPC merchants | Actual procurement, stock, production, shipping, cash constraints and deterministic decisions; not LLM balances. |
+| [x] NPC identities and inventories | Separate per-island owner IDs and real NEP-245 balances; inspect `/api/ownership?actor=ts` or exchange selector. These are managed contract-ledger identities, not funded native subaccounts. |
+| [x] Dynamic pricing / supply-demand | `shared/merchant-rules.js`; stock targets, demand pressure, bounded integer quotes, production and consumption. |
+| [x] Readable reasoning | Quote explanations and tooltips; stock, treasury, financial state and arrears are visible. |
+| [x] Player-owned assets | Real testnet mint/burn receipts and final `mt_batch_balance_of` reads under each player's managed owner ID. Pending inventory is labelled separately. |
+| [x] Player-owned market | First Trade → contract-funded Trading Post acquisition verified through normal API intents; final on-chain bound licence balance = 1 and matching mint receipt. Stocking, price competition, capital and upgrades remain playable. `docs/LIVE_GAME_EVIDENCE.json`. |
+| [x] NPC-to-NPC economy | Forestry/truck, port/yard, yard or player post/workshop, farm/market; snapshots settle per-merchant item and game-credit balances. |
+| [x] Persistent/offline evolution | Supabase atomic saves/history/outbox; same fixed-step catch-up after restart or eviction. Local SQLite development stays available without credentials. |
+| [x] Merchant closure/recovery | Yard pays a $90 daily lease; unpaid expenses close it. Investment pays arrears and restores working capital. Pure-engine checks and actual Chrome week/recovery interaction passed. |
+| [x] One-week preview | 49× for 60 seconds, same economic rules. Browser run showed closure/reopening, price history and transaction totals. `docs/BROWSER_EVIDENCE.json`. |
+| [x] NEP-245 contract | Compiled Rust WASM, six emulated-host checks; actually deployed at `aftermarket-game.testnet`; exact deployed hash and mint verified. `docs/TESTNET_EVIDENCE.json`. |
+| [x] Frictionless managed guest entry | Real isolated Supabase Auth session, stable managed identity, no email confirmation/wallet popup/gas prompt; live API and mobile Chrome guest entry verified. |
+| [~] Personal email / Google | Code and server verification implemented. Google disabled when checked; actual inbox, OAuth redirects and cross-device social sign-in still need operator verification. Guest convenience is not claimed as verified Google/email ownership. |
+| [x] On-chain inspector | Player/merchant selector reads final RPC balances; `npm run near:items -- <owner-id>` works without a signing key. Phone NEAR app links to it. |
+| [x] Documentation and licence | Screener-ordered README, MIT, operations guide, explicit custody/game-credit/baseline/AI disclosures. |
+| [~] Baseline separation | Local `baseline-import` tag and `hackathon/track-09-testnet` branch. Oldest available import already contains in-window backend work; not mislabelled as pre-window. Review diff/submission tag publication awaits approval. `docs/BASELINE.md`. |
+| [x] Public repository | GitHub read-only API confirmed `private:false`. No visibility change was made. Current new branch remains local until approved. |
+| [ ] Complete public hosted demonstration | Render Blueprint and environment handoff prepared. Real remote service URL/access and approved Git publication are still needed. |
+| [ ] Human demo post and final submission | Owner must record the video, publish X post, provide payout/contact details and confirm the exact API payload. Nothing submitted or posted by the agent. |
 
-## Phase evidence
+## Verified evidence
 
-1. **Audit:** PROJECT_AUDIT.md records Claude's baseline, working UI, local simulation, gaps and architecture.
-2. **Economy:** shared/core.js and merchant-rules.js enforce transactions, production, prices, history and recovery; backend checks pass.
-3. **Persistence:** four migrations committed to the actual Supabase project. Seven game tables have RLS; server commits allowed, authenticated/anonymous writes denied. Data API schema access checked. No fake user account or play session was created.
-4. **Simulation:** fixed-step server engine, persistent jobs, offline catch-up and week preview are implemented and checked.
-5. **NEAR:** compiled contract, relayer/outbox, metadata, storage, testnet verification and guarded mainnet deployment scripts exist. Live deployment and full MPC social linking remain partial.
-6. **UX:** original island/characters preserved. Phone now floats at the bottom right with native responsive content, Hide/Close controls and a Map app. The map opens on demand, supports waypoint selection and cancellation, and does not rotate the game camera. Camera controls include proportional zoom, rotation, tilt and reset. DOM/API checks cover those interactions. Local Chrome rendering and layout bounds were checked at desktop, portrait mobile, narrow mobile and landscape sizes; physical-device and deployed-browser QA remain open.
+- Two faucet-funded named testnet accounts; private keys/master key remain local
+  and ignored. No mainnet transaction, paid service or real-fund spend.
+- Actual deployed WASM hash, deployment transaction and verified mint receipt.
+- Normal authenticated API gathering three timber, furniture production and sale;
+  final balances plus matching NEP-245 receipt events were checked.
+- Separate live merchant balance query; player credit balance after the basic
+  loop was 9,800 non-redeemable game cents before later investment.
+- Real Chrome mobile guest sign-in; connected session resume, final item inspector,
+  one-minute week preview, merchant closure and legitimate recovery; no browser
+  JavaScript exceptions in that check. Physical devices remain unverified.
+- Build, syntax lint, game/API/database checks and compiled-WASM checks are recorded
+  in `docs/RELEASE_CHECKS.md` after final execution. Embedded PGlite is not presented
+  as a live Supabase test.
 
-## Deployment modes
+## Known boundaries
 
-- Local development: SQLite, a clearly labelled local identity and no blockchain assets.
-- Connected Supabase play with settlement disabled: real application authentication/cloud saves, explicitly off-chain inventory.
-- Connected NEAR settlement: enable only with the correct funded accounts/keys, successful testnet verification and network-isolated saved worlds.
+Managed custody and a privileged controller; separate islands and a single backend
+instance; asynchronous ordered settlement; no external-transfer indexer, user key
+export, shared multiplayer or P2P marketplace. The contract already has `cash`, so
+non-redeemable credits are mirrored there without adding a separate currency
+contract. Native NEAR pays only operator gas/storage on testnet.
 
-## Intents decision
+## Remaining owner actions
 
-Ordinary game-credit/item trades do not need cross-chain liquidity. Intents is deliberately excluded from the core loop. A future cross-chain cosmetic marketplace may justify it after asset transfer indexing/import-export is complete. No working Intents integration is claimed.
+Approve the exact branch/tag publication; configure and verify Render using
+`docs/OPERATIONS.md`; provide the actual demo URL; configure/verify personal email
+and optional Google callbacks; test a real cross-device session and physical
+mobile device; record a video; publish the X post; confirm the submission payload
+before November 14 at 23:59 UTC. Keep the demo available through November 18,
+ideally November 25. Free Render cold starts are not an uptime guarantee.
 
-## Still required
-
-Repository published at https://github.com/investorVOU/Aftermarket. Still required: successful remote Render deployment after the port-binding fix; Supabase email/Google callback configuration and a real cross-device play session; funded testnet account/controller and keys; approved NEAR Auth credentials and linking implementation; external-transfer indexing/import-export; actual testnet verification and mainnet deployment; physical-device QA; public demo video/post and final human-confirmed submission before 14 November 2026, 23:59 UTC.
-
-`npm run near:preflight` currently reports missing account IDs, signing key, wallet master key and verified deployed testnet build. No mainnet transaction has been signed. Track alignment and implemented economic features are not a claim that every submission/release step is complete.
+The Intents stretch is deliberately skipped while these core release steps remain
+open. No quote-only panel, swap or Intents integration is claimed.

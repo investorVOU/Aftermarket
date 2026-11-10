@@ -13,6 +13,7 @@ const Simulation=require('./simulation.cjs');
 const env=process.env,root=path.join(__dirname,'..'),runtime=require('./runtime.cjs').runtime(env),{development}=runtime;
 const {DevelopmentStore,DevelopmentChain,OffchainChain}=require('./development.cjs');
 const store=development?new DevelopmentStore():new Store(env),chain=development?new DevelopmentChain():env.NEAR_SETTLEMENT_ENABLED==='true'?new Chain(env):new OffchainChain();
+const guest=development?null:new (require('./guest.cjs').GuestAuth)(env,store.sql);
 const worlds=new Map(),tokens=new Map(),limits=new Map();
 const json=(res,status,data)=>{res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(data));};
 function fail(message,status=400){return Object.assign(new Error(message),{status});}
@@ -48,13 +49,15 @@ const server=http.createServer(async(req,res)=>{
   try{
     const url=new URL(req.url,'http://localhost'),route=url.pathname;
     if(route.startsWith('/api/')){
-      const key=req.socket.remoteAddress,now=Date.now(),limit=limits.get(key)||{start:now,count:0};if(now-limit.start>60000){limit.start=now;limit.count=0;}if(++limit.count>800)throw fail('Too many requests. Please wait.',429);limits.set(key,limit);
+      const bearer=req.headers.authorization?.match(/^Bearer (.+)$/)?.[1];
+      const key=bearer?'session:'+crypto.createHash('sha256').update(bearer).digest('hex'):'public:'+req.socket.remoteAddress,now=Date.now(),limit=limits.get(key)||{start:now,count:0};if(now-limit.start>60000){limit.start=now;limit.count=0;}if(++limit.count>800)throw fail('Too many requests. Please wait.',429);limits.set(key,limit);
       if(req.method==='POST'){
         if(req.headers['content-type']?.split(';')[0]!=='application/json')throw fail('JSON required',415);
         const origin=req.headers.origin;if(origin&&origin!==(env.APP_ORIGIN||env.RENDER_EXTERNAL_URL||`http://localhost:${env.PORT||8080}`))throw fail('Origin not allowed',403);
       }
-      if(route==='/api/config'&&req.method==='GET')return json(res,200,{mode:development?'development':'connected',supabaseUrl:env.SUPABASE_URL||null,supabaseKey:env.SUPABASE_PUBLISHABLE_KEY||null,configured:store.ready&&chain.ready,googleEnabled:env.SUPABASE_GOOGLE_ENABLED==='true',chain:chain.publicConfig()});
+      if(route==='/api/config'&&req.method==='GET')return json(res,200,{mode:development?'development':'connected',supabaseUrl:env.SUPABASE_URL||null,supabaseKey:env.SUPABASE_PUBLISHABLE_KEY||null,configured:store.ready&&chain.ready,googleEnabled:env.SUPABASE_GOOGLE_ENABLED==='true',guestEnabled:Boolean(guest?.ready&&store.ready&&chain.ready),chain:chain.publicConfig()});
       if(route==='/api/health'&&req.method==='GET')return json(res,200,{ok:true,configured:store.ready&&chain.ready,network:chain.publicConfig().network});
+      if(route==='/api/guest'&&req.method==='POST'){if(!guest?.ready||!store.ready||!chain.ready)throw fail('Guest entry is not enabled for this island.',403);return json(res,200,await guest.create());}
       const user=await authenticated(req),w=await getWorld(user);
       if(w.catchingUp)return json(res,200,{catchingUp:true,progress:w.progress});
       if(route==='/api/session'&&req.method==='POST'){await serial(w,async()=>{if(!w.revision)await save(user,w);});return json(res,200,snapshot(user,w));}
@@ -76,7 +79,12 @@ const server=http.createServer(async(req,res)=>{
         });return json(res,200,snapshot(user,w));
       }
       if(route==='/api/settlements'&&req.method==='GET')return json(res,200,{settlements:await store.history(user.id)});
-      if(route==='/api/ownership'&&req.method==='GET'){if(!chain.publicConfig().settlement)throw fail('This island inventory is off-chain.',409);const token_ids=['cash','timber','furniture','ore','gold','maize','cassava','milk'];return json(res,200,{network:chain.publicConfig().network,contractId:chain.publicConfig().contractId,wallet:chain.wallet(user.id),token_ids,balances:await chain.view('mt_batch_balance_of',{account_id:chain.wallet(user.id),token_ids})});}
+      if(route==='/api/ownership'&&req.method==='GET'){
+        if(!chain.publicConfig().settlement)throw fail('This island inventory is off-chain.',409);
+        const actor=url.searchParams.get('actor')||'player';if(!['player','ts','ow','post','crew','port','mine','farm','market'].includes(actor))throw fail('Unknown island merchant.');
+        const token_ids=['cash','timber','furniture','ore','gold','maize','cassava','milk',`trading-post:${user.id}`],wallet=chain.wallet(user.id,actor);
+        return json(res,200,{network:chain.publicConfig().network,contractId:chain.publicConfig().contractId,wallet,actor,identityType:'managed contract-ledger identity',token_ids,balances:await chain.view('mt_batch_balance_of',{account_id:wallet,token_ids})});
+      }
       throw fail('Endpoint not found',404);
     }
     if(req.method!=='GET'&&req.method!=='HEAD')throw fail('Method not allowed',405);
@@ -104,7 +112,7 @@ const ticker=setInterval(()=>{const now=Date.now();for(const [id,promise] of wor
 },50);
 const worker=setInterval(async()=>{
   if(!store.ready||!chain.ready||!chain.publicConfig().settlement||settling||Date.now()<settlementRetryAt)return;
-  settling=true;try{const job=await store.pending();if(job){try{const hash=await chain.settle(job.payload);await store.settlement(job.id,{status:'confirmed',transaction_hash:hash,error:null});}catch(e){await store.settlement(job.id,{error:'Mainnet settlement pending. Operator must check relayer balance, storage deposit and contract configuration.'});settlementRetryAt=Date.now()+30000;console.error('Settlement needs attention:',e.message);}}}catch(e){console.error('Settlement worker:',e.message);settlementRetryAt=Date.now()+30000;}finally{settling=false;}
+  settling=true;try{const job=await store.pending();if(job){try{const hash=await chain.settle(job.payload);await store.settlement(job.id,{status:'confirmed',transaction_hash:hash,error:null});}catch(e){await store.settlement(job.id,{error:'Testnet settlement pending. Operator must check relayer balance, storage deposit and contract configuration.'});settlementRetryAt=Date.now()+30000;console.error('Settlement needs attention:',e.message);}}}catch(e){console.error('Settlement worker:',e.message);settlementRetryAt=Date.now()+30000;}finally{settling=false;}
 },4000);
 const cleanup=setInterval(()=>{const now=Date.now();for(const [key,value]of tokens)if(value.until<now)tokens.delete(key);for(const [key,value]of limits)if(now-value.start>60000)limits.delete(key);for(const [key,p]of worlds)p.then(w=>{if(!w.busy&&now-w.lastSeen>120000)worlds.delete(key);});},60000);
 if(require.main===module)server.listen(runtime.port,runtime.host,()=>console.log(`AFTERMARKET http://${runtime.host}:${runtime.port} | ${runtime.mode} | ${chain.publicConfig().network} | ${store.ready&&chain.ready?'configured':'waiting for server environment configuration'}`));

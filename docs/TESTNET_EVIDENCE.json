@@ -1,0 +1,10 @@
+{
+  "network": "testnet",
+  "contractId": "aftermarket-game.testnet",
+  "transactionHash": "C7Ppi3bMkt4L5f5CSFqvgkcWYmukqGNR6wXnuaZXV35W",
+  "wasmSha256": "6c18475191ba6237338f18acaa15426e3d84f6f2284ea6cf8205ef0c716bda3c",
+  "deployedWasmSha256": "6c18475191ba6237338f18acaa15426e3d84f6f2284ea6cf8205ef0c716bda3c",
+  "verifiedAt": "2026-11-09T22:40:54.970Z",
+  "controllerId": "aftermarket-ctrl.testnet",
+  "deploymentTransactionHash": "ANjnywCznt4y1ZnsPuShySypLXyvSNL2GPvfw7Reb17e"
+}

@@ -1,25 +1,9 @@
-﻿# Backend handoff
+# Backend handoff
 
-The proposed backend now exists in `server/` and `shared/`. Read ARCHITECTURE.md and the root README for the current design and configuration.
+Read [OPERATIONS.md](OPERATIONS.md), [ARCHITECTURE.md](ARCHITECTURE.md) and [AUTH_AND_CHAIN.md](AUTH_AND_CHAIN.md).
 
-## Implemented locally
+Implemented and verified: deterministic shared economy, authoritative intents, durable command deduplication, Supabase atomic saves and history, RLS, persistent jobs, offline catch-up, NPC pricing/operating costs/recovery, compiled NEP-245 contract, actual testnet deployment, real mint and normal guest/API gather-craft-sell settlement.
 
-- Shared simulation factory and deterministic world manifest.
-- Authoritative whitelisted intents, collision-checked movement and per-island serialization.
-- Gathering and production removed from render-time inventory mutation.
-- Supabase/Postgres atomic saves, revision guards, settlement outbox, RLS and economic history.
-- Persistent development mode explicitly separated from chain ownership.
-- Offline catch-up and same-rule fast-forward.
-- Compiled multi-token contract and emulated-host WASM checks.
+The two named funded accounts are aftermarket-game.testnet and aftermarket-ctrl.testnet. Player/merchant ownership uses separate managed contract-ledger identities; native accounts are not individually activated. No MPC integration or external-transfer indexing is claimed.
 
-## Remaining verification and engineering
-
-1. Four migrations were applied to the supplied Supabase project on November 9, 2026. All seven game tables have RLS; privileged commit access and browser write restrictions were verified. Keep future schema changes in migrations.
-2. Verify email/Google callbacks and an actual cross-device persistent play session.
-3. Finish NEAR Auth ownership-link proof and asset migration; the SDK adapter alone is not that integration.
-4. Deploy and verify the exact contract build on testnet, then use separate funded mainnet accounts for release.
-5. Add external-transfer indexing/import-export before public asset trading.
-6. Add distributed island leases before multiple backend instances.
-7. Check real browser rendering, handset launcher, desktop/touch controls and mobile performance.
-
-No deployed contract, successful login, receipt or live persistent session has been fabricated. The root requirements checklist records completion status.
+Remaining operator steps: configure and verify real email/Google callbacks; verify an authenticated cross-device session; publish the reviewed local branch/tags only after approval; configure and verify Render; test physical devices; record the demo, publish the X post and confirm the exact hackathon submission. Multiple backend instances still need distributed island leases. Mainnet is outside this release.

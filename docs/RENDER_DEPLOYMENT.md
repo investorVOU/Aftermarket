@@ -1,37 +1,7 @@
 # Render deployment
 
-The Node simulation and outbox worker use a persistent process. Deploy the whole application as one Render **Web Service**, using the root `render.yaml`. A single ordinary Vercel Function is not this backend's hosting model; moving to Vercel would require a separate simulation/worker service or an architectural change.
+See [OPERATIONS.md](OPERATIONS.md#render) for the current testnet configuration, required environment variables, authentication callbacks and verification steps.
 
-## Fixing the November 9 port-scan timeout
+The earlier port-scan timeout came from a development process bound to localhost. The server now detects Render, uses its PORT and binds 0.0.0.0. Public services use connected mode; development identities remain local only. The current Blueprint enables real testnet settlement, isolated guest entry and HTTPS persistence without embedding secrets.
 
-The supplied logs show a local development server listening on `localhost:8080`. Render requires `0.0.0.0` and its assigned `PORT`. The server now detects Render, defaults to connected mode, respects `PORT`, and binds publicly even if an old `HOST=127.0.0.1` value was copied. An explicit `GAME_MODE=development` on a hosted service fails with a clear configuration error rather than exposing local identities.
-
-For the existing manually created service, set `GAME_MODE=connected` and `HOST=0.0.0.0`. Set `SUPABASE_URL=https://ytfioiujcitikvgbfxwg.supabase.co`, the publishable key and `DATABASE_URL` in Render's Environment panel. A Supabase secret key is needed if using the Data API instead of direct SQL. Keep `NEAR_SETTLEMENT_ENABLED=false` until real chain verification is complete. Remove a copied localhost `APP_ORIGIN`; Render's own public URL is used automatically, or set your exact custom HTTPS origin. Never upload the local `.env` file to GitHub.
-
-Use build `npm ci && npm run build`, start `node server/index.cjs`, and health path `/api/health`. Redeploy the latest commit. The startup line should show `http://0.0.0.0:<PORT> | connected`, followed by the actual chain mode. A health response with `configured:false` means the process is reachable but the required service variables still need configuration.
-
-Local verification of the new hosted branch bound to `0.0.0.0:18086` and returned HTTP 200 with `configured:true`, `mode:connected` and `network:offchain`. This is not a claim that the remote Render deploy has succeeded.
-
-## Initial playable cloud deployment
-
-Repository: https://github.com/investorVOU/Aftermarket
-
-1. Connect the repository to Render and create the Blueprint/Web Service from `render.yaml`.
-2. Build: `npm ci && npm run build`. Start: `node server/index.cjs`. Host: `0.0.0.0`. Health: `/api/health`.
-3. Set server secrets `DATABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`. The project URL is already in the Blueprint. Never put credentials in source or build arguments.
-4. Use `GAME_MODE=connected`, `NEAR_SETTLEMENT_ENABLED=false` for Supabase-backed play while NEAR is being verified. The UI explicitly says off-chain inventory; it does not claim ownership receipts.
-5. Render's public URL is used as the allowed request origin automatically. If using a custom domain, set `APP_ORIGIN` to its exact HTTPS origin.
-6. In Supabase Auth, set Site URL and allowed redirects to the public app origin. Configure email delivery and optional Google OAuth before testing sign-in.
-7. Sign in as a real user, complete a trade, refresh, then sign in on a second device and verify the same inventory. Do not claim that verification until it has actually succeeded.
-
-The free plan is explicitly selected to avoid an unrequested paid service. Free instances can sleep; timestamp catch-up restores elapsed economic progression. An always-on paid plan can be chosen for continuous public-demo availability. Do not run multiple backend instances until distributed island ownership is implemented.
-
-## Enable NEAR
-
-After testnet contract deployment and verification, set `NEAR_SETTLEMENT_ENABLED=true` and the corresponding network/RPC/contract/controller/master-key secrets. Initial activation updates saved wallet identities transactionally. Keep testnet and mainnet saved worlds isolated. Mainnet deployment scripts require a verification record for the same WASM hash.
-
-Full NEAR Auth MPC linking and external transfer indexing are still tracked as incomplete. Native gas/storage is paid by the configured relayer; game dollars remain game credits.
-
-## Live database evidence
-
-Four migrations have been applied to `ytfioiujcitikvgbfxwg`. Verification confirmed seven RLS-protected game tables, server-only commit execution, service API access and anonymous read denial. `npm run db:verify` repeats these checks without creating users or inventing play sessions.
+The free plan may sleep. No remote deployment or guaranteed uptime is claimed; the owner must approve publication and supply the actual service URL/account access. Keep the demo available through November 18, ideally November 25.

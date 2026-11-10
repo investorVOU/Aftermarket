@@ -21,6 +21,7 @@ const Eco={log:[],transactions:[],transactionSequence:0,relationships:{},tm:{ts:
  milestone(k){if(this.ms[k])return;this.ms[k]=1;this.say('★ Milestone: '+MS[k]);if(k==='trade')this.say('Unlocked: Trading Post is for sale.');},
  trade(buyer,seller,item,q,unit){const tot=q*unit;
   if(!Number.isSafeInteger(q)||q<1||!Number.isSafeInteger(unit)||unit<0||!Number.isSafeInteger(tot))return false;
+  if(buyer.closed||seller.closed)return this.say((buyer.closed?buyer:seller).name+' is closed. Invest to restore operations.'),false;
   if(q<1||(seller.inv[item]||0)<q)return this.say(`${seller.name} has no ${item}.`),false;
   if(buyer.cash<tot)return this.say(`${buyer.name} cannot afford ${$(tot)}.`),false;
   if(buyer.cap[item]!==undefined&&(buyer.inv[item]||0)+q>buyer.cap[item])return this.say(`${buyer.name} storage full.`),false;
@@ -55,7 +56,7 @@ const Eco={log:[],transactions:[],transactionSequence:0,relationships:{},tm:{ts:
  farmDeliver(item,q){const M=this.market,F=this.farm,tot=q*this.AGP[item].whole;if(q<1||M.inv[item]+q>M.cap[item]||M.cash<tot)return false;M.inv[item]+=q;M.cash-=tot;M.exp+=tot;F.cash+=tot;F.rev+=tot;M.note('Bought '+q+' '+item+' from Greenfield Farm ('+$(tot)+')');F.note('Sold '+q+' '+item+' to the market ('+$(tot)+')');this.say('Tractor delivered '+q+' '+item+' to the market.');return true;},
  crewLog(){const c=this.crew;if(c.inv.timber>=c.cap.timber)return false;c.inv.timber++;c.logged=(c.logged||0)+1;c.note('Logged 1 timber');return true;},
  loadTruck(q){if(!Number.isSafeInteger(q)||q<1)return 0;q=Math.min(q,this.crew.inv.timber);this.crew.inv.timber-=q;this.truckCargo+=q;this.crew.note('Loaded '+q+' timber onto truck');return q;},
- deliver(){const q=this.truckCargo,t=this.ts,c=this.crew,tot=q*1000;if(q<1)return true;if(t.inv.timber+q>t.cap.timber||t.cash<tot)return false;t.inv.timber+=q;t.cash-=tot;t.exp+=tot;c.cash+=tot;c.rev+=tot;this.truckCargo=0;t.note('Truck delivered '+q+' timber ('+$(tot)+')');c.note('Delivered '+q+' timber to '+t.name+' ('+$(tot)+')');this.lastDelivery=q+' timber ('+$(tot)+')';this.say('Truck delivered '+q+' timber to Timber Supply Co.');return true;},
+ deliver(){const q=this.truckCargo,t=this.ts,c=this.crew,tot=q*1000;if(q<1)return true;if(t.closed||t.inv.timber+q>t.cap.timber||t.cash<tot)return false;t.inv.timber+=q;t.cash-=tot;t.exp+=tot;c.cash+=tot;c.rev+=tot;this.truckCargo=0;t.note('Truck delivered '+q+' timber ('+$(tot)+')');c.note('Delivered '+q+' timber to '+t.name+' ('+$(tot)+')');this.lastDelivery=q+' timber ('+$(tot)+')';this.say('Truck delivered '+q+' timber to Timber Supply Co.');return true;},
  unloadStep(q){const s=this.ship,p=this.port;if(!s.paid){const cost=s.total*s.unit;if(p.cash<cost)return false;p.cash-=cost;p.exp+=cost;s.paid=true;p.note('Paid '+$(cost)+' for '+s.total+' imported timber');}q=Math.min(q,s.manifest,p.cap.timber-p.inv.timber);if(q<1)return false;s.manifest-=q;s.landed+=q;p.inv.timber+=q;p.note('Unloaded '+q+' timber from vessel');return true;},
  portDispatch(){const p=this.port,q=Math.min(p.inv.timber,6,this.ts.cap.timber-this.ts.inv.timber);if(q>=1&&this.trade(this.ts,p,'timber',q,1700))this.say('Port sent '+q+' imported timber to Timber Supply Co.');},
  newShipment(){const s=this.ship;if(s.manifest>0)return;s.total=s.manifest=24;s.landed=0;s.paid=false;},
@@ -67,7 +68,7 @@ const Eco={log:[],transactions:[],transactionSequence:0,relationships:{},tm:{ts:
   // production: consumes timber and wages
   if(o.inv.timber>=o.per&&o.cash>=200&&o.inv.furniture<o.cap.furniture){o.activity='Manufacturing';o.prog+=dt;if(o.prog>=6){o.prog=0;o.inv.timber-=o.per;o.cash-=200;o.exp+=200;o.inv.furniture++;o.note('Produced 1 furniture (labour $2.00)');}}else{o.prog=0;o.activity=o.inv.timber<o.per?'Waiting for timber':'Idle';}
   if(t.ts>=5){t.ts=0;this.portDispatch();}
-  if(t.ow>=6){t.ow=0;if(o.inv.timber<6){const src=[this.ts,this.post].filter(b=>b.inv.timber>0&&(b!==this.post||b.owner)).sort((a,b)=>a.price-b.price)[0];if(src)this.trade(o,src,'timber',1,src.price);}}
+  if(t.ow>=6){t.ow=0;if(o.inv.timber<6){const src=[this.ts,this.post].filter(b=>!b.closed&&b.inv.timber>0&&(b!==this.post||b.owner)).sort((a,b)=>a.price-b.price)[0];if(src)this.trade(o,src,'timber',1,src.price);}}
   if(t.cust>=14){t.cust=0;if(o.inv.furniture>0){o.inv.furniture--;o.cash+=o.furnPrice;o.rev+=o.furnPrice;o.note('Sold 1 furniture to a customer ('+$(o.furnPrice)+')');}}}
 };
 const Sim=(()=>{

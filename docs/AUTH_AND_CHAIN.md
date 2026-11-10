@@ -1,29 +1,68 @@
 # Authentication and asset ownership
 
-## Current implementation and its trust boundary
+## What is real in this testnet release
 
-Connected mode uses Supabase email magic-link / optional Google authentication. The server verifies bearer tokens with `auth.getUser`. It derives separate player/business Ed25519 implicit identities from a server-held master key; these are **managed keys**, not NEAR Auth MPC wallets. A token balance under an implicit ID does not establish that its native-NEAR account has been funded/activated.
+Supabase email magic-link / optional Google is the application's identity flow.
+The backend verifies bearer tokens with `auth.getUser`. Each Supabase user ID maps
+deterministically to a managed Ed25519 owner ID derived using a server-held master
+key. The same authenticated account returns to the same island and ledger identity.
+Guest entry creates an isolated real Supabase Auth session without sending email.
+Guest signup was verified in Chrome mobile emulation; the live API verification
+gathered timber, crafted furniture and sold it with real final testnet balances.
+Google was disabled when checked. Actual inbox delivery and Google callbacks are
+not yet verified; configuring a provider is not the same as verifying its login.
 
-The browser submits intents, never balances. Game inventory is an off-chain simulation record. Supabase commits it and an ordered settlement outbox atomically. A server-paid controller applies inventory deltas on NEAR; only a successful final RPC outcome produces a confirmed receipt in the UI. Pending inventory is not represented as confirmed chain ownership. The controller is privileged to mint and burn game items, and business licences are bound to their island. This is a permissioned game, not a trustless financial protocol. Game dollars are game credits, with no native-NEAR or fiat redemption promise.
+The NEP-245 contract is deployed at `aftermarket-game.testnet`; the controller is
+`aftermarket-ctrl.testnet`. The exact deployed WASM and a real mint were verified.
+See `TESTNET_EVIDENCE.json` and `LIVE_GAME_EVIDENCE.json` for public evidence.
 
-The native token contract methods support ownership transfers. External transfers are not yet indexed back into simulation inventory. A conflicting subsequent settlement will fail rather than fabricate sufficient chain balances. Asset export/import and wallet migration must therefore be completed before opening transferable assets to general public trading.
+## Managed ledger identities, not MPC
 
-## NEAR Auth investigation (8 November 2026)
+These are server-managed keys. Normal play asks for no seed phrase, wallet popup
+or gas prompt. This is **not NEAR Auth/MPC**. The unused SDK adapter is a scaffold
+and is not part of the public gameplay bundle. The official NEAR Auth documentation
+was investigated, but its account-link proof, migration and callbacks are not a
+working feature of this release and are not claimed as such.
 
-The current [official NEAR Auth tutorial](https://docs.near.org/web3-apps/tutorials/near-auth) describes Google/Apple/email/passkey identities authenticated with Auth0 and signing secured by MPC. Mainnet requires approved Auth0 client credentials. The documented browser packages are `@fast-auth-near/browser-sdk` and `@fast-auth-near/javascript-provider`. The shipped SDK uses NEAR API v5 interfaces; the backend currently uses v7. `game/near-auth.js` isolates the supported v5 connection via the `near-api-js-legacy` npm alias.
+Each player and merchant has a separate owner ID in the multi-token contract.
+Merchant inventories and game-credit balances are real on-chain balances under
+those IDs. Native NEAR accounts/subaccounts are not funded/activated for each
+merchant: this is the smallest disclosed contract-ledger implementation. The
+controller and contract are the two actual faucet-funded named testnet accounts.
 
-That adapter initializes the provider, performs real SDK login, exposes its signer/public key and handles logout. It is not exposed as a working ownership-link button: before doing that, implement a server-issued, expiring challenge proven by a signed on-chain linking call or verified signature; connect the proof to the existing Supabase profile; migrate existing assets exactly once; and index transfers. Posting a public key is not proof of ownership. None of those steps is replaced with a fabricated account-link success.
+The public inspector uses `mt_batch_balance_of` directly. An explorer's native
+account page may not enumerate NEP-245 tokens; the receipt's NEP-245 owner/item
+logs and final contract views are the evidence of ownership.
 
-### External requirements
+## Settlement and its limits
 
-1. Approved mainnet NEAR Auth Auth0 client ID (apply through the official tutorial) and current provider testnet settings for verification.
-2. Correct callback/logout origins for the deployed app.
-3. Supabase project, email delivery, optional Google OAuth configuration and migration deployment.
-4. Funded contract/controller accounts, server-only signing key and a backed-up wallet master key.
-5. Verify real login, account-link proof and contract calls on testnet before switching production to mainnet.
+The client sends whitelisted intents, never balances or inventories. Supabase
+commits validated state, a durable command ID and the settlement outbox atomically.
+The server-paid controller applies net item/game-credit deltas on testnet; an
+ordered worker records final results. Pending gameplay is not a confirmed chain
+balance. The inspector reads final RPC state rather than echoing a local number.
 
-Supabase social sign-in is implemented as a separate application identity flow. Full NEAR Auth account linking remains partial and is tracked in `HACKATHON_REQUIREMENTS.md`.
+The contract binds wallets to islands and rejects unauthorized mint/burn and
+replayed revisions. A replay returns false; it cannot replace the original mint
+receipt. If a checkpoint is confirmed without its original receipt after recovery,
+the UI says so and offers a final balance query instead of inventing a receipt.
 
-## NEAR Intents
+This is a permissioned game: the controller can mint/burn inventory and credits.
+The `cash` token mirrors non-redeemable integer game cents; it is not native NEAR,
+a stablecoin or a redeemable cash claim. Native gas/storage is paid from faucet
+testnet funds. Daily operating expenses burn game credits, not real money.
 
-No cross-chain swap is necessary for ordinary game-credit and resource transactions. Adding one would increase complexity without improving the central game loop. Intents is deliberately excluded from core gameplay. A future cross-chain cosmetic purchase may justify it, after ownership transfer/indexing is complete.
+The contract's standard transfer/batch/callback methods exist and are checked.
+External transfers are not indexed into the simulation, so this game does not
+offer user asset export or a public external marketplace. Business licences are
+bound to their island. Custody, indexing and export would require further work
+before a public transferable-asset release. This task does not use mainnet.
+
+## NEAR Intents decision
+
+The game-credit economy does not need a cross-chain swap. Intents was not forced
+into the core loop. The stretch quote panel is skipped while hosted verification
+and the owner's publication/demo steps remain open. No swap, paid quote, mainnet
+transaction or working Intents integration is claimed.
+
+Operational configuration and key handling: [OPERATIONS.md](OPERATIONS.md).
