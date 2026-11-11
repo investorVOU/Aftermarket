@@ -11,7 +11,7 @@ let auth,session,sequence=0,lastApplied=0,chainInfo,settlement=[],polling=false,
 
 const shell=document.createElement('div');shell.id='game-shell';shell.innerHTML=`
   <header class="am-topbar"><a class="am-brand" href="/" aria-label="Aftermarket home"><span class="am-mark">A<span>↗</span></span><span>AFTERMARKET<small>SUPPLY & SURVIVAL</small></span></a>
-    <div class="am-session"><span id="am-connection" class="am-connection">Connecting</span><span class="am-mainnet">NEAR TESTNET</span></div>
+    <div class="am-session"><span id="am-connection" class="am-connection">Connecting</span><span class="am-mainnet">A SMALL ISLAND</span></div>
     <div class="am-metrics"><span><small>GAME CASH</small><b id="am-cash">$50.00</b></span><span><small>REPUTATION</small><b id="am-rep">0</b></span><span><small>ISLAND TIME</small><b id="am-time">07:30</b></span></div>
     <button class="am-icon-button" id="am-menu" aria-label="Open island market">☷</button>
   </header>
