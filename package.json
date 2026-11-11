@@ -1,0 +1,42 @@
+{
+  "name": "aftermarket-supply-and-survival",
+  "version": "0.7.0",
+  "description": "AFTERMARKET: a persistent island economy on Supabase and NEAR testnet",
+  "private": true,
+  "scripts": {
+    "test": "node scripts/test.cjs",
+    "test:contract": "node --test tests/contract.test.cjs",
+    "lint": "node scripts/check.cjs",
+    "build": "node scripts/build.cjs",
+    "prestart": "npm run build",
+    "start": "node server/index.cjs",
+    "serve": "npm start",
+    "contract:build": "node scripts/build-contract.cjs",
+    "contract:deploy": "node scripts/deploy-contract.mjs",
+    "contract:verify": "node scripts/verify-contract.cjs",
+    "near:preflight": "node scripts/near-preflight.cjs",
+    "near:items": "node scripts/onchain-items.cjs",
+    "verify:live": "node scripts/verify-live-game.cjs",
+    "db:check": "node scripts/db-check.cjs",
+    "db:migrate": "node scripts/migrate.cjs",
+    "db:verify": "node scripts/verify-database.cjs"
+  },
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "dependencies": {
+    "@fast-auth-near/browser-sdk": "^1.4.2",
+    "@fast-auth-near/javascript-provider": "^1.4.1",
+    "@supabase/supabase-js": "^2.119.0",
+    "near-api-js": "^7.2.0",
+    "near-api-js-legacy": "npm:near-api-js@^5.1.1",
+    "postgres": "^4.1.0",
+    "three": "^0.128.0"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.15",
+    "esbuild": "^0.28.2",
+    "jsdom": "^26.1.0"
+  },
+  "license": "MIT"
+}

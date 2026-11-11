@@ -1,0 +1,32 @@
+{
+  "network": "testnet",
+  "steps": [
+    {
+      "item": "timber",
+      "balance": "3",
+      "transactionHash": "6mSJWoZvaKBm7frVy6Yv656523w1cjJyTGe8PRthxSY1"
+    },
+    {
+      "item": "furniture",
+      "balance": "1",
+      "transactionHash": "GQh1M49kqr6K4siDaxp5FwGR7qYzuiT1rkTy9JXroRAf"
+    },
+    {
+      "item": "furniture",
+      "balance": "0",
+      "transactionHash": "6vUNRJdqDm63dJpn4m6psvg9Zhocn3QEFCUKidBhkxc4"
+    },
+    {
+      "item": "trading-post:c9194bd2-178c-4f48-b115-5a7b86e8a6d9",
+      "balance": "1",
+      "transactionHash": "HRBPwwe4UAX6FVNR6Ajhh6PZmRZX56H1XuJptBcqrYmu"
+    }
+  ],
+  "wallet": "047db926e52e94b6f4ecf8cb6a2b00d7b12eb21bb728b3fc935b0d664f2fed20",
+  "contractId": "aftermarket-game.testnet",
+  "afterCoreCredits": 9800,
+  "businessLicence": "trading-post:c9194bd2-178c-4f48-b115-5a7b86e8a6d9",
+  "merchantWallet": "07d30fafc839ab4a4f7cb2adf86888ad7c1a2b9ff2d19a14bf9974f2ce640112",
+  "verifiedAt": "2026-11-10T03:50:32.458Z",
+  "finalCredits": 600
+}

@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: aftermarket
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: node server/index.cjs
+    healthCheckPath: /api/health
+    numInstances: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 22.22.2
+      - key: GAME_MODE
+        value: connected
+      - key: HOST
+        value: 0.0.0.0
+      - key: NEAR_NETWORK
+        value: testnet
+      - key: NEAR_SETTLEMENT_ENABLED
+        value: "true"
+      - key: NEAR_RPC_URL
+        value: https://test.rpc.fastnear.com
+      - key: NEAR_CONTRACT_ID
+        value: aftermarket-game.testnet
+      - key: NEAR_SIGNER_ID
+        value: aftermarket-ctrl.testnet
+      - key: NEAR_SIGNER_PRIVATE_KEY
+        sync: false
+      - key: NEAR_WALLET_MASTER_KEY
+        sync: false
+      - key: DATABASE_TRANSPORT
+        value: rest
+      - key: DEMO_GUEST_ENABLED
+        value: "true"
+      - key: DEMO_GUEST_DAILY_LIMIT
+        value: "30"
+      - key: SUPABASE_URL
+        value: https://ytfioiujcitikvgbfxwg.supabase.co
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: SUPABASE_SECRET_KEY
+        sync: false

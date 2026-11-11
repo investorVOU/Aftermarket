@@ -1,0 +1,55 @@
+const {test,after}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),os=require('node:os'),path=require('node:path'),crypto=require('node:crypto');
+const {world,action}=require('../server/world.cjs');
+const Rules=require('../shared/merchant-rules.js');
+const State=require('../shared/state.js');
+const Simulation=require('../server/simulation.cjs');
+const {DevelopmentStore}=require('../server/development.cjs');
+const {Chain}=require('../server/near.cjs');
+
+test('buy and sell conserve inventories and cash',()=>{const G=world(),E=G.Eco;const cash=E.player.cash+E.ts.cash,stock=E.player.inv.timber+E.ts.inv.timber;action(G,'buyTimber');assert.equal(E.player.cash+E.ts.cash,cash);assert.equal(E.player.inv.timber+E.ts.inv.timber,stock);assert.equal(E.transactions.length,1);assert.equal(E.relationships[E.ts.name],1);action(G,'sellTimber');assert.equal(E.player.inv.timber,0);assert.equal(E.transactions.length,2);});
+test('invalid quantities and prices cannot mutate balances',()=>{const G=world(),E=G.Eco;for(const q of [0,-1,1.5,NaN,Infinity]){const before=JSON.stringify(E);assert.equal(E.trade(E.player,E.ts,'timber',q,2000),false);assert.equal(JSON.stringify(E),before);}assert.equal(E.trade(E.player,E.ts,'timber',1,-100),false);});
+test('contracts respect storage capacity and record player income',()=>{const E=world().Eco;E.contract.state='active';E.player.inv.timber=5;E.ow.inv.timber=29;E.contractAct();assert.equal(E.player.cash,5000);assert.equal(E.player.inv.timber,5);E.ow.inv.timber=0;E.contractAct();assert.equal(E.player.rev,6000);assert.equal(E.player.cash,E.player.start+E.player.rev-E.player.exp+E.player.capital);});
+test('business ownership gates stock and capital transfers',()=>{const E=world().Eco;const p=E.player.cash;assert.equal(E.move(-2000),false);assert.equal(E.upgrade(),false);assert.equal(E.player.cash,p);E.ms.trade=1;E.player.cash=20000;E.buyPost();E.move(2000);assert.equal(E.post.cash,4000);E.move(-2000);assert.equal(E.post.cash,2000);});
+test('supply, demand and oversupply change explainable quotes',()=>{const low=Rules.quote({base:2000,stock:0,target:20}),high=Rules.quote({base:2000,stock:40,target:20}),demand=Rules.quote({base:2000,stock:20,target:20,demand:5});assert.ok(low.price>high.price);assert.ok(demand.price>2000);assert.match(low.reason,/Low stock/);assert.match(high.reason,/Extra stock/);});
+test('bankrupt buyers cannot purchase and investment funds recovery',()=>{const G=world(),E=G.Eco;E.ow.cash=0;E.player.inv.timber=3;assert.throws(()=>action(G,'sellTimber'),/closed/);assert.equal(E.player.inv.timber,3);action(G,'invest',{business:'ow'});assert.equal(E.player.cash,3000);assert.equal(E.ow.cash,2000);assert.equal(E.merchantProfiles.ow.state,'struggling');});
+test('gathering is range checked and completes once in simulation',()=>{const G=world(),S=G.Sim;assert.equal(S.startHarvest(0),false);const n=S.nodes[0];S.player.x=n.x+1.2;S.player.z=n.z;assert.equal(S.startHarvest(0),true);assert.equal(S.startHarvest(0),false);Simulation.advance(G,2.1);assert.equal(G.Eco.player.inv.timber,1);assert.equal(n.qty,n.max-1);});
+test('offline catch-up uses the same production and pricing rules',async()=>{const A=world(),B=world();Simulation.advance(A,20);await Simulation.catchUp(B,20);for(const name of ['ts','ow','farm','market']){assert.deepEqual(A.Eco[name].inv,B.Eco[name].inv);assert.equal(A.Eco[name].cash,B.Eco[name].cash);}assert.ok(Math.abs(B.Sim.time-20)<.001);});
+
+test('daily costs close an unprofitable merchant and real investment pays arrears before reopening',()=>{
+ const G=world(),B=G.Eco.ts;B.cash=500;G.Sim.time=420;Rules.update(G);
+ assert.equal(B.cash,0);assert.equal(B.arrears,8500);assert.equal(B.closed,true);assert.equal(G.Eco.merchants.timber.closed,true);
+ const before=G.Eco.player.cash,stock=B.inv.timber;assert.throws(()=>action(G,'buyTimber'),/closed/);assert.equal(G.Eco.player.cash,before);assert.equal(B.inv.timber,stock);
+ G.Eco.player.cash=12000;for(let i=0;i<5;i++)action(G,'invest',{business:'ts'});
+ assert.equal(B.arrears,0);assert.equal(B.cash,1500);assert.equal(B.closed,false);assert.equal(G.Eco.player.cash,2000);
+ assert.ok(G.Eco.economicEvents.some(e=>e.type==='merchant_reopened'));
+});
+test('operating bills survive restore and are not charged twice on the same day',()=>{
+ const G=world();G.Sim.time=420;Rules.update(G);const restored=world(State.capture(G,true)),cash=restored.Eco.ts.cash;Rules.update(restored);assert.equal(restored.Eco.ts.cash,cash);assert.equal(restored.Eco.overheadDay,1);
+});
+test('testnet settlement cannot be switched to mainnet by an environment typo',()=>{
+ assert.throws(()=>new Chain({NEAR_NETWORK:'mainnet'}),/testnet-only/);
+});
+test('snapshot restores methods, cargo, inventories and progress',()=>{const A=world();Simulation.advance(A,3);A.Eco.player.inv.ore=2;const B=world(State.capture(A,true));assert.equal(B.Eco.player.inv.ore,2);assert.equal(typeof B.Eco.player.note,'function');assert.equal(B.Sim.npcs.length,29);assert.equal(B.Sim.nodes.length,20);});
+test('crafting reserves ingredients, survives saving and can sell the finished item',()=>{const G=world(),S=G.Sim,E=G.Eco;S.player.x=24;S.player.z=7;E.player.inv.timber=3;assert.equal(S.startCraft('furniture'),true);assert.equal(E.player.inv.timber,0);assert.equal(E.player.cash,4800);const restored=world(State.capture(G,true));Simulation.advance(restored,8.1);assert.equal(restored.Eco.player.inv.furniture,1);restored.Eco.sellFurniture();assert.equal(restored.Eco.player.inv.furniture,0);assert.equal(restored.Eco.player.cash,9800);});
+test('SQLite development persistence survives reopening and rejects stale writes',async()=>{const directory=fs.mkdtempSync(path.join(os.tmpdir(),'aftermarket-')),file=path.join(directory,'save.sqlite');const id=crypto.randomUUID();let db=new DevelopmentStore(file);await db.save(id,0,{value:1},{},'local',null);db.close();db=new DevelopmentStore(file);assert.equal((await db.load(id)).snapshot.value,1);await assert.rejects(db.save(id,0,{value:2},{},'local',null),/conflict/);assert.equal((await db.load(id)).revision,1);db.close();});
+test('failed chain settlement propagates failure instead of claiming confirmation',async()=>{const chain=new Chain({NEAR_NETWORK:'testnet'});chain.account=async()=>({callFunctionRaw:async()=>{throw new Error('RPC unavailable');}});await assert.rejects(chain.settle({}),/RPC unavailable/);});
+
+test('replayed checkpoints do not replace an original mint receipt with a no-op transaction',async()=>{
+ const chain=new Chain({NEAR_NETWORK:'testnet'});let applied=true;
+ chain.account=async()=>({callFunctionRaw:async()=>({status:{SuccessValue:Buffer.from(JSON.stringify(applied)).toString('base64')},transaction:{hash:'actual-receipt'}})});
+ assert.equal(await chain.settle({}),'actual-receipt');applied=false;assert.equal(await chain.settle({}),null);
+ chain.account=async()=>({callFunctionRaw:async()=>({status:{Failure:{}},transaction:{hash:'failed-receipt'}})});await assert.rejects(chain.settle({}),/successful/);
+});
+test('wallet derivation is stable, distinct per merchant and independent of simulation randomness',()=>{const C=new Chain({NEAR_NETWORK:'testnet',NEAR_CONTRACT_ID:'items.testnet',NEAR_SIGNER_ID:'server.testnet',NEAR_SIGNER_PRIVATE_KEY:'placeholder-only-for-derivation',NEAR_WALLET_MASTER_KEY:'a'.repeat(64)});assert.match(C.wallet('alice'),/^[a-f0-9]{64}$/);assert.equal(C.wallet('alice'),C.wallet('alice'));assert.notEqual(C.wallet('alice'),C.wallet('alice','ts'));});
+
+process.env.GAME_MODE='development';process.env.HOST='127.0.0.1';
+const {server,shutdown}=require('../server/index.cjs');
+const ready=new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+after(()=>shutdown());
+const request=async(route,{token,id,name,args}={})=>{await ready;const res=await fetch(`http://127.0.0.1:${server.address().port}/api/${route}`,{method:route==='config'?'GET':'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:route==='config'?undefined:JSON.stringify(route==='action'?{id,name,args}:{})});return{status:res.status,data:await res.json()};};
+test('API rejects unauthenticated and invalid development identities',async()=>{assert.equal((await request('session')).status,401);assert.equal((await request('session',{token:'dev-not-an-id'})).status,401);});
+test('duplicate concurrent API commands execute only once',async()=>{const token='dev-'+crypto.randomUUID();const start=(await request('session',{token})).data;const id=crypto.randomUUID();const results=await Promise.all([request('action',{token,id,name:'buyTimber'}),request('action',{token,id,name:'buyTimber'})]);assert.ok(results.every(r=>r.status===200));const final=results[1].data;assert.equal(final.state.economy.player.inv.timber,1);assert.equal(final.state.economy.player.cash,start.state.economy.player.cash-start.state.economy.ts.price);});
+test('concurrent distinct purchases serialize without lost updates',async()=>{const token='dev-'+crypto.randomUUID();await request('session',{token});const results=await Promise.all([1,2].map(()=>request('action',{token,id:crypto.randomUUID(),name:'buyTimber'})));assert.ok(results.every(r=>r.status===200));const final=(await request('session',{token})).data;assert.equal(final.state.economy.player.inv.timber,2);const purchases=final.state.economy.transactions.filter(t=>t.buyer==='You');assert.equal(purchases.length,2);assert.equal(final.state.economy.player.cash,5000-purchases.reduce((sum,t)=>sum+t.total,0));});
+test('development mode is explicitly labelled and never reports on-chain ownership',async()=>{const result=await request('config');assert.equal(result.data.mode,'development');assert.equal(result.data.chain.network,'development');assert.equal(result.data.chain.settlement,false);});
