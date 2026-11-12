@@ -14,7 +14,7 @@ test('development onboarding, authenticated trade, market and action feedback us
   try{
     w.eval(fs.readFileSync(path.join(__dirname,'../game/client.bundle.js'),'utf8'));
     await until(()=>w.document.getElementById('am-login-button').textContent.includes('development'));
-    assert.equal(w.document.querySelector('.am-mainnet').textContent,'LOCAL DEVELOPMENT');
+    assert.equal(w.document.querySelector('.am-mainnet').textContent,'A SMALL ISLAND');
     w.document.getElementById('am-login').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
     await until(()=>app.Net.online);assert.equal(w.document.getElementById('am-welcome').hidden,true);
     await app.Net.command('buyTimber');assert.equal(app.Game.Eco.player.inv.timber,1);assert.match(w.document.getElementById('am-cash').textContent,/\$30\.00/);
