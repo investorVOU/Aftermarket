@@ -19,7 +19,9 @@
     "verify:live": "node scripts/verify-live-game.cjs",
     "db:check": "node scripts/db-check.cjs",
     "db:migrate": "node scripts/migrate.cjs",
-    "db:verify": "node scripts/verify-database.cjs"
+    "db:verify": "node scripts/verify-database.cjs",
+    "demo:check": "node scripts/demo-check.cjs",
+    "settlement:drain": "node scripts/settlement-drain.cjs"
   },
   "engines": {
     "node": ">=22.14.0"

@@ -14,7 +14,7 @@ ok(Ph.openPhone()&&Ph.open&&H.body.classList.contains('phone-open'),'open: phone
 Ph.openApp('market');Ph.st.market.tab='sell';Ph.openApp('msg');Ph.msgOpen(10);
 ok(Ph.app==='msg'&&Ph.recent.join()==='msg,market','apps open and are tracked as recents (switcher)');
 Ph.minimize();ok(!Ph.open&&!H.body.classList.contains('phone-open')&&Ph.app==='msg'&&Ph.st.msg.c===10&&Ph.st.market.tab==='sell','minimise hides the phone and keeps app + per-app state');
-Ph.openPhone();ok(Ph.app==='msg'&&/Ask/.test(html('msg')),'reopening returns to the same app and conversation');
+Ph.openPhone();ok(Ph.app==='msg'&&/Send a message/.test(html('msg')),'reopening returns to the same app and conversation');
 Ph.back();ok(Ph.app==='msg'&&Ph.st.msg.c===null,'back from a conversation returns to the contact list');Ph.back();ok(Ph.app==='home','back from the list returns to the home screen');
 Ph.openApp('market');Ph.switcher();ok(Ph.sw,'app switcher opens');Ph.switcher();Ph.close();ok(!Ph.open&&Ph.app==='home'&&Ph.recent.length===0&&Ph.st.msg.c===null,'close exits to gameplay and resets to the home screen');
 // apps show real state and call validated Eco functions
@@ -42,6 +42,6 @@ const met=Sim.npcs[5];met.talk.count=1;ok(Sim.Msg.contacts().some(n=>n.id===5),'
 // no junk across random states
 let junk=0;for(let r=0;r<40;r++){Eco.player.cash=Math.floor(rand()*20000);Eco.ts.inv.timber=Math.floor(rand()*41);Eco.farm.inv.milk=Math.floor(rand()*41);Eco.contract.state=rand()<.5?'offer':'active';Sim.ship.state=['offshore','approach','unloading','departing'][Math.floor(rand()*4)];for(const a of Object.keys(V)){Ph.render(a);if(/undefined|NaN|\[object/.test(html(a)))junk++;}}ok(junk===0,'all 8 apps render without undefined/NaN across 40 random game states');
 // dialogue conflict
-Ph.minimize();Sim.npcs.forEach(n=>{n.vis=false;});const n0=Sim.npcs[10];n0.vis=true;n0.x=1;n0.z=0;Sim.player.x=0;Sim.player.z=0;Ph.openPhone();Sim.Talk.open(10);ok(!Ph.open&&Sim.Talk.cur,'starting a conversation minimises the phone (no overlap with the dialogue panel)');
-ok(Ph.openPhone()===false&&!Ph.open,'the phone cannot be opened during a conversation');Sim.Talk.close();ok(Ph.openPhone()===true,'and opens again once the conversation ends');
+Ph.minimize();Sim.npcs.forEach(n=>{n.vis=false;});const n0=Sim.npcs[10];n0.vis=true;n0.x=1;n0.z=0;Sim.player.x=0;Sim.player.z=0;Ph.openPhone();Sim.Talk.open(10);ok(Ph.open&&Sim.Talk.cur&&Ph.app==='msg'&&Ph.st.msg.c===10,'starting a conversation opens that NPC thread in the phone');
+ok(Ph.openPhone()===true&&Ph.open,'the phone remains accessible during conversation');Ph.minimize();ok(!Sim.Talk.cur&&!n0.talking,'closing the phone ends conversation and releases the NPC');
 console.log(`\n${pass} passed, ${fail} failed`);

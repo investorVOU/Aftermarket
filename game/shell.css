@@ -64,3 +64,16 @@
 body.market-open .am-camera,body.market-open #pbtn,body.market-open .abtn,body.market-open .joy,body.market-open .setp,body.market-open .tip{display:none!important}
 
 .am-drawer-head{position:sticky;top:0;z-index:2;background:#1c2d24;padding:6px 0 10px}.am-drawer-head>.am-icon-button{min-width:44px;min-height:44px}
+
+/* Conversations stay inside the compact phone, with distinct incoming/outgoing bubbles. */
+#phone .ph-contact-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+#phone .ph-contact-actions .pb{min-height:36px;flex:1;font-size:11px}
+#phone .thread{background:#ece8df;padding:10px 7px;border-radius:9px;margin:8px 0}
+#phone .bub{box-shadow:0 1px 1px #17201b18;overflow-wrap:anywhere;font-size:12px;user-select:text}
+#phone .bub.me{background:#d3ecc7;color:#193025}
+#phone .bub.them{background:#fff;color:#24372f}
+#phone .bub small{display:block;text-align:right;font-size:9px;opacity:.65;margin-top:4px}
+#phone .chip2{min-height:36px;font-size:11px;text-align:left}
+#phone .ph-call{padding:12px;border-radius:9px;background:#233d33;color:#f5eddf;display:grid;gap:8px}
+#phone .ph-call small{font-size:11px;line-height:1.5}
+#phone .who{position:sticky;top:0;z-index:1;background:#f1f4ec;padding:8px 0;border-bottom:1px solid #d8dfd0}

@@ -1,5 +1,26 @@
 # AFTERMARKET project audit
 
+## November 12 playability follow-up
+
+Connected movement previously rendered only the positions received about every
+150 ms and pointed the camera at that stepped state. `shared/movement-view.js`
+now predicts presentation movement against the same collision map, reconciles
+snapshots and stops prediction after 500 ms without an update. Authoritative
+server coordinates and every economic check remain unchanged. Nearby walls now
+raise the view, with an overhead fallback to avoid a camera inside the character.
+
+The existing NPC dialogue/phone systems were preserved and joined: proximity
+conversations now open persistent message threads, including both sides and the
+existing validated trade choices. Known contacts support remote state-based text
+calls and live camera tracking. No real telephone/voice service is claimed.
+
+`scripts/demo-check.cjs` verifies the real guest/gather/craft/week/chain path without
+a browser and fails closed. `server/settlement.cjs` drains ordered checkpoints in
+bounded batches. Live verification found an existing settlement backlog; consult
+`docs/RELEASE_CHECKS.md` for its actual recovery status. Local Chrome viewport
+evidence lives in `docs/PLAYABILITY_EVIDENCE.json`; physical-device performance is
+not established by that check.
+
 Audited 8 November 2026. This records the original Claude artifact and the migration already in progress when the expanded implementation brief arrived. No application rewrite is needed.
 
 ## 1. What already works

@@ -29,7 +29,7 @@ the server-only Supabase secret key; Google configuration is not needed for it.
 | `DATABASE_TRANSPORT` | `rest` for HTTPS RPC; `postgres` for direct Postgres.js |
 | `DATABASE_URL` | Needed for migrations and optional direct SQL transport; percent-encode the password |
 | `NEAR_NETWORK` | `testnet`; the settlement/deploy commands refuse mainnet |
-| `NEAR_RPC_URL` | `https://test.rpc.fastnear.com` (checked against official provider docs) |
+| `NEAR_RPC_URL` | `https://test.rpc.fastnear.com` (FASTNEAR testnet endpoint) |
 | `NEAR_SETTLEMENT_ENABLED` | `true` |
 | `NEAR_CONTRACT_ID` | `aftermarket-game.testnet` |
 | `NEAR_SIGNER_ID` | `aftermarket-ctrl.testnet` |
@@ -192,3 +192,75 @@ social post or hackathon submission is authorized by this document.
 Before November 14, 23:59 UTC, the owner must approve the exact Git publication,
 record the video, publish the X post and confirm the final submission payload.
 The agent must not create the mainnet prize-payout account on the owner's behalf.
+
+## Browser-free screener check
+
+With a private configured local `.env`:
+
+```sh
+npm ci
+npm run demo:check
+```
+
+The check starts the real server on an available loopback port when needed. It
+reuses a running connected server on `PORT`/8080 to avoid a second relayer. Do not
+run multiple connected server instances against the same island/database.
+
+To use the hosted demo from a fresh clone without operator keys:
+
+```sh
+DEMO_BASE_URL=https://YOUR-VERIFIED-DEMO-HOST npm run demo:check
+```
+
+PowerShell:
+
+```powershell
+$env:DEMO_BASE_URL='https://YOUR-VERIFIED-DEMO-HOST'
+npm run demo:check
+```
+
+Replace the host with the actual service URL; no public URL is embedded until
+the deployment is verified. `DEMO_RPC_URL` optionally selects a testnet RPC for
+independent receipt queries. The default is the FASTNEAR testnet endpoint.
+Development/off-chain targets fail explicitly. Movement uses collision-checked
+`/api/sync`; gathering/crafting use normal validated actions, without teleporting
+or changing balances directly. Allow roughly 2–3 minutes; a settlement backlog
+or unavailable RPC can exceed that time and fail verification. Successful public
+evidence goes into `docs/DEMO_CHECK_EVIDENCE.json`, without credentials or sessions.
+
+`POST /api/guest` with JSON `{}` returns a real isolated session and managed
+wallet ID after saving the initial world. Keep its access/refresh tokens private.
+Use Bearer authorization for gameplay endpoints. The client needs no email,
+CAPTCHA, Supabase admin key or NEAR key; the server needs its private operator
+configuration and available guest capacity.
+
+The normal relayer now drains up to eight consecutive checkpoints per cycle,
+stopping at the first failure and preserving original receipts on replay. It
+refreshes a stale signer nonce and retries the same protected checkpoint at most
+twice. Operator recovery uses:
+
+```sh
+npm run settlement:drain
+```
+
+Prefer stopping the normal server first, then restarting it after recovery.
+Recovery validates testnet and processes at most 250 stored checkpoints or ten
+minutes. It does not change simulation balances, skip failed jobs or invent
+confirmations. A retiring relayer can still cause nonce contention; stop that
+process rather than starting more workers. Windows may protect a process started
+outside this agent session; its owner must restart that terminal to load the new
+server code and `.env` values.
+
+## Phone and movement
+
+NPC dialogue now persists in phone threads, capped at 100 messages per contact.
+Messages and in-game text calls read the deterministic NPC state. Tracking follows
+live positions without teleporting. Calls do not connect to real phone numbers or
+voice services.
+
+Presentation movement predicts collision-checked steps between server responses,
+reconciles snapshots and stops predicting after 500 ms without an update. Server
+position/range checks, inventory and all economic mutations stay authoritative.
+Close walls raise the camera; a minimum-distance overhead fallback avoids placing
+it inside the player's head. Browser viewport checks with added network delay
+are recorded in `PLAYABILITY_EVIDENCE.json`; physical-device frame rate is unverified.

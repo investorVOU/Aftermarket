@@ -256,9 +256,9 @@ function doAct(n,act){const p=Eco.player;
  return '...';}
 const Talk={cur:null,rev:0,range:3.4,
  canTalk(n){return!!n&&n.vis&&Math.hypot(n.x-S.player.x,n.z-S.player.z)<=Talk.range;},
- open(id){const n=S.npcs[id];if(!n||!Talk.canTalk(n)){Bus.emit('talk:denied',id);return null;}if(Talk.cur)Talk.close();n.talking=true;n.talk.count++;Talk.cur={id,text:greet(n),options:opts(n),topic:'greet'};Talk.rev++;Bus.emit('talk:open',id);return Talk.cur;},
+ open(id){const n=S.npcs[id];if(!n||!Talk.canTalk(n)){Bus.emit('talk:denied',id);return null;}if(Talk.cur)Talk.close();n.talking=true;n.talk.count++;Talk.cur={id,text:greet(n),options:opts(n),topic:'greet'};Talk.rev++;Msg.append(id,[{me:0,text:Talk.cur.text,t:S.clock.h}]);Bus.emit('talk:open',id);return Talk.cur;},
  pick(i){const c=Talk.cur;if(c&&c.options[i])return Talk.choose(c.options[i].id);},
- choose(oid){const c=Talk.cur;if(!c)return null;const n=S.npcs[c.id];if(oid==='bye'){Talk.close();return null;}const o=c.options.find(x=>x.id===oid);if(!o)return null;const text=o.act?doAct(n,o.act):answer(n,oid);n.talk.asked[oid]=(n.talk.asked[oid]||0)+1;c.text=text;c.topic=oid;c.options=opts(n);Talk.rev++;Bus.emit('talk:topic',{id:c.id,topic:oid});return text;},
+ choose(oid){const c=Talk.cur;if(!c)return null;const n=S.npcs[c.id];if(oid==='bye'){Talk.close();return null;}const o=c.options.find(x=>x.id===oid);if(!o)return null;const text=o.act?doAct(n,o.act):answer(n,oid);n.talk.asked[oid]=(n.talk.asked[oid]||0)+1;c.text=text;c.topic=oid;c.options=opts(n);Talk.rev++;Msg.append(c.id,[{me:1,text:o.label,t:S.clock.h},{me:0,text,t:S.clock.h}]);Bus.emit('talk:topic',{id:c.id,topic:oid});return text;},
  close(){const c=Talk.cur;if(!c)return;const n=S.npcs[c.id];n.talking=false;n.talk.last=S.time;Talk.cur=null;Talk.rev++;Bus.emit('talk:close',c.id);},
  msg(id,tid){const n=S.npcs[id];if(!n)return null;const t=answer(n,tid);n.talk.asked[tid]=(n.talk.asked[tid]||0)+1;return t;},
  update(){const c=Talk.cur;if(!c)return;const n=S.npcs[c.id];if(!n.vis||Math.hypot(n.x-S.player.x,n.z-S.player.z)>Talk.range+3){Talk.close();Bus.emit('talk:walkedaway',c.id);}}};
@@ -380,10 +380,12 @@ Agri.init=()=>{Agri.anch.market=(()=>{const i=Nav.nearest(SITES.market.x,SITES.m
 S.Agri=Agri;S.tractor=TRC;S.farmGeo={FDEF,AGC,SITES,PAST,inPoly,polyMargin};
 // ---- phone messaging (simulation): NPC replies come from the same state-driven dialogue engine; no external AI ----
 const Msg={threads:{},rev:0,
+ append(id,messages){const th=Msg.thread(id);if(!th)return;th.push(...messages);if(th.length>100)th.splice(0,th.length-100);Msg.rev++;},
+ call(id){if(!Msg.contacts().some(n=>n.id===id))return null;const n=S.npcs[id],text=`${n.name} here. I am ${S.activity(n)}. ${answer(n,'self')}`;Msg.append(id,[{me:1,text:'Called '+n.name,t:S.clock.h},{me:0,text,t:S.clock.h}]);return text;},
  contacts(){const c=new Set([10,11,24]);S.npcs.forEach(n=>{if(n.talk.count>0)c.add(n.id);});return[...c].sort((a,b)=>a-b).map(i=>S.npcs[i]);},
  topics(n){return opts(n).filter(o=>!o.act&&o.id!=='bye');},
  thread(id){const n=S.npcs[id];if(!n)return null;if(!Msg.threads[id]){Msg.threads[id]=[{me:0,text:`Hi, it's ${n.name} — ${n.occ}. Ask me anything.`,t:S.clock.h}];}return Msg.threads[id];},
- ask(id,tid){const n=S.npcs[id];if(!n)return null;const o=Msg.topics(n).find(x=>x.id===tid);if(!o)return null;const th=Msg.thread(id),text=answer(n,tid);n.talk.asked[tid]=(n.talk.asked[tid]||0)+1;th.push({me:1,text:o.label,t:S.clock.h},{me:0,text,t:S.clock.h});Msg.rev++;return text;}};
+ ask(id,tid){const n=S.npcs[id];if(!n)return null;const o=Msg.topics(n).find(x=>x.id===tid);if(!o)return null;const th=Msg.thread(id),text=answer(n,tid);n.talk.asked[tid]=(n.talk.asked[tid]||0)+1;Msg.append(id,[{me:1,text:o.label,t:S.clock.h},{me:0,text,t:S.clock.h}]);return text;}};
 S.Msg=Msg;
 S.Geo.farmZone=(x,z)=>Math.hypot((x-12)/1.15,z+41)<34;
 S.nodes=[];S.harvesting=null;S.jobs=[];S.jobSequence=0;

@@ -1,0 +1,37 @@
+{
+  "verifiedAt": "2026-11-12T18:47:24.335Z",
+  "mode": "local development API; no blockchain claim",
+  "views": [
+    {
+      "label": "desktop",
+      "width": 1280,
+      "height": 800,
+      "motion": {
+        "frames": 41,
+        "stationary": 14,
+        "maxStep": 0.2622578425297877,
+        "distance": 4.132799999998882
+      },
+      "chatReply": true,
+      "inGameCall": true,
+      "track": true,
+      "close": true
+    },
+    {
+      "label": "mobile",
+      "width": 390,
+      "height": 844,
+      "motion": {
+        "frames": 54,
+        "stationary": 17,
+        "maxStep": 0.3335018935716705,
+        "distance": 4.208399999999441
+      },
+      "chatReply": true,
+      "inGameCall": true,
+      "track": true,
+      "close": true
+    }
+  ],
+  "errors": []
+}

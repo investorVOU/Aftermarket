@@ -1,9 +1,11 @@
 import {createClient} from '@supabase/supabase-js';
 import {setupNavigation} from './navigation.js';
+import MovementView from '../shared/movement-view.js';
 
 const A=globalThis.AftermarketApp;
 if(!A)throw new Error('The island renderer could not start.');
 const {Game:G,Net:N,Input,Phone,UI,CamRig}=A,{Eco:E,Sim:S,Bus}=G;
+N.view=new MovementView(S.Col);
 const money=n=>'$'+(n/100).toFixed(2);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let quotesSignature='',ownershipRequest=0;
@@ -11,7 +13,7 @@ let auth,session,sequence=0,lastApplied=0,chainInfo,settlement=[],polling=false,
 
 const shell=document.createElement('div');shell.id='game-shell';shell.innerHTML=`
   <header class="am-topbar"><a class="am-brand" href="/" aria-label="Aftermarket home"><span class="am-mark">A<span>↗</span></span><span>AFTERMARKET<small>SUPPLY & SURVIVAL</small></span></a>
-    <div class="am-session"><span id="am-connection" class="am-connection">Connecting</span><span class="am-mainnet">NEAR TESTNET</span></div>
+    <div class="am-session"><span id="am-connection" class="am-connection">Connecting</span><span class="am-mainnet">A SMALL ISLAND</span></div>
     <div class="am-metrics"><span><small>GAME CASH</small><b id="am-cash">$50.00</b></span><span><small>REPUTATION</small><b id="am-rep">0</b></span><span><small>ISLAND TIME</small><b id="am-time">07:30</b></span></div>
     <button class="am-icon-button" id="am-menu" aria-label="Open island market">☷</button>
   </header>
@@ -32,14 +34,16 @@ const $=id=>document.getElementById(id);
 const toast=message=>{const el=$('am-toast');el.textContent=message;el.classList.add('visible');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('visible'),4500);};
 const navigation=setupNavigation({document,window,Sim:S,Input,CamRig,Phone,Net:N,Bus,toast});
 function setConnection(text,ok=false){$('am-connection').textContent=text;$('am-connection').classList.toggle('online',ok);}
-async function api(route,body){const headers={Authorization:`Bearer ${session?.access_token}`};if(body)headers['Content-Type']='application/json';const response=await fetch('/api/'+route,{method:body?'POST':'GET',headers,body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(15000)});const data=await response.json();if(!response.ok)throw Object.assign(new Error(data.error||'Connection interrupted.'),{status:response.status});return data;}
+async function api(route,body){const headers={Authorization:`Bearer ${session?.access_token}`};if(body)headers['Content-Type']='application/json';const started=performance.now();const response=await fetch('/api/'+route,{method:body?'POST':'GET',headers,body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(15000)});const data=await response.json();data.roundTripMs=performance.now()-started;if(!response.ok)throw Object.assign(new Error(data.error||'Connection interrupted.'),{status:response.status});return data;}
+let phoneSignature='';
+function normalPhoneRender(){if(!Phone.open||Phone.touching||Phone.app==='settings')return;const signature=JSON.stringify([Phone.app,S.Msg.rev,S.Talk.rev,E.player.cash,E.player.inv,E.ts.inv,E.ow.inv,E.farm.inv,Math.floor(S.time/2)]);if(signature!==phoneSignature){phoneSignature=signature;Phone.render();}}
 function apply(data){
   // An older polling response must never overwrite a newer action response.
   if(data.state.time<lastApplied||data.revision<(N.revision||0))return;
-  const wasTalking=Boolean(S.Talk.cur);globalThis.GameState.apply(G,data.state);lastApplied=data.state.time;N.revision=data.revision;chainInfo=data.chain;N.chain=data.chain;N.demo=data.demo;
+  const wasTalking=Boolean(S.Talk.cur);globalThis.GameState.apply(G,data.state);lastApplied=data.state.time;N.revision=data.revision;chainInfo=data.chain;N.chain=data.chain;N.demo=data.demo;N.view.accept(data.state.player,data.movement||{x:0,z:0},data.roundTripMs);normalPhoneRender();
   for(const event of data.events||[])if(event.id>sequence){Bus.emit('notify',event.message);sequence=event.id;}
   if(!wasTalking&&S.Talk.cur)Bus.emit('talk:open',S.Talk.cur.id);
-  if(Phone.open&&Phone.app!=='settings')Phone.render();if(UI.open)UI.render();
+  if(UI.open)UI.render();
   $('am-wallet').textContent=data.wallet;setConnection('Saved · online',true);$('am-saved').textContent='Autosave on';update();
 }
 N.command=(name,args={})=>{
@@ -55,6 +59,7 @@ E.setPrice=delta=>N.command('setPrice',{delta});E.move=amount=>N.command('moveCa
 S.startHarvest=id=>N.command('harvest',{id});S.Talk.open=id=>N.command('talk',{id});S.Talk.choose=option=>N.command('choose',{option});S.Talk.close=()=>N.command('closeTalk');
 S.startCraft=()=>N.command('craft');
 S.Msg.ask=(id,topic)=>N.command('message',{id,topic});
+S.Msg.call=id=>N.command('call',{id});
 
 async function connect(){
   if(!session)return;const data=await api('session',{});if(data.catchingUp){setConnection('Island catching up');$('am-login-status').textContent=`Your island kept moving. Catching up… ${Math.round(data.progress*100)}%`;setTimeout(()=>connect().catch(e=>toast(e.message)),1000);return;}apply(data);N.online=true;N.blocked=false;$('am-welcome').hidden=true;document.body.classList.remove('am-welcoming');setConnection('Saved · online',true);
@@ -104,7 +109,7 @@ async function readOwnership(){
 $('am-refresh-ownership').addEventListener('click',readOwnership);$('am-actor').addEventListener('change',readOwnership);
 $('am-guest').addEventListener('click',async()=>{const button=$('am-guest');if(!auth||button.disabled)return;button.disabled=true;$('am-login-status').textContent='Creating your isolated testnet demo island...';try{const response=await fetch('/api/guest',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}',signal:AbortSignal.timeout(20000)}),data=await response.json();if(!response.ok)throw new Error(data.error||'Guest sign-in failed.');const result=await auth.auth.setSession({access_token:data.access_token,refresh_token:data.refresh_token});if(result.error)throw result.error;session=result.data.session;await connect();toast('Guest demo: progress stays in this browser session. Use email sign-in for your personal island.');}catch(error){$('am-login-status').textContent=error.message;}finally{button.disabled=false;}});
 async function start(){
-  try{const config=await (await fetch('/api/config')).json();chainInfo=config.chain;N.chain=config.chain;document.querySelector('.am-mainnet').textContent=config.chain.network==='development'?'LOCAL DEVELOPMENT':config.chain.network==='offchain'?'OFF-CHAIN PLAY':'NEAR '+config.chain.network.toUpperCase();
+  try{const config=await (await fetch('/api/config')).json();chainInfo=config.chain;N.chain=config.chain;document.querySelector('.am-mainnet').textContent='A SMALL ISLAND';
     if(config.chain.network==='offchain'){document.querySelector('.am-chain>p').textContent='Your progress is saved in Supabase. Items are off-chain until NEAR settlement is enabled.';document.querySelector('.am-login>small').textContent='This island currently uses off-chain inventory with cloud saves.';}
     if(config.chain.network==='mainnet')document.querySelector('.am-demo').hidden=true;
     if(config.mode==='development'){

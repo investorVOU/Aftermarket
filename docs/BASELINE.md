@@ -30,3 +30,12 @@ this environment; the publication checkout is a clean, secret-scanned copy.
 The intended [review diff](https://github.com/investorVOU/Aftermarket/compare/baseline-import...hackathon-submission)
 becomes available after the owner approves publishing those tags. Until then,
 review it locally with `git diff baseline-import..hackathon-submission`.
+
+November 12: the owner explicitly authorized publication. Both named tags were
+pushed without force. The remote review branch had a separate imported history
+with the same source snapshot plus two label changes. That history is preserved
+by a normal merge alongside the local history; the current phone/movement changes
+retain those labels. The submission tag remains the November 10 verified checkpoint
+and is not moved. Follow-up work belongs to the review branch, so inspect the
+[current branch diff](https://github.com/investorVOU/Aftermarket/compare/baseline-import...hackathon/track-09-testnet)
+for the latest fixes. No commit history is rewritten.

@@ -1,8 +1,14 @@
 # AFTERMARKET: Supply & Survival
 
+http://aftmarket.xyz/
+
 A persistent 3D market-town game where shortages, merchant cash reserves and operating costs create the opportunities: gather, craft, trade and own a shop while the economy keeps moving offline.
 
 ## Try it in 3 minutes
+
+1. **Browser-free screener check:** run `npm ci`, then `npm run demo:check`. On an operator-configured local checkout it starts the real server or reuses the running connected server. From a fresh clone, set `DEMO_BASE_URL` to the verified hosted demo first; that client needs no signing keys, browser, email or CAPTCHA. The hosted URL is still pending below. The command creates an API guest, gathers three timber, crafts furniture, runs the actual seven-day preview for about a minute, and prints before/after prices, the managed owner, on-chain furniture balance and a matching testnet mint link. It exits non-zero unless every check passes. A fresh clone without a configured server cannot pass a real blockchain check. [Setup and recovery](docs/OPERATIONS.md#browser-free-screener-check).
+
+Browser walkthrough:
 
 For a fresh local clone, install Node 22.14+ and run:
 
@@ -21,6 +27,8 @@ On an operator-configured connected testnet server, click **Play as guest / demo
 4. In the exchange, start **Seven days. One minute.** **See prices, treasury and trade counts change**, with the timber price history and actual economic events. Trading pauses while the same simulation rules run at 49× speed.
 5. The timber yard's thin margin must cover a **$90 daily lease**. In the seeded opening week it runs out of cash and closes. Use **Invest $20 toward recovery** until the bill is paid and working capital is restored. **See the closure/reopening events and trading resume.** The investment spends your actual game balance; it is not a cosmetic recovery animation.
 6. On testnet, open a receipt's explorer link and inspect its NEP-245 logs: **owner_id identifies the player or merchant, token_ids identifies the item, and amounts shows the mint/burn**. The contract inspector reads balances directly; the explorer may not index every NEP-245 token in its account UI. In local development, use the verified public examples below to inspect real NEAR activity separately.
+
+Approach an NPC and press F: conversations now appear **inside the phone**, with incoming/outgoing bubbles and reply choices. **Phone → Messages** also lets you message known contacts remotely. **Track NPC** follows their current location; **Call NPC** records an in-game text call and a state-based response. This is game dialogue, not a real telephone or voice connection. Close/Hide, P or Escape releases the conversation and resumes walking. History persists with the world. [Mobile capture](docs/images/phone-chat-mobile.png).
 
 The complete gather/craft/sell path has been run through the real authenticated API and final testnet queries. Public evidence: [LIVE_GAME_EVIDENCE.json](docs/LIVE_GAME_EVIDENCE.json). The one-minute browser preview/recovery check is recorded separately in the requirements checklist; physical-device and remote-host verification are distinct.
 
@@ -81,9 +89,9 @@ npm run near:items -- 047db926e52e94b6f4ecf8cb6a2b00d7b12eb21bb728b3fc935b0d664f
 
 The owner supplied a Claude-generated **v0.6** local game: Three.js island, characters, navigation, phone, local trades, contracts, forestry and agriculture. These are baseline, not claimed as new NEAR work. [Audit](PROJECT_AUDIT.md).
 
-The available history starts at [957283d](https://github.com/investorVOU/Aftermarket/tree/957283d), a November 9 import that already includes backend and contract work. There is no authentic pre-window commit to tag. The conservative comparison baseline is `baseline-import` at that commit; the dedicated local branch is `hackathon/track-09-testnet`. This excludes earlier upgrades from the reviewed diff rather than falsely dating the import.
+The available history starts at [957283d](https://github.com/investorVOU/Aftermarket/tree/957283d), a November 9 import that already includes backend and contract work. There is no authentic pre-window commit to tag. The conservative comparison baseline is `baseline-import` at that commit; the review branch is `hackathon/track-09-testnet`. This excludes earlier upgrades from the reviewed diff rather than falsely dating the import.
 
-This branch adds the verified testnet deployment/receipts, real guest-to-managed-identity flow, on-chain inspection, daily operating costs/closure/recovery, screener evidence, operations guide and release hygiene. The submission tag is created after final checks. [Proposed baseline-to-submission diff](https://github.com/investorVOU/Aftermarket/compare/baseline-import...hackathon-submission) becomes available after owner-approved publication; until then inspect it locally with `git diff baseline-import..hackathon-submission`. [Exact plan and limitations](docs/BASELINE.md). No history rewrite is used.
+This branch adds the verified testnet deployment/receipts, real guest-to-managed-identity flow, on-chain inspection, daily operating costs/closure/recovery, screener evidence, operations guide and release hygiene. The published submission tag records the verified November 10 checkpoint. Subsequent fixes live on the review branch. [Baseline-to-current-branch diff](https://github.com/investorVOU/Aftermarket/compare/baseline-import...hackathon/track-09-testnet). [Exact plan and limitations](docs/BASELINE.md). No history rewrite is used.
 
 AI disclosure: Claude generated the supplied baseline; Codex assisted the backend, economic rules, contract integration, UI and documentation. Intermediate edits from another model were replaced from the known published baseline before the UI corrections. Human review and final submission remain the owner's responsibility.
 
@@ -114,6 +122,7 @@ npm test
 npm run contract:build
 npm run test:contract
 npm run near:preflight
+npm run demo:check
 ```
 
 `lint` is syntax checking, including the preserved inline renderer. Unit/API checks use SQLite and embedded PostgreSQL/PGlite; they do not pretend to be live Supabase checks. Contract tests execute compiled WASM against an emulated host. The separate opt-in `npm run verify:live` creates a real testnet guest and verifies the complete live loop; it requires private operator configuration. See [OPERATIONS.md](docs/OPERATIONS.md) for database migrations, auth callbacks, account provisioning, deployment, secrets and Render variables.

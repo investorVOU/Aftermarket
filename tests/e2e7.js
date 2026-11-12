@@ -10,14 +10,14 @@ const body=H.body.classList;
  ok(Input.ui.bF.style.display==='flex'&&Input.ui.bF.textContent==='Talk to Chidi','touch interact button reads the short label "'+Input.ui.bF.textContent+'"');
  await key('f');ok(T.cur&&T.cur.id===4&&Dlg.state().visible&&Dlg.state().name==='Chidi Okafor','F opens the dialogue panel for the nearby NPC');
  ok(Dlg.state().options.length>=6&&/Goodbye/.test(Dlg.state().options.slice(-1)[0]),`panel shows greeting + ${Dlg.state().options.length} options incl. Goodbye`);
- ok(body.contains('talking'),'body gets the "talking" class (hides joystick/action buttons on touch)');
+ ok(body.contains('phone-open'),'body gets the "phone-open" class (hides joystick/action buttons on touch)');
  // ---- 2) choosing options (number keys) works; F is ignored while open
  const t0=T.cur.text;await key('2');ok(T.cur.topic&&T.cur.topic!=='greet'&&T.cur.text!==t0,`number key 2 chose "${T.cur.topic}" → "${T.cur.text.slice(0,50)}…"`);
  const cnt=n4.talk.count;await key('f');ok(n4.talk.count===cnt&&T.cur.id===4,'pressing F again while talking does nothing');
  // NPC holds still and faces player
  const px=n4.x;await wait(150);ok(n4.x===px&&n4.talking,'NPC stays put while talking');
  // ---- 3) Esc closes, gameplay restored
- await key('Escape');ok(T.cur===null&&!Dlg.state().visible&&!body.contains('talking')&&!n4.talking,'Esc closes the dialogue and clears the talking state');
+ await key('Escape');ok(T.cur===null&&!Dlg.state().visible&&!body.contains('phone-open')&&!n4.talking,'Esc closes the dialogue and clears the talking state');
  const z0=Sim.player.z,moveStart=Sim.time;await key('w',250);ok(Math.abs(Sim.player.z-z0)>Math.max(.5,4*(Sim.time-moveStart)),'movement works right after closing');
  const yaw0=CamRig.gy;await key('e',120);ok(CamRig.gy>yaw0,'camera rotation works right after closing');
  // ---- 4) out of range: no prompt, no conversation
@@ -36,11 +36,11 @@ const body=H.body.classList;
  const pr2=CamRig.project(n.x,W.tY(n.x,n.z)+1,n.z,1200,800);Input.ptr('down',{id:72,x:pr2.x,y:pr2.y,type:'touch'});Input.ptr('up',{id:72,x:pr2.x,y:pr2.y});await wait(150);
  ok(T.cur&&T.cur.id===4,'tapping the already-selected, in-range NPC again starts the conversation');
  // ---- 6) walking away: dialogue closes, tracking continues; player can move freely
- Input.key(true,'w');for(let attempts=0;attempts<50&&T.cur;attempts++)await wait(50);Input.key(false,'w');await wait(40);ok(T.cur===null&&CamRig.follow===4,'walking out of range closes the dialogue; the camera keeps following the NPC');
+ const heldZ=Sim.player.z;await key('w',200);ok(T.cur&&Math.abs(Sim.player.z-heldZ)<.01,'phone conversation pauses walking');await key('Escape');ok(T.cur===null&&CamRig.follow===4,'closing the phone releases conversation and preserves tracking');
  Input.btn('C');await wait(120);ok(CamRig.follow===null&&Input.ui.trk.style.display==='none','✕/recenter stops following');
  // ---- 7) touch mode: joystick is released and hidden during dialogue
  Sim.player.x=0;Sim.player.z=0;only(10,1.5,.5);await wait(150);Input.setMode('touch');Input.joy.cx=100;Input.joy.cy=600;Input.joy.R=60;Input.joyDown(5,100,600);Input.joyMove(5,160,600);
- Input.btn('F');await wait(150);ok(T.cur&&T.cur.id===10&&Input.joy.id===null&&Input.joy.x===0&&body.contains('talking')&&body.contains('touch'),'touch: opening a conversation releases the joystick and applies the talking layout');
+ Input.btn('F');await wait(150);ok(T.cur&&T.cur.id===10&&Input.joy.id===null&&Input.joy.x===0&&body.contains('phone-open')&&body.contains('touch'),'touch: opening a conversation releases the joystick and applies the talking layout');
  // ---- 8) consequence through the UI path: buy timber from the Timber Supply owner
  Eco.player.cash=5000;Eco.ts.inv.timber=12;const idx=T.cur.options.findIndex(o=>o.id==='a_buy');const c0=Eco.player.cash,t0b=Eco.player.inv.timber,s0=Eco.ts.inv.timber,trades0=Eco.transactions.filter(t=>t.buyer===Eco.player.name&&t.seller===Eco.ts.name).length;await key(String(idx+1));
  ok(Eco.player.inv.timber===t0b+1&&Eco.player.cash===c0-Eco.ts.price&&Eco.transactions.filter(t=>t.buyer===Eco.player.name&&t.seller===Eco.ts.name).length===trades0+1,`choosing "${T.cur.options[idx]&&T.cur.options[idx].label}" via number key changes the economy exactly once`);

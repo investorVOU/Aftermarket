@@ -41,7 +41,7 @@ async function save(user,w,command=null){
   const revision=await store.save(user.id,w.revision,snapshot,balances,chain.wallet(user.id),payload,command);
   w.revision=revision;w.balances=balances;w.lastSave=Date.now();
 }
-function snapshot(user,w){return {state:State.capture(w.game),revision:w.revision,events:w.events,sequence:w.sequence,wallet:chain.wallet(user.id),chain:chain.publicConfig(),demo:{active:w.demoUntil>Date.now(),secondsRemaining:Math.max(0,Math.ceil((w.demoUntil-Date.now())/1000))}};}
+function snapshot(user,w){return {state:State.capture(w.game),revision:w.revision,events:w.events,sequence:w.sequence,wallet:chain.wallet(user.id),chain:chain.publicConfig(),movement:Date.now()-w.movement.at<350&&!w.game.Sim.harvesting&&!w.game.Sim.Talk.cur?w.movement:{x:0,z:0},demo:{active:w.demoUntil>Date.now(),secondsRemaining:Math.max(0,Math.ceil((w.demoUntil-Date.now())/1000))}};}
 function serial(w,fn){const task=w.queue.then(async()=>{w.busy=true;try{return await fn();}finally{w.busy=false;}});w.queue=task.catch(()=>{});return task;}
 
 const server=http.createServer(async(req,res)=>{
@@ -57,7 +57,12 @@ const server=http.createServer(async(req,res)=>{
       }
       if(route==='/api/config'&&req.method==='GET')return json(res,200,{mode:development?'development':'connected',supabaseUrl:env.SUPABASE_URL||null,supabaseKey:env.SUPABASE_PUBLISHABLE_KEY||null,configured:store.ready&&chain.ready,googleEnabled:env.SUPABASE_GOOGLE_ENABLED==='true',guestEnabled:Boolean(guest?.ready&&store.ready&&chain.ready),chain:chain.publicConfig()});
       if(route==='/api/health'&&req.method==='GET')return json(res,200,{ok:true,configured:store.ready&&chain.ready,network:chain.publicConfig().network});
-      if(route==='/api/guest'&&req.method==='POST'){if(!guest?.ready||!store.ready||!chain.ready)throw fail('Guest entry is not enabled for this island.',403);return json(res,200,await guest.create());}
+      if(route==='/api/guest'&&req.method==='POST'){
+        if(!guest?.ready||!store.ready||!chain.ready)throw fail('Guest entry is not enabled for this island.',403);
+        await body(req);const session=await guest.create(),user=await store.user(session.access_token),w=await getWorld(user);
+        await serial(w,async()=>{if(!w.revision)await save(user,w);});
+        return json(res,200,{...session,wallet:chain.wallet(user.id),chain:chain.publicConfig()});
+      }
       const user=await authenticated(req),w=await getWorld(user);
       if(w.catchingUp)return json(res,200,{catchingUp:true,progress:w.progress});
       if(route==='/api/session'&&req.method==='POST'){await serial(w,async()=>{if(!w.revision)await save(user,w);});return json(res,200,snapshot(user,w));}
@@ -90,7 +95,7 @@ const server=http.createServer(async(req,res)=>{
     if(req.method!=='GET'&&req.method!=='HEAD')throw fail('Method not allowed',405);
     const allowed={
       '/':'game/aftermarket.html','/aftermarket.html':'game/aftermarket.html','/client.js':'game/client.bundle.js','/shell.css':'game/shell.css',
-      '/shared/core.js':'shared/core.js','/shared/state.js':'shared/state.js','/shared/merchant-rules.js':'shared/merchant-rules.js',
+      '/shared/movement-view.js':'shared/movement-view.js','/shared/core.js':'shared/core.js','/shared/state.js':'shared/state.js','/shared/merchant-rules.js':'shared/merchant-rules.js',
       '/vendor/three.min.js':'node_modules/three/build/three.min.js'
     };
     if(!Object.hasOwn(allowed,route))throw fail('Not found',404);
@@ -105,14 +110,14 @@ const ticker=setInterval(()=>{const now=Date.now();for(const [id,promise] of wor
   const actual=Math.max(0,(now-w.wallTimestamp)/1000);
   const accelerated=w.demoUntil>w.wallTimestamp?Math.max(0,(Math.min(now,w.demoUntil)-w.wallTimestamp)/1000):0;
   const remaining=actual+accelerated*48;
-  if(!w.demoUntil||w.demoUntil<=now){const m=w.movement;if(now-m.at<350&&!w.game.Sim.harvesting)w.game.Sim.player.move(m.x*6*Math.min(actual,.1),m.z*6*Math.min(actual,.1));}
+  if(!w.demoUntil||w.demoUntil<=now){const m=w.movement;if(now-m.at<350&&!w.game.Sim.harvesting&&!w.game.Sim.Talk.cur)w.game.Sim.player.move(m.x*6*Math.min(actual,.1),m.z*6*Math.min(actual,.1));}
   Simulation.advance(w.game,remaining);w.wallTimestamp=now;
   if(now-w.lastSave>10000)serial(w,()=>save({id},w)).catch(e=>{console.error('Autosave:',e.message);worlds.delete(id);});
 }).catch(e=>{console.error('Simulation stopped:',e.message);worlds.delete(id);});}
 },50);
 const worker=setInterval(async()=>{
   if(!store.ready||!chain.ready||!chain.publicConfig().settlement||settling||Date.now()<settlementRetryAt)return;
-  settling=true;try{const job=await store.pending();if(job){try{const hash=await chain.settle(job.payload);await store.settlement(job.id,{status:'confirmed',transaction_hash:hash,error:null});}catch(e){await store.settlement(job.id,{error:'Testnet settlement pending. Operator must check relayer balance, storage deposit and contract configuration.'});settlementRetryAt=Date.now()+30000;console.error('Settlement needs attention:',e.message);}}}catch(e){console.error('Settlement worker:',e.message);settlementRetryAt=Date.now()+30000;}finally{settling=false;}
+  settling=true;try{await require('./settlement.cjs').drain({store,chain});}catch(e){console.error('Settlement needs attention:',e.message);settlementRetryAt=Date.now()+30000;}finally{settling=false;}
 },4000);
 const cleanup=setInterval(()=>{const now=Date.now();for(const [key,value]of tokens)if(value.until<now)tokens.delete(key);for(const [key,value]of limits)if(now-value.start>60000)limits.delete(key);for(const [key,p]of worlds)p.then(w=>{if(!w.busy&&now-w.lastSeen>120000)worlds.delete(key);});},60000);
 if(require.main===module)server.listen(runtime.port,runtime.host,()=>console.log(`AFTERMARKET http://${runtime.host}:${runtime.port} | ${runtime.mode} | ${chain.publicConfig().network} | ${store.ready&&chain.ready?'configured':'waiting for server environment configuration'}`));

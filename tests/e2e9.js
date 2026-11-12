@@ -6,6 +6,6 @@ const W=H.load(909,true);const {Sim,Eco,Input,Phone}=W;const wait=ms=>new Promis
  Input.joy.cx=100;Input.joy.cy=600;Input.joy.R=60;Input.joyDown(3,100,600);Input.joyMove(3,160,600);await wait(200);ok(true,'joystick held');const x0=Sim.player.x;await wait(200);ok(Math.abs(Sim.player.x-x0)<.05,'a held joystick cannot move the player while the phone is open');Input.joyUp(3);
  Sim.player.x=-24;Sim.player.z=9.4;await wait(150);const t0=Eco.ts.inv.timber;await key('f');ok(Eco.ts.inv.timber===t0,'F cannot trigger world interactions while the phone is open');
  await key('Escape');ok(!Phone.open,'Esc minimises the phone');Sim.player.x=0;Sim.player.z=4;await wait(100);const zz=Sim.player.z,moveStart=Sim.time;await key('w',250);ok(Math.abs(Sim.player.z-zz)>Math.max(.5,4*(Sim.time-moveStart)),'movement works again after minimising');
- const n=Sim.npcs[10];n.vis=true;n.x=-23;n.z=10.5;n.wait=9999;n.phase='work';Sim.player.x=-24;Sim.player.z=9.4;await wait(150);await key('f');ok(Sim.Talk.cur&&Sim.Talk.cur.id===10&&!Phone.open,'talking to an NPC still works and the phone stays out of the way');
- await key('p');ok(!Phone.open,'P is ignored while a conversation is open');await key('Escape');
+ const n=Sim.npcs[10];n.vis=true;n.x=-23;n.z=10.5;n.wait=9999;n.phase='work';Sim.player.x=-24;Sim.player.z=9.4;await wait(150);await key('f');ok(Sim.Talk.cur&&Sim.Talk.cur.id===10&&Phone.open&&Phone.app==='msg','talking to an NPC opens the phone conversation');
+ await key('p');ok(!Phone.open&&!Sim.Talk.cur,'P closes the phone conversation and releases the NPC');await key('Escape');
  console.log(`\n${pass} passed, ${fail} failed`);process.exit(fail?1:0);})();

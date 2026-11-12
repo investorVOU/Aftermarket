@@ -1,6 +1,6 @@
 # Track 09 — Games With Real Economies
 
-Updated November 10, 2026. Implementation, local verification, live testnet evidence
+Updated November 12, 2026. Implementation, local verification, live testnet evidence
 and a public hosted deployment are different states.
 
 Sources: [live organizer rules](https://nearhackathon.com/HACKATHON.md),
@@ -67,3 +67,16 @@ ideally November 25. Free Render cold starts are not an uptime guarantee.
 
 The Intents stretch is deliberately skipped while these core release steps remain
 open. No quote-only panel, swap or Intents integration is claimed.
+
+## November 12 follow-up
+
+- Implemented movement prediction with authoritative reconciliation, close-wall
+  camera clearance, persisted phone conversations, remote text calls and tracking.
+- Chrome desktop/mobile viewport messaging, call history, tracking and close controls
+  passed with added network delay and no page errors: `docs/PLAYABILITY_EVIDENCE.json`.
+- Added `npm run demo:check`: real API guest, gathering, crafting, seven-day economy
+  and independent final balance/mint receipt verification; failures exit non-zero.
+  The current live rerun result is recorded in `docs/RELEASE_CHECKS.md`.
+- Added faster ordered settlement draining and bounded stale-nonce recovery.
+  Pending checkpoints are never reported as successful mints. NPCs remain distinct
+  contract-ledger owners, not individually funded native accounts.

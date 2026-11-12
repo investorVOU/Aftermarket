@@ -21,6 +21,7 @@ function action(G,name,args={}){
     processOre:()=>{if(Math.hypot(S.player.x-58,S.player.z+21.5)>5)throw new Error('Visit the processing plant first.');E.processOre();},
     talk:()=>{if(!S.Talk.open(args.id))throw new Error('Walk closer to talk.');},
     choose:()=>S.Talk.choose(args.option),closeTalk:()=>S.Talk.close(),
+    call:()=>{if(!S.Msg.call(args.id))throw new Error('Contact unavailable');},
     message:()=>{if(!S.Msg.contacts().some(n=>n.id===args.id))throw new Error('Contact unavailable');S.Msg.ask(args.id,args.topic);},
     invest:()=>{if(!['ts','ow','farm','market'].includes(args.business))throw new Error('Unknown merchant');if(E.player.cash<2000)throw new Error('Investment costs $20.');const B=E[args.business];E.player.cash-=2000;E.player.capital-=2000;B.cash+=2000;B.capital+=2000;E.say('Invested $20 in '+B.name+'.');}};
   if(!Object.hasOwn(actions,name))throw new Error('Unknown action');

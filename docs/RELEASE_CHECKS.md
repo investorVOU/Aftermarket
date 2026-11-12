@@ -1,5 +1,42 @@
 # Release verification — November 10, 2026
 
+## November 12 follow-up
+
+- Movement prediction, camera clearance, persistent in-phone conversation, NPC text
+  call/tracking and the browser-free `demo:check` are implemented. The previous
+  dialogue/phone checks were updated to verify the requested phone interaction.
+- `npm run build` passed. An intermittent Windows parent-directory access failure
+  was addressed with absolute esbuild entry/output paths and symlink preservation.
+- Clean publication checkout: build and syntax lint passed (51 modules plus the
+  inline renderer); 41 backend/API/database/DOM/movement/settlement checks and 322
+  original game checks passed. The six compiled-WASM checks also passed separately.
+- Chrome desktop (1280×800) and mobile (390×844) viewport checks passed with added
+  120 ms sync-request delay: message reply, persisted call record, NPC tracking and
+  close controls; no page exceptions. `PLAYABILITY_EVIDENCE.json` and
+  `images/phone-chat-{desktop,mobile}.png`. This is local API QA, not hosted QA.
+- The live headless check created real guests, gathered/crafted furniture and
+  advanced the actual seven-day simulation. All six merchant quotes changed.
+  Its initial final-balance/receipt checks **failed**, including RPC access/errors
+  and a settlement backlog (218 pending checkpoints when inspected). They are
+  not presented as successful new mint evidence. Prior verified on-chain evidence
+  remains separately recorded in `LIVE_GAME_EVIDENCE.json`.
+- Recovery exposed concurrent nonce contention with the protected existing server.
+  The relayer now batches ordered jobs and retries only stale nonces with a fresh
+  signer, without skipping failures or replacing original receipts. The alternate
+  generic NEAR RPC answered status but rejected transactions as deprecated; it was
+  removed again. Defaults use FASTNEAR from the current official provider list.
+- Subsequent recovery did confirm real checkpoints, including
+  [checkpoint 574](https://testnet.nearblocks.io/txns/48AaJZiyxSpeBhNcDb4RH6sF6RS8xYmaYAN6v3rJpmvU).
+  This demonstrates relaying stored game revisions; it is not represented as a
+  passing new `demo:check` or as an empty queue.
+- Windows denied stopping the existing local server, so loading new server code
+  requires restarting that process from its owning terminal. No second game server
+  was started against the connected database. Operator recovery results and final
+  publication are reported separately rather than assumed successful.
+
+The table below records the earlier November 10 verification, not a claim that
+every external service was reverified on November 12.
+
 ## Completed
 
 | Check | Observed result |
