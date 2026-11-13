@@ -2,6 +2,7 @@ import {createClient} from '@supabase/supabase-js';
 import {setupNavigation} from './navigation.js';
 import MovementView from '../shared/movement-view.js';
 import GameSync from '../shared/sync-transport.js';
+import GameHTTP from '../shared/http-client.js';
 
 const A=globalThis.AftermarketApp;
 if(!A)throw new Error('The island renderer could not start.');
@@ -35,10 +36,11 @@ const shell=document.createElement('div');shell.id='game-shell';shell.innerHTML=
   <section id="am-welcome" class="am-welcome"><div class="am-welcome-copy"><img class="am-welcome-logo" src="/assets/aftermarket-mark.svg" width="90" height="52" alt="Aftermarket logo"><span class="am-eyebrow">WELCOME TO AFTERMARKET</span><h1>A small island.<br>A living economy.<br><em>Your next move.</em></h1><p>Gather, trade, and build a business in a town that keeps moving. Every shortage is someone's opportunity.</p><div class="am-welcome-tags"><span>29 islanders</span><span>Player-owned markets</span><span>A world that remembers</span></div></div><form id="am-login" class="am-login"><span class="am-eyebrow">YOUR ISLAND IS WAITING</span><h2>Start something<br>of your own.</h2><p>Sign in to keep your progress and belongings between visits.</p><label for="am-email">Email address</label><input id="am-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required><button id="am-login-button" type="submit">Email me a sign-in link ↗</button><button id="am-google" type="button" class="am-secondary" hidden>Continue with Google</button><button id="am-guest" type="button" class="am-secondary" hidden>Play as guest / demo account</button><div id="am-login-status" role="status" aria-live="polite">Checking the island connection…</div><small>Your progress and belongings are saved automatically.</small></form></section>`;
 document.body.appendChild(shell);document.body.classList.add('am-enhanced');
 const $=id=>document.getElementById(id);
+const retryConnection=document.createElement('button');retryConnection.type='button';retryConnection.className='am-secondary';retryConnection.textContent='Retry connection';retryConnection.hidden=true;retryConnection.addEventListener('click',()=>location.reload());$('am-login-status').after(retryConnection);
 const toast=message=>{const el=$('am-toast');el.textContent=message;el.classList.add('visible');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('visible'),4500);};
 const navigation=setupNavigation({document,window,Sim:S,Input,CamRig,Phone,Net:N,Bus,toast});
 function setConnection(text,ok=false){$('am-connection').textContent=text;$('am-connection').classList.toggle('online',ok);}
-async function api(route,body){const headers={Authorization:`Bearer ${session?.access_token}`};if(body)headers['Content-Type']='application/json';const started=performance.now();const response=await fetch('/api/'+route,{method:body?'POST':'GET',headers,body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(15000)});const data=await response.json();data.roundTripMs=performance.now()-started;if(!response.ok)throw Object.assign(new Error(data.error||'Connection interrupted.'),{status:response.status});return data;}
+async function api(route,body){const headers={Authorization:`Bearer ${session?.access_token}`};if(body)headers['Content-Type']='application/json';const started=performance.now();const data=await GameHTTP.requestJSON('/api/'+route,{method:body?'POST':'GET',headers,body:body?JSON.stringify(body):undefined},route==='session'?30000:15000);data.roundTripMs=performance.now()-started;return data;}
 let phoneSignature='',uiSignature='',lastHudUpdate=-Infinity;
 const stateTransport=new GameSync.StateTransport(api);
 N.stop=()=>{disposed=true;clearTimeout(syncTimer);N.movement={x:0,z:0};N.online=false;return stateTransport.tail;};
@@ -72,7 +74,9 @@ S.startCraft=()=>N.command('craft');
 S.Msg.ask=(id,topic)=>N.command('message',{id,topic});
 S.Msg.call=id=>N.command('call',{id});
 
-async function connect(){
+let connecting;
+function connect(){if(connecting)return connecting;connecting=connectOnce().finally(()=>{connecting=null;});return connecting;}
+async function connectOnce(){
   if(!session||disposed)return;const data=await stateTransport.request('session',{});if(disposed)return;if(data.catchingUp){setConnection('Island catching up');$('am-login-status').textContent=`Your island kept moving. Catching up… ${Math.round(data.progress*100)}%`;setTimeout(()=>connect().catch(e=>{if(!disposed)toast(e.message);}),1000);return;}apply(data);N.online=true;N.blocked=false;$('am-welcome').hidden=true;document.body.classList.remove('am-welcoming');setConnection('Saved · online',true);
 }
 async function sync(){if(disposed||!session||polling||!N.online)return;polling=true;try{const data=await stateTransport.request('sync',()=>N.blocked?{x:0,z:0}:{...N.movement});N.diagnostics.syncLatencyMs.push(data.roundTripMs);N.diagnostics.syncLatencyMs=N.diagnostics.syncLatencyMs.slice(-60);apply(data);}catch(error){if(disposed)return;N.online=false;N.blocked=true;setConnection('Connection lost');toast('Connection lost. Your last confirmed save is safe.');}finally{polling=false;}}
@@ -133,9 +137,23 @@ async function readOwnership(){
   catch(error){if(request===ownershipRequest)root.textContent=error.message;}finally{if(request===ownershipRequest)button.disabled=false;}
 }
 $('am-refresh-ownership').addEventListener('click',readOwnership);$('am-actor').addEventListener('change',readOwnership);
-$('am-guest').addEventListener('click',async()=>{const button=$('am-guest');if(!auth||button.disabled)return;button.disabled=true;$('am-login-status').textContent='Preparing your island...';try{const response=await fetch('/api/guest',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}',signal:AbortSignal.timeout(20000)}),data=await response.json();if(!response.ok)throw new Error(data.error||'Guest sign-in failed.');const result=await auth.auth.setSession({access_token:data.access_token,refresh_token:data.refresh_token});if(result.error)throw result.error;session=result.data.session;await connect();toast('Guest demo: progress stays in this browser session. Use email sign-in for your personal island.');}catch(error){$('am-login-status').textContent=error.message;}finally{button.disabled=false;}});
+$('am-guest').addEventListener('click',async()=>{
+ const button=$('am-guest');if(!auth||button.disabled)return;button.disabled=true;retryConnection.hidden=true;text('am-login-status','Connecting to the island…');
+ const slow=setTimeout(()=>text('am-login-status','The island is taking a little longer to open. Keep this page open; we are still connecting.'),8000);
+ try{
+  if(!session){
+   // Warm the service with a safe read before creating an identity. Never
+   // automatically retry a timed-out guest POST: it may already have succeeded.
+   await GameHTTP.requestJSON('/api/health',{},60000);
+   text('am-login-status','Preparing your guest island…');
+   const data=await GameHTTP.requestJSON('/api/guest',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'},45000);
+   const result=await auth.auth.setSession({access_token:data.access_token,refresh_token:data.refresh_token});if(result.error)throw result.error;session=result.data.session;
+  }
+  await connect();if(N.online)toast('Guest demo: progress stays in this browser session. Use email sign-in for your personal island.');
+ }catch(error){text('am-login-status',GameHTTP.friendlyError(error));retryConnection.hidden=false;}finally{clearTimeout(slow);button.disabled=false;}
+});
 async function start(){
-  try{const config=await (await fetch('/api/config')).json();chainInfo=config.chain;N.chain=config.chain;document.querySelector('.am-mainnet').textContent='A SMALL ISLAND';
+  try{const config=await GameHTTP.requestJSON('/api/config',{},60000);chainInfo=config.chain;N.chain=config.chain;document.querySelector('.am-mainnet').textContent='A SMALL ISLAND';
     if(config.chain.network==='offchain'){document.querySelector('.am-chain>p').textContent='Saved inventory; external ownership verification is unavailable on this island.';document.querySelector('.am-login>small').textContent='Your progress and belongings are saved automatically.';}
     if(config.chain.network==='mainnet')document.querySelector('.am-demo').hidden=true;
     if(config.mode==='development'){
@@ -150,6 +168,6 @@ async function start(){
     const {data,error}=await auth.auth.getSession();if(error)throw error;session=data.session;
     auth.auth.onAuthStateChange((_event,next)=>{session=next;if(next)setTimeout(()=>connect().catch(e=>{$('am-login-status').textContent=e.message;}),0);});
     if(session)await connect();else setConnection('Sign in to play');
-  }catch(error){$('am-login-status').textContent=error.message;setConnection('Unable to connect');}
+  }catch(error){text('am-login-status',GameHTTP.friendlyError(error));retryConnection.hidden=false;setConnection('Unable to connect');}
 }
 setInterval(update,500);update();start();

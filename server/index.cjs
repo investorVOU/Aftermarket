@@ -18,7 +18,7 @@ const guest=development?null:new (require('./guest.cjs').GuestAuth)(env,store.sq
 const worlds=new Map(),tokens=new Map(),limits=new Map();
 // Covers observed hosted RTTs while bounding movement after a lost connection.
 const MOVEMENT_TTL_MS=1000;
-const json=(res,status,data)=>{res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(data));};
+const json=(res,status,data)=>{const started=performance.now(),encoded=JSON.stringify(data);res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store','Server-Timing':`app;dur=${(performance.now()-(res.requestStarted||started)).toFixed(2)}, serialize;dur=${(performance.now()-started).toFixed(2)}`});res.end(encoded);};
 function fail(message,status=400){return Object.assign(new Error(message),{status});}
 async function body(req){let text='';for await(const b of req){text+=b;if(text.length>8192)throw fail('Request too large',413);}try{return JSON.parse(text||'{}');}catch{throw fail('Invalid JSON');}}
 async function authenticated(req){
@@ -47,6 +47,7 @@ async function save(user,w,command=null){
 function snapshot(user,w){return {state:State.capture(w.game),revision:w.revision,events:w.events,sequence:w.sequence,wallet:chain.wallet(user.id),chain:chain.publicConfig(),movement:Date.now()-w.movement.at<MOVEMENT_TTL_MS&&!w.game.Sim.harvesting&&!w.game.Sim.Talk.cur?w.movement:{x:0,z:0},demo:{active:w.demoUntil>Date.now(),secondsRemaining:Math.max(0,Math.ceil((w.demoUntil-Date.now())/1000))}};}
 
 const server=http.createServer(async(req,res)=>{
+  res.requestStarted=performance.now();
   res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','same-origin');res.setHeader('X-Frame-Options','DENY');
   try{
     const url=new URL(req.url,'http://localhost'),route=url.pathname;
