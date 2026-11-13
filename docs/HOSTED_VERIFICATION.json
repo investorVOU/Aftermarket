@@ -129,5 +129,30 @@
       "finalOnChainReceipt": false,
       "error": "Furniture balance and matching real NEP-245 mint receipt were not both confirmed."
     }
-  ]
+  ],
+  "publication": {
+    "checkedAt": "2026-11-13T04:01:07.520Z",
+    "branches": {
+      "main": {
+        "status": 200,
+        "sha": "202d3ca4235571d3927109676d7fce00577f3b42"
+      },
+      "hackathon/track-09-testnet": {
+        "status": 200,
+        "sha": "202d3ca4235571d3927109676d7fce00577f3b42"
+      }
+    },
+    "mainReadme": {
+      "status": 200,
+      "readableWithoutAuthentication": true
+    },
+    "host": {
+      "clientStatus": 200,
+      "clientMatchesReviewedBuild": true,
+      "configured": true,
+      "guestEnabled": true,
+      "network": "testnet",
+      "rpcFallbackConfigured": false
+    }
+  }
 }

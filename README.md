@@ -45,7 +45,7 @@ For browser play, start the core loop in about a minute; the week preview takes 
 3. Walk to **Oak & Iron** (24, 7). **Phone → Business → Craft furniture** consumes three timber and $2 game credits; wait eight island seconds.
 4. **Phone → Marketplace → Sell** sells furniture for game credits. The server validates ownership and merchant funds.
 5. Open the island exchange and choose **Seven days. One minute.** Watch prices, stock, cash and trade counts change. If a merchant closes, invest until its arrears are paid and working capital is restored.
-6. Open **Inventory → Verify on-chain**, then **Refresh verified inventory**. Receipts and identities are inside this collapsed section; normal play keeps the chain out of the way. This revision includes the friendly inventory layout; the recorded hosted checks used the earlier deployment.
+6. Open **Inventory → Verify on-chain**, then **Refresh verified inventory**. Receipts and identities are inside this collapsed section; normal play keeps the chain out of the way. Hosted assets matched this friendly inventory build on November 13; the recorded headless chain check used the preceding deployment.
 
 NPC conversations live in the phone as message threads. Known contacts also offer tracking and in-game text calls based on current activity; these are not real telephone or voice calls.
 
@@ -109,6 +109,6 @@ Credentials-free local play, Supabase configuration, Render deployment, managed-
 - Settlement is asynchronous; failed or backlogged checkpoints can delay final ownership. The recorded hosted headless check confirms one real mint, not an uptime guarantee.
 - Google is disabled in the observed hosted configuration; personal email delivery, OAuth callbacks and cross-device login are unverified.
 - Desktop/mobile viewport checks do not establish physical-device FPS. Render cold starts and shared public RPCs affect response and confirmation time.
-- Hosted verification of this revision requires a Render redeploy. Recorded November 12 measurements distinguish the deployed game from the locally tested client.
+- Hosted assets matched the reviewed build on November 13. The recorded November 12 FPS comparison used the earlier deployment; physical-device performance remains unverified.
 
 The server supports a private QuickNode NEAR testnet fallback for reads and settlement. [Real fallback verification](docs/QUICKNODE_VERIFICATION.json) and [verification mint receipt](docs/QUICKNODE_SETTLEMENT_EVIDENCE.json) record a deliberately unavailable primary provider. Operators configure it privately through [OPERATIONS.md](docs/OPERATIONS.md#quicknode-fallback).

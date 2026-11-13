@@ -26,8 +26,6 @@ services:
         value: https://test.rpc.fastnear.com
       - key: QUICKNODE_RPC_URL
         sync: false
-      - key: QUICKNODE_API_KEY
-        sync: false
       - key: NEAR_CONTRACT_ID
         value: aftermarket-game.testnet
       - key: NEAR_SIGNER_ID

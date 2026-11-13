@@ -324,7 +324,9 @@ method and is not used. QuickNode documents direct JSON-RPC access; its separate
 SDK does not support native Windows. Read-only real fallback verification with a
 deliberately failed primary is recorded in `QUICKNODE_VERIFICATION.json`.
 
-The local `.env` is not uploaded during Git publication. Set the two secret
-QuickNode variables in the existing Render service to activate its fallback,
-then redeploy the reviewed commit. Keep signer and wallet-master credentials
-unchanged. The Blueprint has secret placeholders rather than actual credentials.
+The local `.env` is not uploaded during Git publication. Set the secret
+`QUICKNODE_RPC_URL` in the existing Render service to activate its fallback,
+then redeploy. The broader `QUICKNODE_API_KEY` is stored locally as requested
+but is not required by the authenticated endpoint's RPC calls; the Blueprint
+does not request that unused management credential. Keep signer and wallet-master
+credentials unchanged. The Blueprint contains no private endpoint value.
