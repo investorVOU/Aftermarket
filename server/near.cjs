@@ -1,7 +1,7 @@
 'use strict';
 const crypto=require('node:crypto');
 const ITEMS=['cash','timber','furniture','ore','gold','maize','cassava','milk'];
-const ACTORS=['player','ts','ow','post','crew','port','mine','farm','market'];
+const ACTORS=['player','ts','ow','post','crew','port','mine','farm','market','lender'];
 class Chain {
   constructor(env){this.env=env;this.network=env.NEAR_NETWORK||'testnet';if(this.network!=='testnet')throw new Error('The hackathon settlement service is testnet-only.');this.ready=Boolean(env.NEAR_CONTRACT_ID&&env.NEAR_SIGNER_ID&&env.NEAR_SIGNER_PRIVATE_KEY&&/^[a-f0-9]{64}$/i.test(env.NEAR_WALLET_MASTER_KEY||''));
     if([env.NEAR_CONTRACT_ID,env.NEAR_SIGNER_ID].some(v=>v&&!v.endsWith('.testnet')))throw new Error('Use named .testnet contract and controller accounts.');}
@@ -11,7 +11,7 @@ class Chain {
     const key=crypto.createPrivateKey({key:Buffer.concat([Buffer.from('302e020100300506032b657004220420','hex'),seed]),format:'der',type:'pkcs8'});
     return crypto.createPublicKey(key).export({format:'der',type:'spki'}).subarray(-32).toString('hex');
   }
-  balances(user,G){const b={};for(const actor of ACTORS){const B=G.Eco[actor],id=this.wallet(user,actor);for(const item of ITEMS)b[`${id}/${item}`]=String(item==='cash'?B.cash:B.inv[item]||0);}return b;}
+  balances(user,G){const b={};for(const actor of ACTORS){const B=G.Eco[actor],id=this.wallet(user,actor);for(const item of ITEMS)b[`${id}/${item}`]=String(item==='cash'?B?.cash||0:B?.inv[item]||0);}return b;}
   payload(user,G,prior={}){const balances=this.balances(user,G),changes=[];for(const [key,value] of Object.entries(balances)){const delta=BigInt(value)-BigInt(prior[key]||0);if(delta!==0n){const [account_id,token_id]=key.split('/');changes.push({account_id,token_id,delta:String(delta)});}}
     const licence=G.Eco.post.owner&&!prior.$licence; if(G.Eco.post.owner)balances.$licence='1';
     return {balances,payload:changes.length||licence?{world_id:user,changes,licence_owner:licence?this.wallet(user):null}:null};}

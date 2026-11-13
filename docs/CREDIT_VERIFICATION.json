@@ -1,0 +1,33 @@
+{
+  "at": "2026-11-13T08:37:39.166Z",
+  "scope": "Local development API and real Chrome, no on-chain loan transaction verified",
+  "results": [
+    {
+      "label": "desktop",
+      "width": 1280,
+      "height": 800,
+      "phoneFits": true,
+      "borrowAndPartialThenFullRepayment": true,
+      "finalCashCents": 4600,
+      "errors": []
+    },
+    {
+      "label": "mobile",
+      "width": 390,
+      "height": 844,
+      "phoneFits": true,
+      "borrowAndPartialThenFullRepayment": true,
+      "finalCashCents": 4600,
+      "errors": []
+    },
+    {
+      "label": "small-mobile",
+      "width": 320,
+      "height": 568,
+      "phoneFits": true,
+      "borrowAndPartialThenFullRepayment": true,
+      "finalCashCents": 4600,
+      "errors": []
+    }
+  ]
+}

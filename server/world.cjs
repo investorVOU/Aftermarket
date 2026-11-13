@@ -2,18 +2,19 @@
 const {createGame}=require('../shared/core.js');
 const State=require('../shared/state.js');
 const Rules=require('../shared/merchant-rules.js');
+const Credit=require('./credit.cjs');
 const manifest=require('../shared/world.json');
 function world(saved){
   const G=createGame(),S=G.Sim,w=structuredClone(manifest);
   for(const c of w.colliders)c.k==='s'?S.Col.addSeg(c.x1,c.z1,c.x2,c.z2,c.r,c.type):S.Col.add(c.x,c.z,c.hx*2,c.hz*2,c.type);
   for(const r of w.roads)S.Roads.add(r.cl,r.w,r.kind);
   S.init(w);if(saved){State.apply(G,saved,{restore:true});G.elapsedRemainder=saved.economicRemainder||0;G.ruleClock=saved.ruleClock||0;}Rules.update(G);
-  return G;
+  Credit.ensure(G);Credit.tick(G);return G;
 }
 const marketActions={buyTimber:'ts',sellTimber:'ow',buyFurn:'ow',contract:'ow',buy_maize:'farm',buy_cassava:'farm',buy_milk:'farm',sellAgri:'market'};
 function action(G,name,args={}){
   const E=G.Eco,S=G.Sim;
-  const actions={buyTimber:()=>E.buyTimber(),sellTimber:()=>E.sellTimber(),buyFurn:()=>E.buyFurn(),contract:()=>E.contractAct(),buyPost:()=>E.buyPost(),stock:()=>E.stock(),upgrade:()=>E.upgrade(),sellAgri:()=>E.sellAgri(),
+  const actions={borrow:()=>Credit.borrow(G,args.amount),repayLoan:()=>Credit.repay(G,args.amount),buyTimber:()=>E.buyTimber(),sellTimber:()=>E.sellTimber(),buyFurn:()=>E.buyFurn(),contract:()=>E.contractAct(),buyPost:()=>E.buyPost(),stock:()=>E.stock(),upgrade:()=>E.upgrade(),sellAgri:()=>E.sellAgri(),
     buy_maize:()=>E.buyFarm('maize',1),buy_cassava:()=>E.buyFarm('cassava',1),buy_milk:()=>E.buyFarm('milk',1),sellGold:()=>E.sellGold(),sellFurniture:()=>E.sellFurniture(),craft:()=>{if(!S.startCraft('furniture'))throw new Error('Visit Oak & Iron with 3 timber and $2 labour to craft furniture.');},
     setPrice:()=>{if(![-100,100].includes(args.delta))throw new Error('Invalid price adjustment');E.setPrice(args.delta);},
     moveCapital:()=>{if(![-2000,2000].includes(args.amount))throw new Error('Invalid transfer');E.move(args.amount);},

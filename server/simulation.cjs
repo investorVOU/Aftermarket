@@ -1,10 +1,11 @@
 'use strict';
 const Rules=require('../shared/merchant-rules.js');
+const Credit=require('./credit.cjs');
 const STEP=.1;
 // The same fixed economic step drives real time, offline catch-up and preview mode.
 function advance(game,seconds){
   game.elapsedRemainder=(game.elapsedRemainder||0)+seconds;
-  while(game.elapsedRemainder>=STEP-1e-8){game.Sim.update(STEP);game.elapsedRemainder-=STEP;game.ruleClock=(game.ruleClock||0)+STEP;if(game.ruleClock>=5-1e-8){game.ruleClock=0;Rules.update(game);}}
+  while(game.elapsedRemainder>=STEP-1e-8){game.Sim.update(STEP);game.elapsedRemainder-=STEP;game.ruleClock=(game.ruleClock||0)+STEP;if(game.ruleClock>=5-1e-8){game.ruleClock=0;Rules.update(game);Credit.tick(game);}}
 }
 async function catchUp(game,seconds,onProgress=()=>{}){
   if(!Number.isFinite(seconds)||seconds<0)throw new Error('Invalid offline time');

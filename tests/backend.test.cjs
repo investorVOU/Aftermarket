@@ -53,3 +53,14 @@ test('API rejects unauthenticated and invalid development identities',async()=>{
 test('duplicate concurrent API commands execute only once',async()=>{const token='dev-'+crypto.randomUUID();const start=(await request('session',{token})).data;const id=crypto.randomUUID();const results=await Promise.all([request('action',{token,id,name:'buyTimber'}),request('action',{token,id,name:'buyTimber'})]);assert.ok(results.every(r=>r.status===200));const final=results[1].data;assert.equal(final.state.economy.player.inv.timber,1);assert.equal(final.state.economy.player.cash,start.state.economy.player.cash-start.state.economy.ts.price);});
 test('concurrent distinct purchases serialize without lost updates',async()=>{const token='dev-'+crypto.randomUUID();await request('session',{token});const results=await Promise.all([1,2].map(()=>request('action',{token,id:crypto.randomUUID(),name:'buyTimber'})));assert.ok(results.every(r=>r.status===200));const final=(await request('session',{token})).data;assert.equal(final.state.economy.player.inv.timber,2);const purchases=final.state.economy.transactions.filter(t=>t.buyer==='You');assert.equal(purchases.length,2);assert.equal(final.state.economy.player.cash,5000-purchases.reduce((sum,t)=>sum+t.total,0));});
 test('development mode is explicitly labelled and never reports on-chain ownership',async()=>{const result=await request('config');assert.equal(result.data.mode,'development');assert.equal(result.data.chain.network,'development');assert.equal(result.data.chain.settlement,false);});
+
+test('duplicate and competing loan requests cannot create multiple advances',async()=>{
+ const token='dev-'+crypto.randomUUID();await request('session',{token});const id=crypto.randomUUID();
+ const duplicate=await Promise.all([1,2].map(()=>request('action',{token,id,name:'borrow',args:{amount:2000}})));
+ assert.ok(duplicate.every(r=>r.status===200));let state=(await request('session',{token})).data.state;
+ assert.equal(state.economy.player.cash,7000);assert.equal(state.economy.credit.sequence,1);
+ await request('action',{token,id:crypto.randomUUID(),name:'repayLoan',args:{amount:'full'}});
+ const competing=await Promise.all([1,2].map(()=>request('action',{token,id:crypto.randomUUID(),name:'borrow',args:{amount:2000}})));
+ assert.deepEqual(competing.map(r=>r.status).sort(),[200,400]);state=(await request('session',{token})).data.state;
+ assert.equal(state.economy.credit.sequence,2);assert.equal(state.economy.player.cash,6600);
+});
