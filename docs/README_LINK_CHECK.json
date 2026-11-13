@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-13T18:34:44.086Z",
+  "checkedAt": "2026-11-13T19:01:03.988Z",
   "relative": [
     {
       "target": "docs/images/island-exchange-live.png",
@@ -58,7 +58,7 @@
       "exists": true
     },
     {
-      "target": "docs/EMAIL_DELIVERY.md",
+      "target": "docs/EMAIL_VERIFICATION.json",
       "exists": true
     },
     {
@@ -120,6 +120,11 @@
   ],
   "external": [
     {
+      "url": "https://testnet.nearblocks.io/address/aftermarket-game.testnet",
+      "status": 403,
+      "finalUrl": "https://testnet.nearblocks.io/address/aftermarket-game.testnet"
+    },
+    {
       "url": "https://testnet.nearblocks.io/txns/ANjnywCznt4y1ZnsPuShySypLXyvSNL2GPvfw7Reb17e",
       "status": 403,
       "finalUrl": "https://testnet.nearblocks.io/txns/ANjnywCznt4y1ZnsPuShySypLXyvSNL2GPvfw7Reb17e"
@@ -130,19 +135,14 @@
       "finalUrl": "https://aftmarket.xyz/"
     },
     {
-      "url": "https://testnet.nearblocks.io/address/aftermarket-game.testnet",
+      "url": "https://testnet.nearblocks.io/txns/26b9YefLP7En7gHJZa7i58hye9V7521URwK7KXVMeBoZ",
       "status": 403,
-      "finalUrl": "https://testnet.nearblocks.io/address/aftermarket-game.testnet"
+      "finalUrl": "https://testnet.nearblocks.io/txns/26b9YefLP7En7gHJZa7i58hye9V7521URwK7KXVMeBoZ"
     },
     {
       "url": "https://testnet.nearblocks.io/txns/J2NJm9TAymoEym8PYgryd5vxxxbym13bvY8UsMqpszSd",
       "status": 403,
       "finalUrl": "https://testnet.nearblocks.io/txns/J2NJm9TAymoEym8PYgryd5vxxxbym13bvY8UsMqpszSd"
-    },
-    {
-      "url": "https://testnet.nearblocks.io/txns/26b9YefLP7En7gHJZa7i58hye9V7521URwK7KXVMeBoZ",
-      "status": 403,
-      "finalUrl": "https://testnet.nearblocks.io/txns/26b9YefLP7En7gHJZa7i58hye9V7521URwK7KXVMeBoZ"
     },
     {
       "url": "https://github.com/nearai/near-hackathon-prompt-examples/blob/main/tracks/09-games.md",

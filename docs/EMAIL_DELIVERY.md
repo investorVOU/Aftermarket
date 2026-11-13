@@ -5,9 +5,14 @@ the link and issues the session; the server maps that verified user to a managed
 in-game wallet. Resend is the SMTP delivery provider, not a second authentication
 system. No Resend SDK or API key belongs in the browser or Render runtime.
 
-**Status:** setup tooling is implemented; production SMTP, inbox delivery and the
-return-to-game callback remain unverified. Guest entry does not send email and
-does not depend on SMTP. Google remains optional and disabled unless configured.
+**Status — November 13:** `aftmarket.xyz` was verified for sending through the
+Resend API before SMTP was applied to Supabase project `ytfioiujcitikvgbfxwg`.
+The hosted email form sent one authorized test; Resend reported `delivered`.
+Opening that actual email's Supabase verification link returned to the game,
+created/loaded the managed identity and retained it after reload. A fresh guest
+still entered successfully. [Redacted verification](EMAIL_VERIFICATION.json).
+Physical inbox placement and a second physical device remain unverified. Google
+was disabled before and after setup; no OAuth provider settings were changed.
 
 ## Set up the sending domain
 
@@ -36,16 +41,34 @@ derived from the existing `SUPABASE_URL`.
 
 ```sh
 npm run email:configure
-npm run email:configure -- --apply
+npm run email:configure:apply
 ```
 
-The first command previews without writes. Applying requires a verified sender
+The first command checks the project and verified domain without writes. Applying requires a verified sender
 domain, configures Resend SMTP, enables email links, keeps email confirmation on,
 sets `https://aftmarket.xyz` as Site URL and adds its exact root callbacks while
 preserving existing redirect entries. Unrelated OAuth providers, templates and
 rate limits are preserved. Settings are read back; this is not proof of delivery.
 The script prints neither keys nor full provider responses. Remove the management
 token from the environment after setup if it is no longer needed.
+
+### Windows PowerShell argument forwarding
+
+The installed PowerShell `npm.ps1` wrapper was observed dropping `--apply` from
+`npm run email:configure -- --apply`, leaving Node in its safe preview default.
+`npm.cmd` forwarded the same argument correctly. The dedicated apply command
+puts `--apply` inside `package.json`, so it does not depend on forwarding flags.
+If PowerShell blocks `npm.ps1` under its execution policy, use:
+
+```powershell
+npm.cmd run email:configure
+npm.cmd run email:configure:apply
+```
+
+Direct equivalents are `node scripts/configure-email.cjs` and
+`node scripts/configure-email.cjs --apply`. The local `.env` is resolved from the
+script directory, not the caller's working directory. Existing shell variables
+take precedence, and the script refuses a project other than Aftermarket's.
 
 ## Dashboard alternative
 
@@ -77,9 +100,10 @@ Review Auth rate limits for expected judging traffic rather than disabling limit
 4. If rejected, inspect Supabase Auth/Resend delivery logs privately: DNS/domain,
    SMTP credentials, recipient suppression and rate limits are separate causes.
 
-The owner authorized one test to a private inbox; its address is intentionally
-excluded from public documentation. No test message has been sent by this setup.
-Existing guest islands are not automatically merged into a new email account.
+One authorized test email was sent and its single-use verification link consumed
+by the browser check. The recipient, link and session tokens are excluded from
+public evidence. Request a fresh link for another personal sign-in. Existing
+guest islands are not automatically merged into a new email account.
 
 Email alone satisfies the Track 9 example's **social or email** option. Finish
 inbox/callback verification before adding Google. X sign-in adds another OAuth

@@ -30,7 +30,7 @@ use the unmodified hosted release `ccf254e7f71f`, not a locally substituted clie
 | Operator sponsorship | Controller code and real testnet receipts | Operator gas/storage balance required |
 | Server authority and persistent economy | Atomic save/outbox, RLS/concurrency/PGlite checks plus recorded live Supabase and hosted saves | Single supported backend instance; embedded checks are not live DB tests |
 | Predicted movement | Client prediction, stale-response/queue/reconciliation checks and published profiling | Not a promise of 60 FPS on all hardware; see `PERFORMANCE.md` |
-| Resend email delivery | Operator setup script and four mocked configuration checks | No private Resend/management credentials supplied; SMTP not applied, test inbox/callback not verified |
+| Resend email delivery | Verified sender domain API, Supabase SMTP/redirect read-back, actual hosted form send, Resend `delivered`, actual emailed link opened island, reload retained managed identity; `EMAIL_VERIFICATION.json` | Test link consumed once; no physical inbox-placement or second-device claim. Seven mocked configuration checks are separate from live proof |
 | Email satisfies the prompt; Google optional | Official Track 9 example says social or email | Implemented email button alone is not evidence of working delivery/login |
 | Baseline and diff | Public November 9 import `957283d`, published checkpoint `ccf254e`, existing Git ancestry | Import already includes backend/contract code; not an untouched pre-window snapshot |
 | AI, libraries and MIT | Owner history, manifests, `LICENSE` | Third-party licences remain separate |

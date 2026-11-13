@@ -26,7 +26,7 @@ server-managed), not a separately funded native NEAR account.
 | Week in about a minute | Implemented + hosted | Same fixed-step engine at 49×; [API evidence](docs/DEMO_CHECK_EVIDENCE.json), fresh hosted UI screenshot run |
 | NEP-245 single contract | Deployed + verified | `aftermarket-game.testnet`, exact WASM hash, six compiled-WASM checks and actual receipts; [evidence](docs/TESTNET_EVIDENCE.json) |
 | Managed guest entry | Implemented + hosted | Real isolated Supabase session and managed identity; no email/CAPTCHA/key/gas prompts; fresh hosted Chrome entry verified |
-| Personal email login | Partial | Client uses Supabase links; Resend SMTP setup script/tests ready. Private credentials, verified sender domain, inbox and callback test pending; [setup](docs/EMAIL_DELIVERY.md) |
+| Personal email login | Configured + hosted flow verified | Verified Resend sender domain, SMTP read-back, hosted email send, provider `delivered` event, actual Supabase link return and same identity after reload; [evidence](docs/EMAIL_VERIFICATION.json). Physical inbox and second-device test remain open |
 | Google login | Disabled / unverified | Optional; no callback claim |
 | Optional Groq proposals/dialogue | Implemented; owner-reported live | Owner's working `openai/gpt-oss-20b` unchanged. Mocked automated provider checks are not independent live proof |
 | Browser-free screener | Implemented + hosted | `BASE_URL=https://aftmarket.xyz npm run demo:check`; guest, gather, craft, week, real final item/mint verification; fails non-zero |
@@ -42,11 +42,10 @@ server-managed), not a separately funded native NEAR account.
 
 ## Remaining release work
 
-1. Verify `aftmarket.xyz` for sending in Resend, configure Supabase SMTP and test
-   one actual email-link return to the saved island. The selected sender is
-   `play@aftmarket.xyz`; credentials and test recipient stay private.
-2. Verify a personal session across devices and test on a physical phone.
-3. Record the demo, publish the human's X demo post and approve the exact final
+1. Check the test message's inbox/spam placement, verify a personal session across
+   devices and test on a physical phone. Sending domain, SMTP and the actual
+   email-link return to a persistent managed identity are now verified.
+2. Record the demo, publish the human's X demo post and approve the exact final
    submission before November 14 at 23:59 UTC. Keep the hosted demo available
    through judging, at least November 18. Free Render spin-down is not an uptime
    guarantee; an always-on tier is an owner decision.

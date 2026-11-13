@@ -1,5 +1,31 @@
 # Release verification — November 10, 2026
 
+## November 13 live email integration follow-up
+
+The Windows PowerShell npm wrapper dropped forwarded `--apply`; the dedicated
+`email:configure:apply` script puts the flag inside the package command. The script
+now pins the correct project, checks the sending domain during preview as well as
+apply, verifies redirect preservation and unchanged OAuth enablement, and returns
+sanitized permission/network/response failures. Local `.env` stays private.
+
+The initial diagnostic via `npm.cmd` applied settings after the built-in domain
+check, before the separately requested preview. That ordering mistake was
+reported. After the fix, a read-only preview verified the project/domain, followed
+by the dedicated apply command and successful settings read-back.
+
+Real hosted email form → Supabase HTTP 200 → Resend `delivered` → actual emailed
+confirmation link → hosted island → reload with the same managed identity passed.
+A separate new guest still entered, with no browser exceptions in the check.
+`EMAIL_VERIFICATION.json` excludes the recipient, verification URL and tokens.
+Google remained disabled; no accounts, guest implementation, wallet derivation or
+settlement rules were replaced. Physical inbox placement/second device not checked.
+
+Build and lint passed; all 87 backend/API/DB/client/configuration checks and 322
+original game checks passed (409 total). Exact configured credential scanning
+included the browser bundle and public sources/docs and found no matches. The
+private `.env` remains ignored and untracked. No key or email-link token is in
+the public verification record.
+
 ## November 13 README, hosted screenshots and email delivery setup
 
 - `npm run build`: passed.

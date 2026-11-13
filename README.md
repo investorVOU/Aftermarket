@@ -61,7 +61,7 @@ The checker creates an isolated guest through the API, gathers three timber, cra
 | Bankruptcy and investment recovery | Merchant cash, bills, arrears and closure rules | Engine/browser verified; not a new hosted recovery receipt |
 | Player-owned market | Trading Post stock, pricing, capital and upgrades; [licence evidence](docs/LIVE_GAME_EVIDENCE.json) | Real testnet bound licence; separate island per player |
 | NEP-245 items in one contract | [Rust contract](contracts/economy/src/lib.rs), deployed hash and receipts above | Deployed and verified on testnet |
-| Social **or email** sign-in, invisible chain | Supabase email links and managed in-game wallets; [Resend setup](docs/EMAIL_DELIVERY.md) | Guest verified; personal email delivery/callback still unverified; Google disabled |
+| Social **or email** sign-in, invisible chain | Supabase email links through Resend and managed in-game wallets; [live email proof](docs/EMAIL_VERIFICATION.json) | Hosted email send, provider delivery, actual link return, reload and guest verified; Google disabled |
 | One week in about a minute; offline evolution | [Elapsed-time scheduler](server/simulation.cjs), same fixed-step rules at 49× | Hosted preview verified; idle islands catch up when loaded |
 
 The [track prompt](https://github.com/nearai/near-hackathon-prompt-examples/blob/main/tracks/09-games.md) and [live organizer rules](https://nearhackathon.com/HACKATHON.md) are the source of this mapping. Testnet is eligible. The full [requirements checklist](HACKATHON_REQUIREMENTS.md) distinguishes implementation from verification.
@@ -113,7 +113,7 @@ npm run test:contract
 
 ### Known limitations
 
-- Email links exist in the client, but personal inbox delivery and return-to-game login are not yet verified. Guest entry is a demo convenience, not proof of email/social ownership. Google is disabled; adding OAuth is optional.
+- Hosted email delivery was confirmed by Resend and the actual verification link returned to a persistent island. Physical inbox placement and a second physical device remain unverified. Guest entry is a separate demo convenience. Google is disabled; adding OAuth is optional.
 - Each player has a separate persistent island. There is no shared multiplayer/P2P market; one backend instance is supported.
 - Custodial managed keys and a privileged settlement controller; no MPC, user key export or external-transfer indexer. Pending settlement can delay final ownership.
 - Short accelerated Chrome samples do not establish physical-phone FPS or universal smoothness. Render cold starts and upstream service latency affect entry and confirmations. [Measured performance](docs/PERFORMANCE.md).
