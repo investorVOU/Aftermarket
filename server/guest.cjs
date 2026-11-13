@@ -9,7 +9,11 @@ class GuestAuth {
     this.ready=env.DEMO_GUEST_ENABLED==='true'&&env.NEAR_NETWORK==='testnet'&&env.NEAR_SETTLEMENT_ENABLED==='true'&&Boolean(env.SUPABASE_SECRET_KEY&&env.SUPABASE_URL&&env.SUPABASE_PUBLISHABLE_KEY);
     if(this.ready)this.admin=clientFactory(env.SUPABASE_URL,env.SUPABASE_SECRET_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
   }
-  create(){const request=this.busy.then(()=>this.issue());this.busy=request.catch(()=>{});return request;}
+  // One unused session may be prepared while the welcome page is open. Taking
+  // the slot synchronously guarantees that two visitors never share an identity.
+  prepare(){if(!this.ready||this.env.DEMO_GUEST_PREWARM==='false'||this.prepared)return;const slot=this.createNew().then(session=>({session,until:Date.now()+session.expires_in*1000}));this.prepared=slot;slot.catch(()=>{if(this.prepared===slot)this.prepared=null;});}
+  async create(){const slot=this.prepared;this.prepared=null;if(slot){const ready=await slot;if(ready.until>Date.now()+60000)return ready.session;}return this.createNew();}
+  createNew(){const request=this.busy.then(()=>this.issue());this.busy=request.catch(()=>{});return request;}
   prime(){if(!this.ready)return Promise.resolve();if(Date.now()-this.checkedAt<30000)return Promise.resolve();if(this.checking)return this.checking;
     this.checking=this.availability().finally(()=>{this.checking=null;});return this.checking;
   }

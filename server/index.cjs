@@ -16,7 +16,7 @@ const {DevelopmentStore,DevelopmentChain,OffchainChain}=require('./development.c
 const store=development?new DevelopmentStore():new Store(env),chain=development?new DevelopmentChain():env.NEAR_SETTLEMENT_ENABLED==='true'?new Chain(env):new OffchainChain();
 const guest=development?null:new (require('./guest.cjs').GuestAuth)(env,store.sql);
 guest?.prime().catch(()=>{});
-const worlds=new Map(),tokens=new Map(),limits=new Map();
+const worlds=new Map(),tokens=new Map(),limits=new Map(),guestEntries=new (require('./guest-entry.cjs').GuestEntries)();
 const {MerchantAgent,MERCHANTS}=require('./merchant-agent.cjs'),merchantAgent=new MerchantAgent(env);
 async function runMerchant(user,w,id,question){
   if(w.agentBusy||w.demoUntil>Date.now())throw fail('Merchant is busy. Try after the economy preview.',429);
@@ -74,14 +74,14 @@ const server=http.createServer(async(req,res)=>{
         if(req.headers['content-type']?.split(';')[0]!=='application/json')throw fail('JSON required',415);
         const origin=req.headers.origin;if(origin&&origin!==(env.APP_ORIGIN||env.RENDER_EXTERNAL_URL||`http://localhost:${env.PORT||8080}`))throw fail('Origin not allowed',403);
       }
-      if(route==='/api/config'&&req.method==='GET')return json(res,200,{mode:development?'development':'connected',supabaseUrl:env.SUPABASE_URL||null,supabaseKey:env.SUPABASE_PUBLISHABLE_KEY||null,configured:store.ready&&chain.ready,googleEnabled:env.SUPABASE_GOOGLE_ENABLED==='true',guestEnabled:Boolean(guest?.ready&&store.ready&&chain.ready),merchantAI:{enabled:merchantAgent.ready},guestBootstrap:true,jobsEnabled:true,release:env.RENDER_GIT_COMMIT?.slice(0,12)||'local',chain:chain.publicConfig()});
+      if(route==='/api/config'&&req.method==='GET'){if(store.ready&&chain.ready)guest?.prepare?.();return json(res,200,{mode:development?'development':'connected',supabaseUrl:env.SUPABASE_URL||null,supabaseKey:env.SUPABASE_PUBLISHABLE_KEY||null,configured:store.ready&&chain.ready,googleEnabled:env.SUPABASE_GOOGLE_ENABLED==='true',guestEnabled:Boolean(guest?.ready&&store.ready&&chain.ready),merchantAI:{enabled:merchantAgent.ready},guestBootstrap:true,guestRecovery:true,guestPrewarm:env.DEMO_GUEST_PREWARM!=='false',jobsEnabled:true,release:env.RENDER_GIT_COMMIT?.slice(0,12)||'local',chain:chain.publicConfig()});}
       if(route==='/api/health'&&req.method==='GET')return json(res,200,{ok:true,configured:store.ready&&chain.ready,network:chain.publicConfig().network});
       if(route==='/api/guest'&&req.method==='POST'){
         if(!guest?.ready||!store.ready||!chain.ready)throw fail('Guest entry is not enabled for this island.',403);
-        await body(req);const {user,...session}=await guest.create(),w=await getWorld(user,{fresh:true});
+        const request=await body(req);const entry=await guestEntries.run(request.requestId,async()=>{const {user,...session}=await guest.create(),w=await getWorld(user,{fresh:true});
         await serial(w,async()=>{if(!w.revision)await save(user,w);});
         tokens.set(crypto.createHash('sha256').update(session.access_token).digest('hex'),{user,until:Date.now()+30000});
-        return json(res,200,{...session,wallet:chain.wallet(user.id),chain:chain.publicConfig(),initial:snapshot(user,w)});
+        return {...session,wallet:chain.wallet(user.id),chain:chain.publicConfig(),initial:snapshot(user,w)};});return json(res,200,entry);
       }
       const user=await authenticated(req),w=await getWorld(user);
       if(w.catchingUp)return json(res,200,{catchingUp:true,progress:w.progress});

@@ -13,5 +13,12 @@
    return data;
   }catch(error){if(error?.name==='AbortError'||error?.name==='TimeoutError'||error instanceof TypeError)throw Object.assign(new Error(friendlyError(error)),{status:503});throw error;}
  }
- return {requestJSON,friendlyError};
+ async function retryRead(url,{attempts=6,timeout=10000,onRetry=()=>{},fetcher=globalThis.fetch,delay=ms=>new Promise(r=>setTimeout(r,ms))}={}){
+  for(let i=0;i<attempts;i++){try{return await requestJSON(url,{},timeout,fetcher);}catch(error){if(error.status<500||i===attempts-1)throw error;onRetry(i+1);await delay(Math.min(3000,250*2**i));}}
+ }
+ async function guestEntry(ticket,fetcher=globalThis.fetch,delay=ms=>new Promise(r=>setTimeout(r,ms))){
+  const options={method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({requestId:ticket})};
+  try{return await requestJSON('/api/guest',options,15000,fetcher);}catch(error){if(error.status<500)throw error;await delay(500);return requestJSON('/api/guest',options,45000,fetcher);}
+ }
+ return {requestJSON,friendlyError,retryRead,guestEntry};
 });

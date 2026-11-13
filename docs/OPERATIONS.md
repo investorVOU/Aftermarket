@@ -1,9 +1,9 @@
 # AFTERMARKET operations
 
-## November 13 local candidate
+## November 13 publication and guest recovery
 
-No publication or default-branch change is authorized for this update yet. The
-phone credit system needs no new migration or credential: debt and lender cash
+The owner authorized publication to main and the review branch. No force push or
+default-branch change was needed. The phone credit system needs no new migration or credential: debt and lender cash
 use the existing atomic snapshot/outbox save. Its live chain settlement still
 needs verification after deployment. Keep the existing wallet master key.
 
@@ -20,10 +20,24 @@ unless `GROQ_AGENTS_ENABLED=false` is explicitly set. Use that flag to disable i
 The faster guest route now prefetches availability (without creating accounts),
 reuses the identity verified by password sign-in, skips an impossible prior save
 for a new guest and sends its atomically saved island in the guest response.
-The client can enter immediately, while the Supabase SDK persists the session;
+The client can enter when that saved response arrives, while the Supabase SDK persists the session;
 it no longer needs an extra world request or a warm-up read after fresh config.
 No anonymous-auth setting change is required. Cold starts and upstream latency
 remain outside this code's control; performance claims need live measurements.
+
+Guest preparation keeps at most one unused private session ready while the
+welcome page opens. Claimed identities are never shared. Preparation counts
+toward the daily demo account cap and can be disabled with
+`DEMO_GUEST_PREWARM=false`. It creates no on-chain assets until a player claims
+and saves the island. The prewarm slot is in memory, not a shared demo login.
+
+The browser retries transient configuration reads automatically. Guest POSTs
+carry a private random request ticket; one retry recovers the same response
+instead of creating another identity. The server caches tickets for five minutes,
+within one process. A restart discards this cache. Never log ticket/session values.
+Validation and capacity errors are not automatically retried. For judging traffic,
+review `DEMO_GUEST_DAILY_LIMIT` (maximum 200); the existing Blueprint starts at 30.
+An always-on Render instance is still required to avoid free-tier spin-down waits.
 
 [Merchant delivery jobs](JOBS.md) use the existing JSON snapshot and transactional
 outbox. No migration is needed. Preserve the wallet master key when deploying:
@@ -164,8 +178,8 @@ The relayer pays testnet gas/storage and serializes settlement. Supabase commits
 the authoritative intent and outbox first; pending inventory is not a confirmed
 on-chain balance. Replay protection makes retrying a checkpoint safe. The controller
 can mint/burn resources and non-redeemable game credits; disclose that trust boundary.
-Merchant identities are separate balances in the contract, not funded native
-subaccounts. Native account activation and user-controlled export are not offered.
+Each merchant has its own wallet identity and on-chain inventory (contract-held, server-managed), not a separately funded native NEAR account.
+User-controlled key export is not offered.
 
 Read items without a signer:
 

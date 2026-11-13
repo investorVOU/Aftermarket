@@ -8,3 +8,11 @@ test('a mismatched sign-in identity never bootstraps another player world',async
  const factory=(_url,key)=>key==='mock-secret'?{auth:{admin:{listUsers:async()=>({data:{users:[]}}),createUser:async()=>({data:{user:{id:'fresh-user'}}})}}}:{auth:{signInWithPassword:async()=>({data:{user:{id:'other-user'},session:{access_token:'mock-token'}}})}};
  await assert.rejects(new GuestAuth(env,null,factory).create(),e=>e.status===503);
 });
+
+test('one prepared identity is claimed once and simultaneous visitors receive distinct sessions',async()=>{
+ let creates=0;const ids=new Map(),factory=(_url,key)=>key==='mock-secret'?{auth:{admin:{listUsers:async()=>({data:{users:[]}}),createUser:async({email})=>{const user={id:'prepared-'+(++creates)};ids.set(email,user);return{data:{user}};}}}}:{auth:{signInWithPassword:async({email})=>({data:{user:ids.get(email),session:{access_token:'mock-'+ids.get(email).id,expires_in:3600}}})}};
+ const g=new GuestAuth({...env,DEMO_GUEST_DAILY_LIMIT:'5'},null,factory);g.prepare();g.prepare();await g.prepared;assert.equal(creates,1);
+ const [a,b]=await Promise.all([g.create(),g.create()]);assert.equal(creates,2);assert.notEqual(a.user.id,b.user.id);assert.notEqual(a.access_token,b.access_token);
+ g.prepared=Promise.resolve({session:{access_token:'expired'},until:Date.now()-1});assert.notEqual((await g.create()).access_token,'expired');assert.equal(creates,3);
+});
+test('preparation can be disabled without changing ordinary guest creation',()=>{const g=new GuestAuth({...env,DEMO_GUEST_PREWARM:'false'},null,()=>({auth:{}}));g.prepare();assert.equal(g.prepared,undefined);});
