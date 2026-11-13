@@ -16,6 +16,21 @@ const {DevelopmentStore,DevelopmentChain,OffchainChain}=require('./development.c
 const store=development?new DevelopmentStore():new Store(env),chain=development?new DevelopmentChain():env.NEAR_SETTLEMENT_ENABLED==='true'?new Chain(env):new OffchainChain();
 const guest=development?null:new (require('./guest.cjs').GuestAuth)(env,store.sql);
 const worlds=new Map(),tokens=new Map(),limits=new Map();
+const {MerchantAgent,MERCHANTS}=require('./merchant-agent.cjs'),merchantAgent=new MerchantAgent(env);
+async function runMerchant(user,w,id,question){
+  if(w.agentBusy||w.demoUntil>Date.now())throw fail('Merchant is busy. Try after the economy preview.',429);
+  w.agentBusy=true;
+  try{
+    const context=merchantAgent.context(w.game,id);context.wallet=chain.wallet(user.id,context.business);
+    const decision=await merchantAgent.decide(context,question);
+    await serial(w,async()=>{
+      if(await worlds.get(user.id)!==w||w.demoUntil>Date.now())throw fail('The island changed. Please retry the conversation.',409);
+      if(question)w.game.Sim.Msg.append(id,[{me:1,text:question,t:w.game.Sim.clock.h}]);
+      merchantAgent.apply(w.game,id,decision);
+      try{await save(user,w);}catch{worlds.delete(user.id);throw fail('Conversation could not be saved. Reconnect to reload your island.',503);}
+    });
+  }finally{w.agentBusy=false;}
+}
 // Covers observed hosted RTTs while bounding movement after a lost connection.
 const MOVEMENT_TTL_MS=1000;
 const json=(res,status,data)=>{const started=performance.now(),encoded=JSON.stringify(data);res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store','Server-Timing':`app;dur=${(performance.now()-(res.requestStarted||started)).toFixed(2)}, serialize;dur=${(performance.now()-started).toFixed(2)}`});res.end(encoded);};
@@ -58,7 +73,7 @@ const server=http.createServer(async(req,res)=>{
         if(req.headers['content-type']?.split(';')[0]!=='application/json')throw fail('JSON required',415);
         const origin=req.headers.origin;if(origin&&origin!==(env.APP_ORIGIN||env.RENDER_EXTERNAL_URL||`http://localhost:${env.PORT||8080}`))throw fail('Origin not allowed',403);
       }
-      if(route==='/api/config'&&req.method==='GET')return json(res,200,{mode:development?'development':'connected',supabaseUrl:env.SUPABASE_URL||null,supabaseKey:env.SUPABASE_PUBLISHABLE_KEY||null,configured:store.ready&&chain.ready,googleEnabled:env.SUPABASE_GOOGLE_ENABLED==='true',guestEnabled:Boolean(guest?.ready&&store.ready&&chain.ready),chain:chain.publicConfig()});
+      if(route==='/api/config'&&req.method==='GET')return json(res,200,{mode:development?'development':'connected',supabaseUrl:env.SUPABASE_URL||null,supabaseKey:env.SUPABASE_PUBLISHABLE_KEY||null,configured:store.ready&&chain.ready,googleEnabled:env.SUPABASE_GOOGLE_ENABLED==='true',guestEnabled:Boolean(guest?.ready&&store.ready&&chain.ready),merchantAI:{enabled:merchantAgent.ready},chain:chain.publicConfig()});
       if(route==='/api/health'&&req.method==='GET')return json(res,200,{ok:true,configured:store.ready&&chain.ready,network:chain.publicConfig().network});
       if(route==='/api/guest'&&req.method==='POST'){
         if(!guest?.ready||!store.ready||!chain.ready)throw fail('Guest entry is not enabled for this island.',403);
@@ -68,6 +83,11 @@ const server=http.createServer(async(req,res)=>{
       }
       const user=await authenticated(req),w=await getWorld(user);
       if(w.catchingUp)return json(res,200,{catchingUp:true,progress:w.progress});
+      if(route==='/api/merchant-chat'&&req.method==='POST'){
+        const data=await body(req);if(!Object.hasOwn(MERCHANTS,data.id)||typeof data.id!=='number'||typeof data.question!=='string'||!data.question.trim()||data.question.length>240)throw fail('Choose a merchant and a message up to 240 characters.');
+        if(Date.now()-(w.agentChatAt||0)<15000)throw fail('Give the merchant a moment before sending another message.',429);
+        w.agentChatAt=Date.now();await runMerchant(user,w,data.id,data.question.trim());return json(res,200,{saved:true,source:'groq'});
+      }
       if(route==='/api/session'&&req.method==='POST'){await serial(w,async()=>{if(!w.revision)await save(user,w);});return json(res,200,snapshot(user,w));}
       if(route==='/api/sync'&&req.method==='POST'){
         const data=await body(req);const x=data.x,z=data.z;
@@ -123,8 +143,18 @@ const worker=setInterval(async()=>{
   if(!store.ready||!chain.ready||!chain.publicConfig().settlement||settling||Date.now()<settlementRetryAt)return;
   settling=true;try{await require('./settlement.cjs').drain({store,chain});}catch(e){console.error('Settlement needs attention:',e.message);settlementRetryAt=Date.now()+30000;}finally{settling=false;}
 },4000);
+// Optional slow agent decisions never run under the simulation/movement lock.
+// Deterministic NPCs continue at full speed when Groq is disabled or unavailable.
+const agentWorker=setInterval(()=>{
+  if(!merchantAgent.ready||merchantAgent.active||!store.ready||!chain.ready)return;
+  for(const [id,promise]of worlds){promise.then(w=>{
+    if(w.busy||w.agentBusy||w.catchingUp||w.demoUntil>Date.now()||Date.now()-w.lastSeen>60000||Date.now()-(w.agentAt||0)<60000)return;
+    w.agentAt=Date.now();const merchant=[10,11,24][(w.agentTurn||0)%3];w.agentTurn=(w.agentTurn||0)+1;
+    runMerchant({id},w,merchant).catch(()=>{});
+  }).catch(()=>{});}
+},10000);
 const cleanup=setInterval(()=>{const now=Date.now();for(const [key,value]of tokens)if(value.until<now)tokens.delete(key);for(const [key,value]of limits)if(now-value.start>60000)limits.delete(key);for(const [key,p]of worlds)p.then(w=>{if(!w.busy&&now-w.lastSeen>120000)worlds.delete(key);});},60000);
 if(require.main===module)server.listen(runtime.port,runtime.host,()=>console.log(`AFTERMARKET http://${runtime.host}:${runtime.port} | ${runtime.mode} | ${chain.publicConfig().network} | ${store.ready&&chain.ready?'configured':'waiting for server environment configuration'}`));
-async function shutdown(){clearInterval(ticker);clearInterval(worker);clearInterval(cleanup);await Promise.all([...worlds.entries()].map(async([id,p])=>{const w=await p;await serial(w,()=>save({id},w)).catch(e=>console.error('Final save:',e.message));}));server.close();}
+async function shutdown(){clearInterval(ticker);clearInterval(worker);clearInterval(agentWorker);clearInterval(cleanup);await Promise.all([...worlds.entries()].map(async([id,p])=>{const w=await p;await serial(w,()=>save({id},w)).catch(e=>console.error('Final save:',e.message));}));server.close();}
 process.once('SIGINT',()=>shutdown().then(()=>process.exit()));process.once('SIGTERM',()=>shutdown().then(()=>process.exit()));
 module.exports={server,shutdown};

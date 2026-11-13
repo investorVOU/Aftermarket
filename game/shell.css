@@ -83,3 +83,4 @@ body.market-open .am-camera,body.market-open #pbtn,body.market-open .abtn,body.m
 .am-brand .am-mark{display:block;flex:none;box-sizing:border-box;object-fit:contain;padding:4px;background:#fff;border:0;border-radius:8px}.am-welcome-logo{display:block;width:90px;height:52px;object-fit:contain;background:#fff;padding:7px;border-radius:10px;box-sizing:border-box;margin-bottom:22px}
 @media(max-width:760px){.am-brand .am-mark{width:28px;height:28px;padding:3px;border-radius:6px}.am-welcome-logo{width:66px;height:40px;padding:5px;margin-bottom:12px}}
 @media(max-height:700px){.am-welcome-logo{display:none}}
+#ph-merchant-question{box-sizing:border-box;width:100%;min-height:40px;padding:8px;margin:6px 0 10px;border:1px solid #7d8a7e;border-radius:8px;background:#fff;color:#17251d;font:inherit}

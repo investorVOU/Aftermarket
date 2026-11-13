@@ -47,7 +47,7 @@ const stateTransport=new GameSync.StateTransport(api);
 N.stop=()=>{disposed=true;clearTimeout(syncTimer);N.movement={x:0,z:0};N.online=false;return stateTransport.tail;};
 window.addEventListener('pagehide',N.stop);
 window.addEventListener('pageshow',event=>{if(event.persisted)location.reload();});
-function normalPhoneRender(){if(!Phone.open||Phone.touching||Phone.app==='settings')return;const signature=JSON.stringify([Phone.app,S.Msg.rev,S.Talk.rev,E.player.cash,E.player.inv,E.ts.inv,E.ow.inv,E.farm.inv,E.credit,E.lender?.cash,Phone.app==='biz'?Math.floor(S.time):Math.floor(S.time/2)]);if(signature!==phoneSignature){phoneSignature=signature;Phone.render();}}
+function normalPhoneRender(){if(!Phone.open||Phone.touching||Phone.app==='settings'||document.activeElement?.id==='ph-merchant-question')return;const signature=JSON.stringify([Phone.app,S.Msg.rev,S.Talk.rev,E.player.cash,E.player.inv,E.ts.inv,E.ow.inv,E.farm.inv,E.credit,E.lender?.cash,Phone.app==='biz'?Math.floor(S.time):Math.floor(S.time/2)]);if(signature!==phoneSignature){phoneSignature=signature;Phone.render();}}
 function apply(data,immediate=false){
   if(disposed)return;
   // An older polling response must never overwrite a newer action response.
@@ -74,6 +74,10 @@ S.startHarvest=id=>N.command('harvest',{id});S.Talk.open=id=>N.command('talk',{i
 S.startCraft=()=>N.command('craft');
 S.Msg.ask=(id,topic)=>N.command('message',{id,topic});
 S.Msg.call=id=>N.command('call',{id});
+N.askMerchant=async(id,question)=>{
+ if(Phone.aiBusy)return;Phone.aiBusy=true;Phone.render('msg');
+ try{await api('merchant-chat',{id,question});apply(await stateTransport.request('session',{}),true);}catch(error){toast(GameHTTP.friendlyError(error));}finally{Phone.aiBusy=false;Phone.render('msg');}
+};
 
 let connecting;
 function connect(){if(connecting)return connecting;connecting=connectOnce().finally(()=>{connecting=null;});return connecting;}
@@ -154,7 +158,7 @@ $('am-guest').addEventListener('click',async()=>{
  }catch(error){text('am-login-status',GameHTTP.friendlyError(error));retryConnection.hidden=false;}finally{clearTimeout(slow);button.disabled=false;}
 });
 async function start(){
-  try{const config=await GameHTTP.requestJSON('/api/config',{},60000);chainInfo=config.chain;N.chain=config.chain;document.querySelector('.am-mainnet').textContent='A SMALL ISLAND';
+  try{const config=await GameHTTP.requestJSON('/api/config',{},60000);chainInfo=config.chain;N.chain=config.chain;N.merchantAI=config.merchantAI;document.querySelector('.am-mainnet').textContent='A SMALL ISLAND';
     if(config.chain.network==='offchain'){document.querySelector('.am-chain>p').textContent='Saved inventory; external ownership verification is unavailable on this island.';document.querySelector('.am-login>small').textContent='Your progress and belongings are saved automatically.';}
     if(config.chain.network==='mainnet')document.querySelector('.am-demo').hidden=true;
     if(config.mode==='development'){

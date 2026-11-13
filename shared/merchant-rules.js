@@ -57,5 +57,24 @@
     for(const item of ['maize','cassava','milk'])E.AGP[item].retail=result[item].price;
     return result;
   }
-  return {quote,update,DAILY_COSTS};
+  // Groq may propose a business action; these deterministic limits choose the
+  // item, quantity, counterparty and price against CURRENT state at execution.
+  function agentAction(game,business,intent){
+    const E=game.Eco,B=E[business];if(!['ts','ow','farm'].includes(business))throw Error('Unknown merchant');
+    if(intent==='hold')return 'Held stock and cash; no trade executed.';
+    if(B.closed)return 'Shop is closed; investment must clear its arrears first.';
+    let seller,buyer,item,price;
+    if(intent==='restock'&&business==='ow'){
+      if(B.inv.timber>=6)return 'Timber target already met; no purchase.';
+      seller=[E.ts,E.post].filter(b=>!b.closed&&b.inv.timber>0&&(b!==E.post||b.owner)).sort((a,b)=>a.price-b.price)[0];buyer=B;item='timber';price=seller?.price;
+    }else if(intent==='restock'&&business==='ts'){
+      if(B.inv.timber>=20)return 'Yard target already met; no purchase.';seller=E.port;buyer=B;item='timber';price=1700;
+    }else if(intent==='sell_surplus'&&business==='farm'){
+      item=['maize','cassava','milk'].find(i=>B.inv[i]>10);if(!item)return 'No farm surplus above the 10-unit reserve.';seller=B;buyer=E.market;price=E.AGP[item].whole;
+    }else throw Error('Invalid merchant proposal');
+    if(!seller||seller.closed||seller.inv[item]<1||buyer.cash<price||(buyer.inv[item]||0)+1>buyer.cap[item])return 'Cannot trade: cash, stock or storage is insufficient.';
+    if(!E.trade(buyer,seller,item,1,price))return 'Trade rejected by the economy rules.';
+    return `Traded 1 ${item} from ${seller.name} to ${buyer.name} at $${(price/100).toFixed(2)}.`;
+  }
+  return {quote,update,DAILY_COSTS,agentAction};
 });
