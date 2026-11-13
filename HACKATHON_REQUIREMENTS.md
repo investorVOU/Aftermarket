@@ -3,6 +3,15 @@
 Updated November 13, 2026. Implementation, local verification, live testnet evidence
 and a public hosted deployment are different states.
 
+Latest update: owner-approved changes are on main and the review branch. The
+hosted guest entered in 3.5s after the first optimization; further preparation and
+automatic recovery are tracked separately. A real hosted merchant job delivered
+furniture, paid $55 and cleared its on-chain wage reserve; `docs/LIVE_JOB_EVIDENCE.json`.
+The phone Playbook and deliberate startup-failure recovery passed three viewport
+checks. Groq is left unchanged with the owner's working `openai/gpt-oss-20b` setting.
+
+Each merchant has its own wallet identity and on-chain inventory (contract-held, server-managed), not a separately funded native NEAR account.
+
 Sources: [live organizer rules](https://nearhackathon.com/HACKATHON.md),
 [track example](https://github.com/nearai/near-hackathon-prompt-examples/blob/main/tracks/09-games.md),
 and [NEAR Builders](https://nearbuilders.org/build). Testnet entries are eligible.

@@ -24,11 +24,8 @@ and is not part of the public gameplay bundle. The official NEAR Auth documentat
 was investigated, but its account-link proof, migration and callbacks are not a
 working feature of this release and are not claimed as such.
 
-Each player and merchant has a separate owner ID in the multi-token contract.
-Merchant inventories and game-credit balances are real on-chain balances under
-those IDs. Native NEAR accounts/subaccounts are not funded/activated for each
-merchant: this is the smallest disclosed contract-ledger implementation. The
-controller and contract are the two actual faucet-funded named testnet accounts.
+Each merchant has its own wallet identity and on-chain inventory (contract-held, server-managed), not a separately funded native NEAR account.
+The controller and contract are the two faucet-funded named testnet accounts.
 
 The public inspector uses `mt_batch_balance_of` directly. An explorer's native
 account page may not enumerate NEP-245 tokens; the receipt's NEP-245 owner/item

@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-13T09:19:03.717Z",
+  "baseUrl": "https://aftmarket.xyz",
+  "release": "bea0ded22ec3",
+  "contract": "aftermarket-game.testnet",
+  "wallet": "3cd33c1978aa5125d318d138a1c51ddb5abb1c88943c8f03ab4dc997339e7da5",
+  "job": "Furnish the market",
+  "rewardCents": 5500,
+  "finalCashCents": 10300,
+  "finalFurniture": "0",
+  "employerFurniture": 1,
+  "completed": 1,
+  "reputation": 1,
+  "reserveWallet": "e8e37dfb5404442bd1c96b636e59cf2df8d8ece249f28c40ed021b9546cdf16a",
+  "reserveCash": "0",
+  "transaction": "26b9YefLP7En7gHJZa7i58hye9V7521URwK7KXVMeBoZ"
+}

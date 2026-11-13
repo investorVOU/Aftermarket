@@ -91,3 +91,6 @@ body.market-open .am-camera,body.market-open #pbtn,body.market-open .abtn,body.m
 .am-enhanced #phone .ph-scroll{min-width:0;min-height:0;overflow-x:hidden;overflow-y:auto;overflow-wrap:anywhere}
 .am-enhanced #phone .ph-nav .tt{min-width:0;overflow-wrap:anywhere}
 .am-enhanced #phone .hero b{font-size:27px;letter-spacing:-.5px}
+.am-enhanced #phone .ph-scroll details{padding:12px 0;font-size:12px;line-height:1.55}
+.am-enhanced #phone .ph-scroll summary{cursor:pointer;font-weight:700;min-height:28px}
+.am-enhanced #phone .ph-scroll details p{margin:10px 0}

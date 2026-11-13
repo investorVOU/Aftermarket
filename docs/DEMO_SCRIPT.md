@@ -34,8 +34,7 @@ business; separate saved islands are explicit.
   costs create choices. NPCs cannot buy unlimited stock or spend money they lack.
 - The server validates transactions and persists the world; offline catch-up uses
   the same rules. NEAR records confirmed items, game credits and business licences.
-- Guest/email authentication maps to server-managed ledger identities. This is
-  managed custody, not MPC or independently funded native accounts for every NPC.
+- Each merchant has its own wallet identity and on-chain inventory (contract-held, server-managed), not a separately funded native NEAR account. This is managed custody, not MPC.
 - Credits are non-redeemable game units, not native NEAR or real money. All chain
   activity shown is testnet, with operator-sponsored gas/storage.
 - Existing Claude v0.6 world/art/local mechanics are disclosed baseline; the

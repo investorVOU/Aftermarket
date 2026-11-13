@@ -7,7 +7,7 @@ Set these **server-side** locally and in Render, then restart:
 ```dotenv
 GROQ_AGENTS_ENABLED=true
 GROQ_API_KEY=<your-private-Groq-key>
-GROQ_MODEL=llama-3.1-8b-instant
+GROQ_MODEL=openai/gpt-oss-20b
 GROQ_DAILY_LIMIT=100
 ```
 
@@ -19,4 +19,4 @@ Groq returns dialogue plus one constrained proposal: hold, restock timber, or se
 
 While players are active, the optional scheduler considers one merchant per world each minute, rotating the three merchants. API inference happens outside the simulation lock and times out after seven seconds. The process permits one inference at a time and defaults to 100 calls per UTC day. This process-local cap resets on restart: use Groq console spend limits as the account-level budget. Chats have an additional 15-second cooldown. A failed proposal changes no balances. Regular rule-based NPC simulation and offline catch-up continue without Groq; the accelerated preview does not make LLM calls.
 
-Wallets remain managed **contract-ledger identities**, not funded native NEAR accounts. Enabling Groq does not change custody or wallet infrastructure. Tests cover provider failure, invalid proposals, current-state validation, targets, closed shops, call limits and the authenticated persisted chat/trade endpoint. A live provider/key and hosted deployment verification are still required before describing the hosted game as using AI agents.
+Each merchant has its own wallet identity and on-chain inventory (contract-held, server-managed), not a separately funded native NEAR account. Enabling Groq does not change custody or wallet infrastructure. Tests cover provider failure, invalid proposals, current-state validation, targets, closed shops, call limits and the authenticated persisted chat/trade endpoint. The owner reports `GROQ_MODEL=openai/gpt-oss-20b` working in Render and asked to retain that integration. The earlier automated request failed before that confirmation; no subsequent provider request or model implementation change was made. Mocked tests and owner-reported live operation are separate evidence.

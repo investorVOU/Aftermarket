@@ -1,0 +1,36 @@
+{
+  "at": "2026-11-13T09:26:31.398Z",
+  "scope": "Local Chrome + development API; first two config responses deliberately replaced with HTML 503, no page reload",
+  "results": [
+    {
+      "label": "desktop",
+      "configFailuresRecovered": 2,
+      "configCalls": 3,
+      "topics": 8,
+      "forestWaypoint": true,
+      "jobsNavigation": true,
+      "phoneFits": true,
+      "errors": []
+    },
+    {
+      "label": "mobile",
+      "configFailuresRecovered": 2,
+      "configCalls": 3,
+      "topics": 8,
+      "forestWaypoint": true,
+      "jobsNavigation": true,
+      "phoneFits": true,
+      "errors": []
+    },
+    {
+      "label": "small-mobile",
+      "configFailuresRecovered": 2,
+      "configCalls": 3,
+      "topics": 8,
+      "forestWaypoint": true,
+      "jobsNavigation": true,
+      "phoneFits": true,
+      "errors": []
+    }
+  ]
+}

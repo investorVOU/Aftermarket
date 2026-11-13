@@ -75,7 +75,7 @@ async function check(){
   const merchant=await api('ownership?actor=ts');if(merchant.wallet===wallet)throw Error('Merchant must have a separate on-chain owner.');
   console.log('On-chain item: furniture = 1 | contract '+config.chain.contractId+' | owner '+wallet);
   console.log('Verified testnet mint: https://testnet.nearblocks.io/txns/'+hash);
-  console.log('Autonomous merchant owner: '+merchant.wallet+' (contract-ledger identity; not a funded native account)');
+  console.log('Merchant wallet identity: '+merchant.wallet);console.log('Each merchant has its own wallet identity and on-chain inventory (contract-held, server-managed), not a separately funded native NEAR account.');
   let sale=null;
   if(process.env.DEMO_CHECK_SELL==='true'){
     const cash=state.state.economy.player.cash,revision=state.revision;await action('sellFurniture');

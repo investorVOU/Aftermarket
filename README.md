@@ -44,7 +44,7 @@ This creates an isolated guest, gathers three timber, crafts furniture, runs the
 
 For browser play, start the core loop in about a minute; the week preview takes another minute:
 
-1. Open [aftmarket.xyz](https://aftmarket.xyz) and choose **Play as guest / demo account**.
+1. Open [aftmarket.xyz](https://aftmarket.xyz) and choose **Play as guest / demo account**. **Phone → Playbook** explains the controls and complete loop.
 2. Open the bottom-right **Phone → Map → Forest**. Walk to a tree and gather three timber. Use WASD/arrows or the touch joystick; F interacts, G performs the secondary action.
 3. Walk to **Oak & Iron** (24, 7). **Phone → Business → Craft furniture** consumes three timber and $2 game credits; wait eight island seconds.
 4. **Phone → Marketplace → Sell** sells furniture for game credits. The server validates ownership and merchant funds.
@@ -71,7 +71,7 @@ NPC conversations live in the phone as message threads. Known contacts also offe
 |---|---|---|
 | Items | NEP-245 balances for timber, furniture, ore, gold and farm goods | Server validates gathering, production and trades; ordered checkpoints mint/burn net changes |
 | Player wallet | A stable contract-held owner identity and confirmed balances | Managed in-game wallet derived from the user ID and a server-held managed key; custodial, not MPC |
-| Merchants | Separate contract-held ledger identities and balances derived from the managed key | Autonomous rule-based merchants, not AI agents and not individually funded native NEAR accounts |
+| Merchants | Separate contract-held ledger identities and balances derived from the managed key | Each merchant has its own wallet identity and on-chain inventory (contract-held, server-managed), not a separately funded native NEAR account. |
 | Credits | The `cash` token mirrors integer game cents | Non-redeemable game credits, without NEAR or fiat backing |
 | Business | Bound `trading-post:<world-id>` licence | Server validates ownership, investment, prices and upgrades |
 | Fees | Operator pays testnet gas/storage | Players do not manage keys, wallet prompts or gas during normal play |
@@ -106,7 +106,7 @@ npm run test:contract
 
 Credentials-free local play, Supabase configuration, Render deployment, managed-key custody and recovery commands are in [OPERATIONS.md](docs/OPERATIONS.md). [Claim-by-claim verification](docs/README_CLAIMS.md) distinguishes hosted results, testnet evidence and local checks. [November 13 performance measurements](docs/PERFORMANCE.md) compare the published client with a local candidate using the real hosted API.
 
-The local candidate adds [Back Alley Credit in the phone](docs/GAME_LOOP.md) and [optional Groq merchant dialogue and bounded business proposals](docs/MERCHANT_AI.md). Borrowing/repayment passed local desktop/mobile browser and server checks. Groq passed mocked provider/API checks; no live Groq key is configured, and neither addition is claimed on the hosted deployment yet.
+The phone includes [merchant-funded Jobs](docs/JOBS.md), [Back Alley Credit](docs/GAME_LOOP.md) and a Playbook covering controls, gathering, crafting, deliveries, trading and business ownership. A [real hosted job](docs/LIVE_JOB_EVIDENCE.json) reserved and paid $55, transferred the furniture, and cleared the on-chain wage reserve. [Groq merchant dialogue and bounded business proposals](docs/MERCHANT_AI.md) use the owner-configured `openai/gpt-oss-20b`; the owner reports that model working. Automated provider tests use mocks, which are distinct from a live provider verification.
 
 ### Known limitations
 
@@ -115,6 +115,6 @@ The local candidate adds [Back Alley Credit in the phone](docs/GAME_LOOP.md) and
 - Settlement is asynchronous; failed or backlogged checkpoints can delay final ownership. The recorded hosted headless check confirms one real mint, not an uptime guarantee.
 - Google is disabled in the observed hosted configuration; personal email delivery, OAuth callbacks and cross-device login are unverified.
 - Desktop/mobile viewport checks do not establish physical-device FPS. Render cold starts and shared public RPCs affect response and confirmation time.
-- The November 13 candidate has smaller geometry/shadow budgets and fewer idle syncs. Short GPU-accelerated samples were around 60 FPS before and after, with lower p95 frame intervals; they do not reproduce the earlier 22/32 FPS report or establish physical-device performance. Candidate changes await publication approval.
+- The November 13 candidate has smaller geometry/shadow budgets and fewer idle syncs. Short GPU-accelerated samples were around 60 FPS before and after, with lower p95 frame intervals; they do not reproduce the earlier 22/32 FPS report or establish physical-device performance. The renderer and jobs updates were published with owner approval; later guest recovery/Playbook verification is recorded separately.
 
 The server supports a private QuickNode NEAR testnet fallback for reads and settlement. [Real fallback verification](docs/QUICKNODE_VERIFICATION.json) and [verification mint receipt](docs/QUICKNODE_SETTLEMENT_EVIDENCE.json) record a deliberately unavailable primary provider. Operators configure it privately through [OPERATIONS.md](docs/OPERATIONS.md#quicknode-fallback).
