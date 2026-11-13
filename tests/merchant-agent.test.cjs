@@ -1,4 +1,5 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),{MerchantAgent}=require('../server/merchant-agent.cjs'),{world}=require('../server/world.cjs');
+test('a supplied server key enables Groq unless explicitly disabled',()=>{assert.equal(new MerchantAgent({GROQ_API_KEY:'test-only'}).ready,true);assert.equal(new MerchantAgent({GROQ_API_KEY:'test-only',GROQ_AGENTS_ENABLED:'false'}).ready,false);});
 test('disabled Groq never makes a provider request',async()=>{
  const agent=new MerchantAgent({},()=>{throw Error('must not call');});await assert.rejects(agent.decide({}),e=>e.status===409);assert.equal(agent.ready,false);
 });

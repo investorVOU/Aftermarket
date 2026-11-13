@@ -15,6 +15,7 @@ const env=process.env,root=path.join(__dirname,'..'),runtime=require('./runtime.
 const {DevelopmentStore,DevelopmentChain,OffchainChain}=require('./development.cjs');
 const store=development?new DevelopmentStore():new Store(env),chain=development?new DevelopmentChain():env.NEAR_SETTLEMENT_ENABLED==='true'?new Chain(env):new OffchainChain();
 const guest=development?null:new (require('./guest.cjs').GuestAuth)(env,store.sql);
+guest?.prime().catch(()=>{});
 const worlds=new Map(),tokens=new Map(),limits=new Map();
 const {MerchantAgent,MERCHANTS}=require('./merchant-agent.cjs'),merchantAgent=new MerchantAgent(env);
 async function runMerchant(user,w,id,question){
@@ -43,10 +44,10 @@ async function authenticated(req){
   if(!cached||cached.until<Date.now()){const user=await store.user(token);cached={user,until:Date.now()+30000};tokens.set(key,cached);}
   return cached.user;
 }
-async function getWorld(user){
+async function getWorld(user,{fresh=false}={}){
   if(!worlds.has(user.id)){
     if(worlds.size>=20)throw fail('The island is busy. Please try again shortly.',503);
-    const promise=(async()=>{const saved=await store.load(user.id),network=chain.publicConfig().network,previous=saved?.snapshot?.chainNetwork;if(previous&&['mainnet','testnet'].includes(previous)&&previous!==network)throw fail('Use separate saved worlds for different settlement networks.',409);if(chain.publicConfig().settlement&&saved?.wallet_id?.match(/^[a-f0-9]{64}$/)&&saved.wallet_id!==chain.wallet(user.id))throw fail('Wallet key does not match this saved island. Restore its original wallet master key.',503);return {game:world(saved?.snapshot),revision:saved?.revision||0,balances:saved?.chain_balances||{},commands:saved?.snapshot?.commands||[],wallTimestamp:saved?.snapshot?.wallTimestamp||Date.now(),lastSeen:Date.now(),lastSave:Date.now(),movement:{x:0,z:0,at:0},busy:false,queue:Promise.resolve(),demoUntil:0,ruleClock:0,events:[],sequence:0,catchingUp:false,progress:0};})();
+    const promise=(async()=>{const saved=fresh?null:await store.load(user.id),network=chain.publicConfig().network,previous=saved?.snapshot?.chainNetwork;if(previous&&['mainnet','testnet'].includes(previous)&&previous!==network)throw fail('Use separate saved worlds for different settlement networks.',409);if(chain.publicConfig().settlement&&saved?.wallet_id?.match(/^[a-f0-9]{64}$/)&&saved.wallet_id!==chain.wallet(user.id))throw fail('Wallet key does not match this saved island. Restore its original wallet master key.',503);return {game:world(saved?.snapshot),revision:saved?.revision||0,balances:saved?.chain_balances||{},commands:saved?.snapshot?.commands||[],wallTimestamp:saved?.snapshot?.wallTimestamp||Date.now(),lastSeen:Date.now(),lastSave:Date.now(),movement:{x:0,z:0,at:0},busy:false,queue:Promise.resolve(),demoUntil:0,ruleClock:0,events:[],sequence:0,catchingUp:false,progress:0};})();
     worlds.set(user.id,promise);try{const w=await promise;w.game.Bus.on('notify',m=>{w.events.push({id:++w.sequence,message:m});if(w.events.length>60)w.events.shift();});
       const now=Date.now(),elapsed=Math.max(0,(now-w.wallTimestamp)/1000);if(elapsed>1){w.catchingUp=true;serial(w,async()=>{await Simulation.catchUp(w.game,elapsed,p=>w.progress=p);w.wallTimestamp=now;await save(user,w);w.catchingUp=false;}).catch(e=>{console.error('Catch-up failed:',e.message);worlds.delete(user.id);});}
     }catch(e){worlds.delete(user.id);throw e;}
@@ -73,13 +74,14 @@ const server=http.createServer(async(req,res)=>{
         if(req.headers['content-type']?.split(';')[0]!=='application/json')throw fail('JSON required',415);
         const origin=req.headers.origin;if(origin&&origin!==(env.APP_ORIGIN||env.RENDER_EXTERNAL_URL||`http://localhost:${env.PORT||8080}`))throw fail('Origin not allowed',403);
       }
-      if(route==='/api/config'&&req.method==='GET')return json(res,200,{mode:development?'development':'connected',supabaseUrl:env.SUPABASE_URL||null,supabaseKey:env.SUPABASE_PUBLISHABLE_KEY||null,configured:store.ready&&chain.ready,googleEnabled:env.SUPABASE_GOOGLE_ENABLED==='true',guestEnabled:Boolean(guest?.ready&&store.ready&&chain.ready),merchantAI:{enabled:merchantAgent.ready},chain:chain.publicConfig()});
+      if(route==='/api/config'&&req.method==='GET')return json(res,200,{mode:development?'development':'connected',supabaseUrl:env.SUPABASE_URL||null,supabaseKey:env.SUPABASE_PUBLISHABLE_KEY||null,configured:store.ready&&chain.ready,googleEnabled:env.SUPABASE_GOOGLE_ENABLED==='true',guestEnabled:Boolean(guest?.ready&&store.ready&&chain.ready),merchantAI:{enabled:merchantAgent.ready},guestBootstrap:true,release:env.RENDER_GIT_COMMIT?.slice(0,12)||'local',chain:chain.publicConfig()});
       if(route==='/api/health'&&req.method==='GET')return json(res,200,{ok:true,configured:store.ready&&chain.ready,network:chain.publicConfig().network});
       if(route==='/api/guest'&&req.method==='POST'){
         if(!guest?.ready||!store.ready||!chain.ready)throw fail('Guest entry is not enabled for this island.',403);
-        await body(req);const session=await guest.create(),user=await store.user(session.access_token),w=await getWorld(user);
+        await body(req);const {user,...session}=await guest.create(),w=await getWorld(user,{fresh:true});
         await serial(w,async()=>{if(!w.revision)await save(user,w);});
-        return json(res,200,{...session,wallet:chain.wallet(user.id),chain:chain.publicConfig()});
+        tokens.set(crypto.createHash('sha256').update(session.access_token).digest('hex'),{user,until:Date.now()+30000});
+        return json(res,200,{...session,wallet:chain.wallet(user.id),chain:chain.publicConfig(),initial:snapshot(user,w)});
       }
       const user=await authenticated(req),w=await getWorld(user);
       if(w.catchingUp)return json(res,200,{catchingUp:true,progress:w.progress});

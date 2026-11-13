@@ -2,7 +2,7 @@
 const Rules=require('../shared/merchant-rules.js');
 const MERCHANTS={10:'ts',11:'ow',24:'farm'};
 class MerchantAgent {
- constructor(env,fetcher=fetch){this.env=env;this.fetcher=fetcher;this.ready=env.GROQ_AGENTS_ENABLED==='true'&&Boolean(env.GROQ_API_KEY);this.model=env.GROQ_MODEL||'llama-3.1-8b-instant';this.day=-1;this.calls=0;this.active=false;}
+ constructor(env,fetcher=fetch){this.env=env;this.fetcher=fetcher;this.ready=env.GROQ_AGENTS_ENABLED!=='false'&&Boolean(env.GROQ_API_KEY);this.model=env.GROQ_MODEL||'llama-3.1-8b-instant';this.day=-1;this.calls=0;this.active=false;}
  context(G,id){const business=MERCHANTS[id],n=G.Sim.npcs[id],b=G.Eco[business];if(!business||!n||!b)throw Error('Choose a merchant contact.');return{business,name:n.name,personality:id===10?'Practical and blunt timber trader':id===11?'Careful furniture maker who dislikes waste':'Warm farmer who protects her harvest',cashCents:b.cash,inventory:{...b.inv},closed:Boolean(b.closed),goal:G.Eco.merchantProfiles[business]?.goal,quotes:Object.values(G.Eco.merchants).filter(q=>q.biz===business),possibleActions:business==='farm'?['hold','sell_surplus']:['hold','restock']};}
  async decide(context,question='What should your business do next?'){
   if(!this.ready)throw Object.assign(Error('Groq dialogue is not enabled. Regular merchant conversations still work.'),{status:409});

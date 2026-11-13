@@ -12,7 +12,7 @@ const money=n=>'$'+(n/100).toFixed(2);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let quotesSignature='',ownershipRequest=0;
 let auth,session,sequence=0,chainInfo,settlement=[],polling=false,commandQueue=Promise.resolve(),isDevelopment=false,settlementPolling=false;
-let disposed=false,syncTimer;
+let disposed=false,syncTimer,configReadyAt=0;
 const snapshotOrder=new GameSync.SnapshotOrder();
 N.diagnostics={syncLatencyMs:[],applyMs:[],ignoredSnapshots:0,authoritativePositionWrites:0,maxConcurrentStateRequests:0};
 
@@ -81,8 +81,9 @@ N.askMerchant=async(id,question)=>{
 
 let connecting;
 function connect(){if(connecting)return connecting;connecting=connectOnce().finally(()=>{connecting=null;});return connecting;}
+function enterIsland(data){apply(data,true);N.online=true;N.blocked=false;$('am-welcome').hidden=true;document.body.classList.remove('am-welcoming');setConnection('Saved · online',true);}
 async function connectOnce(){
-  if(!session||disposed)return;const data=await stateTransport.request('session',{});if(disposed)return;if(data.catchingUp){setConnection('Island catching up');$('am-login-status').textContent=`Your island kept moving. Catching up… ${Math.round(data.progress*100)}%`;setTimeout(()=>connect().catch(e=>{if(!disposed)toast(e.message);}),1000);return;}apply(data);N.online=true;N.blocked=false;$('am-welcome').hidden=true;document.body.classList.remove('am-welcoming');setConnection('Saved · online',true);
+  if(!session||disposed)return;const data=await stateTransport.request('session',{});if(disposed)return;if(data.catchingUp){setConnection('Island catching up');$('am-login-status').textContent=`Your island kept moving. Catching up… ${Math.round(data.progress*100)}%`;setTimeout(()=>connect().catch(e=>{if(!disposed)toast(e.message);}),1000);return;}enterIsland(data);
 }
 async function sync(){if(disposed||!session||polling||!N.online)return;polling=true;try{const data=await stateTransport.request('sync',()=>N.blocked?{x:0,z:0}:{...N.movement});N.diagnostics.syncLatencyMs.push(data.roundTripMs);N.diagnostics.syncLatencyMs=N.diagnostics.syncLatencyMs.slice(-60);apply(data);}catch(error){if(disposed)return;N.online=false;N.blocked=true;setConnection('Connection lost');toast('Connection lost. Your last confirmed save is safe.');}finally{polling=false;}}
 let lastMovement='',lastMovementSent=0;
@@ -149,16 +150,20 @@ $('am-guest').addEventListener('click',async()=>{
   if(!session){
    // Warm the service with a safe read before creating an identity. Never
    // automatically retry a timed-out guest POST: it may already have succeeded.
-   await GameHTTP.requestJSON('/api/health',{},60000);
+   if(performance.now()-configReadyAt>30000)await GameHTTP.requestJSON('/api/health',{},60000);
    text('am-login-status','Preparing your guest island…');
    const data=await GameHTTP.requestJSON('/api/guest',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'},45000);
-   const result=await auth.auth.setSession({access_token:data.access_token,refresh_token:data.refresh_token});if(result.error)throw result.error;session=result.data.session;
+   session={access_token:data.access_token,refresh_token:data.refresh_token};
+   // The server already authenticated and atomically saved this new island.
+   // Show it immediately; SDK persistence must not add another world round trip.
+   if(data.initial?.state)enterIsland(data.initial);
+   const result=await auth.auth.setSession(session);if(result.error)throw result.error;session=result.data.session;
   }
-  await connect();if(N.online)toast('Guest demo: progress stays in this browser session. Use email sign-in for your personal island.');
+  if(!N.online)await connect();if(N.online)toast('Guest demo: progress stays in this browser session. Use email sign-in for your personal island.');
  }catch(error){text('am-login-status',GameHTTP.friendlyError(error));retryConnection.hidden=false;}finally{clearTimeout(slow);button.disabled=false;}
 });
 async function start(){
-  try{const config=await GameHTTP.requestJSON('/api/config',{},60000);chainInfo=config.chain;N.chain=config.chain;N.merchantAI=config.merchantAI;document.querySelector('.am-mainnet').textContent='A SMALL ISLAND';
+  try{const config=await GameHTTP.requestJSON('/api/config',{},60000);configReadyAt=performance.now();chainInfo=config.chain;N.chain=config.chain;N.merchantAI=config.merchantAI;document.querySelector('.am-mainnet').textContent='A SMALL ISLAND';
     if(config.chain.network==='offchain'){document.querySelector('.am-chain>p').textContent='Saved inventory; external ownership verification is unavailable on this island.';document.querySelector('.am-login>small').textContent='Your progress and belongings are saved automatically.';}
     if(config.chain.network==='mainnet')document.querySelector('.am-demo').hidden=true;
     if(config.mode==='development'){
@@ -171,7 +176,7 @@ async function start(){
     if(!config.configured){$('am-login-button').disabled=true;$('am-email').disabled=true;setConnection('Island opening soon');$('am-login-status').textContent=location.hostname==='localhost'||location.hostname==='127.0.0.1'?'Setup needed: add Supabase and NEAR testnet credentials to .env, apply the migration, and restart.':'The island is preparing to open. Please come back soon.';return;}
     auth=createClient(config.supabaseUrl,config.supabaseKey);$('am-guest').hidden=!config.guestEnabled;$('am-google').hidden=!config.googleEnabled;$('am-login-status').textContent='Your progress follows you from one device to the next.';
     const {data,error}=await auth.auth.getSession();if(error)throw error;session=data.session;
-    auth.auth.onAuthStateChange((_event,next)=>{session=next;if(next)setTimeout(()=>connect().catch(e=>{$('am-login-status').textContent=e.message;}),0);});
+    auth.auth.onAuthStateChange((_event,next)=>{const previousId=session?.user?.id;session=next;if(next&&(!N.online||previousId&&previousId!==next.user.id))setTimeout(()=>connect().catch(e=>{$('am-login-status').textContent=e.message;}),0);});
     if(session)await connect();else setConnection('Sign in to play');
   }catch(error){text('am-login-status',GameHTTP.friendlyError(error));retryConnection.hidden=false;setConnection('Unable to connect');}
 }
