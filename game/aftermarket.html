@@ -3,6 +3,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <title>AFTERMARKET: Supply & Survival</title>
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<script id="am-early-connection">
+// Start connecting before Three.js and the island are constructed. A failed
+// early read falls back to the normal automatic recovery in the client.
+globalThis.__aftermarketConfigPromise=fetch('/api/config',{cache:'no-store',signal:AbortSignal.timeout(8000)})
+ .then(r=>r.ok?r.json():null).then(c=>c?.chain&&c?.mode?c:null).catch(()=>null);
+</script>
 <style>
 :root{--bg:#f3efe6;--panel:rgba(255,252,245,.92);--ink:#2a2a26;--accent:#b5651d;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1f1d;--panel:rgba(32,36,33,.92);--ink:#eee9dc;--accent:#e0a050;color-scheme:dark}}

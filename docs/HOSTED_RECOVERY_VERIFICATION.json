@@ -1,0 +1,28 @@
+{
+  "at": "2026-11-13T09:37:06.807Z",
+  "baseUrl": "https://aftmarket.xyz",
+  "scope": "Unmodified deployed mobile Chrome. Running Render instance and prewarmed guest. Recovery case injects two HTML 503 config responses and drops a real successful guest response, then checks identity reuse.",
+  "results": [
+    {
+      "faultInjected": false,
+      "clickToPlayableMs": 2182,
+      "pageToPlayableMs": 9384,
+      "guestCalls": 1,
+      "connectionStayedOnline": true,
+      "playbookTopics": 8,
+      "errors": []
+    },
+    {
+      "faultInjected": true,
+      "clickToPlayableMs": 5530,
+      "pageToPlayableMs": 10483,
+      "guestCalls": 2,
+      "configCalls": 3,
+      "connectionStayedOnline": true,
+      "playbookTopics": 8,
+      "errors": [],
+      "lostSuccessfulResponseRecovered": true,
+      "sameTicket": true
+    }
+  ]
+}
