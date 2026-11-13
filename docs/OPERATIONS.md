@@ -1,5 +1,9 @@
 # AFTERMARKET operations
 
+Email delivery and exact Resend/Supabase SMTP configuration are in
+[EMAIL_DELIVERY.md](EMAIL_DELIVERY.md). SMTP is configured on Supabase; adding a
+Resend key to Render alone does not enable email sign-in delivery.
+
 ## November 13 publication and guest recovery
 
 The owner authorized publication to main and the review branch. No force push or

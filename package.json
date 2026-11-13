@@ -21,7 +21,8 @@
     "db:migrate": "node scripts/migrate.cjs",
     "db:verify": "node scripts/verify-database.cjs",
     "demo:check": "node scripts/demo-check.cjs",
-    "settlement:drain": "node scripts/settlement-drain.cjs"
+    "settlement:drain": "node scripts/settlement-drain.cjs",
+    "email:configure": "node scripts/configure-email.cjs"
   },
   "engines": {
     "node": ">=22.14.0"
