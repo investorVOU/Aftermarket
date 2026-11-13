@@ -74,7 +74,7 @@ const server=http.createServer(async(req,res)=>{
         if(req.headers['content-type']?.split(';')[0]!=='application/json')throw fail('JSON required',415);
         const origin=req.headers.origin;if(origin&&origin!==(env.APP_ORIGIN||env.RENDER_EXTERNAL_URL||`http://localhost:${env.PORT||8080}`))throw fail('Origin not allowed',403);
       }
-      if(route==='/api/config'&&req.method==='GET')return json(res,200,{mode:development?'development':'connected',supabaseUrl:env.SUPABASE_URL||null,supabaseKey:env.SUPABASE_PUBLISHABLE_KEY||null,configured:store.ready&&chain.ready,googleEnabled:env.SUPABASE_GOOGLE_ENABLED==='true',guestEnabled:Boolean(guest?.ready&&store.ready&&chain.ready),merchantAI:{enabled:merchantAgent.ready},guestBootstrap:true,release:env.RENDER_GIT_COMMIT?.slice(0,12)||'local',chain:chain.publicConfig()});
+      if(route==='/api/config'&&req.method==='GET')return json(res,200,{mode:development?'development':'connected',supabaseUrl:env.SUPABASE_URL||null,supabaseKey:env.SUPABASE_PUBLISHABLE_KEY||null,configured:store.ready&&chain.ready,googleEnabled:env.SUPABASE_GOOGLE_ENABLED==='true',guestEnabled:Boolean(guest?.ready&&store.ready&&chain.ready),merchantAI:{enabled:merchantAgent.ready},guestBootstrap:true,jobsEnabled:true,release:env.RENDER_GIT_COMMIT?.slice(0,12)||'local',chain:chain.publicConfig()});
       if(route==='/api/health'&&req.method==='GET')return json(res,200,{ok:true,configured:store.ready&&chain.ready,network:chain.publicConfig().network});
       if(route==='/api/guest'&&req.method==='POST'){
         if(!guest?.ready||!store.ready||!chain.ready)throw fail('Guest entry is not enabled for this island.',403);
@@ -111,7 +111,7 @@ const server=http.createServer(async(req,res)=>{
       if(route==='/api/settlements'&&req.method==='GET')return json(res,200,{settlements:await store.history(user.id)});
       if(route==='/api/ownership'&&req.method==='GET'){
         if(!chain.publicConfig().settlement)throw fail('This island inventory is off-chain.',409);
-        const actor=url.searchParams.get('actor')||'player';if(!['player','ts','ow','post','crew','port','mine','farm','market','lender'].includes(actor))throw fail('Unknown island merchant.');
+        const actor=url.searchParams.get('actor')||'player';if(!['player','ts','ow','post','crew','port','mine','farm','market','lender','jobdesk'].includes(actor))throw fail('Unknown island merchant.');
         const token_ids=['cash','timber','furniture','ore','gold','maize','cassava','milk',`trading-post:${user.id}`],wallet=chain.wallet(user.id,actor);
         return json(res,200,{network:chain.publicConfig().network,contractId:chain.publicConfig().contractId,wallet,actor,identityType:'managed contract-ledger identity',token_ids,balances:await chain.view('mt_batch_balance_of',{account_id:wallet,token_ids})});
       }

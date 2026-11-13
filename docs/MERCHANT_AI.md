@@ -1,6 +1,6 @@
 # Optional Groq merchants
 
-This is an unpublished, opt-in implementation. No Groq key is configured in the working environment at verification time. Provider responses are mocked in tests; no successful live Groq request is claimed. The hosted merchants remain autonomous rule-based merchants.
+The owner has supplied a Groq key in Render. The server enables Groq when a key is present unless `GROQ_AGENTS_ENABLED=false` explicitly disables it. Local `.env.example` defaults to disabled. Provider responses are mocked in automated tests; live hosted verification is recorded separately and must not be inferred from a configured flag.
 
 Set these **server-side** locally and in Render, then restart:
 

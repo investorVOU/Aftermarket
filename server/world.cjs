@@ -3,13 +3,14 @@ const {createGame}=require('../shared/core.js');
 const State=require('../shared/state.js');
 const Rules=require('../shared/merchant-rules.js');
 const Credit=require('./credit.cjs');
+const Employment=require('./employment.cjs');
 const manifest=require('../shared/world.json');
 function world(saved){
   const G=createGame(),S=G.Sim,w=structuredClone(manifest);
   for(const c of w.colliders)c.k==='s'?S.Col.addSeg(c.x1,c.z1,c.x2,c.z2,c.r,c.type):S.Col.add(c.x,c.z,c.hx*2,c.hz*2,c.type);
   for(const r of w.roads)S.Roads.add(r.cl,r.w,r.kind);
   S.init(w);if(saved){State.apply(G,saved,{restore:true});G.elapsedRemainder=saved.economicRemainder||0;G.ruleClock=saved.ruleClock||0;}Rules.update(G);
-  Credit.ensure(G);Credit.tick(G);return G;
+  Credit.ensure(G);Credit.tick(G);Employment.update(G);return G;
 }
 const marketActions={buyTimber:'ts',sellTimber:'ow',buyFurn:'ow',contract:'ow',buy_maize:'farm',buy_cassava:'farm',buy_milk:'farm',sellAgri:'market'};
 function action(G,name,args={}){
@@ -25,8 +26,9 @@ function action(G,name,args={}){
     call:()=>{if(!S.Msg.call(args.id))throw new Error('Contact unavailable');},
     message:()=>{if(!S.Msg.contacts().some(n=>n.id===args.id))throw new Error('Contact unavailable');S.Msg.ask(args.id,args.topic);},
     invest:()=>{if(!['ts','ow','farm','market'].includes(args.business))throw new Error('Unknown merchant');if(E.player.cash<2000)throw new Error('Investment costs $20.');const B=E[args.business];E.player.cash-=2000;E.player.capital-=2000;B.cash+=2000;B.capital+=2000;E.say('Invested $20 in '+B.name+'.');}};
+  Object.assign(actions,{acceptJob:()=>Employment.accept(G,args.offer),completeJob:()=>Employment.complete(G),cancelJob:()=>Employment.cancel(G)});
   if(!Object.hasOwn(actions,name))throw new Error('Unknown action');
   const biz=marketActions[name];if(biz&&E[biz].cash<1)throw new Error(E[biz].name+' is closed. Invest to reopen it.');
-  actions[name]();Rules.update(G);
+  actions[name]();Rules.update(G);Employment.update(G);
 }
 module.exports={world,action};

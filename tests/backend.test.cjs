@@ -54,6 +54,14 @@ test('duplicate concurrent API commands execute only once',async()=>{const token
 test('concurrent distinct purchases serialize without lost updates',async()=>{const token='dev-'+crypto.randomUUID();await request('session',{token});const results=await Promise.all([1,2].map(()=>request('action',{token,id:crypto.randomUUID(),name:'buyTimber'})));assert.ok(results.every(r=>r.status===200));const final=(await request('session',{token})).data;assert.equal(final.state.economy.player.inv.timber,2);const purchases=final.state.economy.transactions.filter(t=>t.buyer==='You');assert.equal(purchases.length,2);assert.equal(final.state.economy.player.cash,5000-purchases.reduce((sum,t)=>sum+t.total,0));});
 test('development mode is explicitly labelled and never reports on-chain ownership',async()=>{const result=await request('config');assert.equal(result.data.mode,'development');assert.equal(result.data.chain.network,'development');assert.equal(result.data.chain.settlement,false);});
 
+test('concurrent job acceptance reserves wages only once; cancellation cannot duplicate a refund',async()=>{
+ const token='dev-'+crypto.randomUUID();await request('session',{token});const id=crypto.randomUUID();
+ const accepted=await Promise.all([1,2].map(()=>request('action',{token,id,name:'acceptJob',args:{offer:'workshop'}})));assert.ok(accepted.every(r=>r.status===200));
+ const active=(await request('session',{token})).data.state.economy;assert.equal(active.employment.sequence,1);assert.equal(active.jobdesk.cash,active.employment.active.reward);
+ const cancelId=crypto.randomUUID();await Promise.all([1,2].map(()=>request('action',{token,id:cancelId,name:'cancelJob'})));
+ const final=(await request('session',{token})).data.state.economy;assert.equal(final.jobdesk.cash,0);assert.equal(final.player.cash,5000);assert.equal(final.employment.active,null);
+});
+
 test('duplicate and competing loan requests cannot create multiple advances',async()=>{
  const token='dev-'+crypto.randomUUID();await request('session',{token});const id=crypto.randomUUID();
  const duplicate=await Promise.all([1,2].map(()=>request('action',{token,id,name:'borrow',args:{amount:2000}})));

@@ -14,8 +14,20 @@ not performed here. No Supabase setting change was identified as necessary to fi
 the observed client timeout. Personal email/Google callbacks remain unverified.
 
 Optional Groq setup is in [MERCHANT_AI.md](MERCHANT_AI.md). Add `GROQ_API_KEY` only
-to private server environment variables and enable `GROQ_AGENTS_ENABLED=true`
-when ready to verify a real provider request. Disabled is the safe default.
+to private server environment variables. A server key enables the integration
+unless `GROQ_AGENTS_ENABLED=false` is explicitly set. Use that flag to disable it.
+
+The faster guest route now prefetches availability (without creating accounts),
+reuses the identity verified by password sign-in, skips an impossible prior save
+for a new guest and sends its atomically saved island in the guest response.
+The client can enter immediately, while the Supabase SDK persists the session;
+it no longer needs an extra world request or a warm-up read after fresh config.
+No anonymous-auth setting change is required. Cold starts and upstream latency
+remain outside this code's control; performance claims need live measurements.
+
+[Merchant delivery jobs](JOBS.md) use the existing JSON snapshot and transactional
+outbox. No migration is needed. Preserve the wallet master key when deploying:
+the new `jobdesk` reserve is another managed contract-ledger identity.
 
 The normal screener command retains the crafted item. For an additional real
 sale and matching burn receipt check:

@@ -1,0 +1,30 @@
+{
+  "at": "2026-11-13T09:10:54.087Z",
+  "scope": "Local Chrome and real development server; acceptance, waypoint and cancellation, not a live chain job",
+  "results": [
+    {
+      "label": "desktop",
+      "phoneFits": true,
+      "accept": true,
+      "routeMarker": true,
+      "cancelRefund": true,
+      "errors": []
+    },
+    {
+      "label": "mobile",
+      "phoneFits": true,
+      "accept": true,
+      "routeMarker": true,
+      "cancelRefund": true,
+      "errors": []
+    },
+    {
+      "label": "small-mobile",
+      "phoneFits": true,
+      "accept": true,
+      "routeMarker": true,
+      "cancelRefund": true,
+      "errors": []
+    }
+  ]
+}
