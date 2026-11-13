@@ -1,0 +1,691 @@
+{
+  "environment": {
+    "browser": "Installed Chrome headless, no CPU/network throttle; mobile is viewport/touch emulation, not a physical phone",
+    "baseUrl": "http://127.0.0.1:8095",
+    "gpu": [
+      {
+        "vendor": "",
+        "device": "Intel(R) UHD Graphics"
+      },
+      {
+        "vendor": "",
+        "device": "Microsoft Basic Render Driver"
+      }
+    ],
+    "features": {
+      "2d_canvas": "enabled",
+      "direct_rendering_display_compositor": "disabled_off_ok",
+      "gpu_compositing": "enabled",
+      "multiple_raster_threads": "enabled_on",
+      "opengl": "enabled_on",
+      "rasterization": "enabled",
+      "skia_graphite": "disabled_off",
+      "trees_in_viz": "disabled_off",
+      "video_decode": "enabled",
+      "video_encode": "enabled",
+      "webgl": "enabled",
+      "webgpu": "enabled",
+      "webnn": "disabled_off"
+    }
+  },
+  "before": {
+    "measuredAt": "2026-11-13T04:26:24.831Z",
+    "scope": "Local client and development API; hosted endpoint unavailable",
+    "results": [
+      {
+        "label": "desktop",
+        "fps": 60.02,
+        "p95FrameMs": 26.2,
+        "render": {
+          "calls": 513,
+          "triangles": 159387,
+          "geometries": 1757,
+          "textures": 37,
+          "pixelRatio": 0.9,
+          "shadows": true,
+          "shadowMap": [
+            1024,
+            1024
+          ],
+          "postprocessing": "none",
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        },
+        "costs": {
+          "collision": {
+            "count": 907,
+            "medianMs": 0,
+            "p95Ms": 0.1,
+            "totalMs": 14
+          },
+          "farmVisuals": {
+            "count": 721,
+            "medianMs": 0,
+            "p95Ms": 0.1,
+            "totalMs": 34
+          },
+          "inputDOM": {
+            "count": 721,
+            "medianMs": 0,
+            "p95Ms": 0,
+            "totalMs": 2
+          },
+          "camera": {
+            "count": 721,
+            "medianMs": 0.2,
+            "p95Ms": 0.3,
+            "totalMs": 118
+          },
+          "cameraChipDOM": {
+            "count": 721,
+            "medianMs": 0,
+            "p95Ms": 0,
+            "totalMs": 2
+          },
+          "shadow": {
+            "count": 721,
+            "medianMs": 0,
+            "p95Ms": 8.4,
+            "totalMs": 1184
+          },
+          "render": {
+            "count": 721,
+            "medianMs": 5.4,
+            "p95Ms": 14.4,
+            "totalMs": 4700
+          },
+          "stateApply": {
+            "count": 80,
+            "medianMs": 0.4,
+            "p95Ms": 0.6,
+            "totalMs": 32
+          },
+          "navigation": {
+            "count": 104,
+            "medianMs": 0,
+            "p95Ms": 0.1,
+            "totalMs": 1
+          },
+          "update": {
+            "count": 104,
+            "medianMs": 0.1,
+            "p95Ms": 0.2,
+            "totalMs": 9
+          }
+        },
+        "metrics": {
+          "LayoutDuration": 0.036585,
+          "RecalcStyleDuration": 0.006107,
+          "DevToolsCommandDuration": 0.013676000000000021,
+          "ScriptDuration": 5.691006,
+          "V8CompileDuration": 0,
+          "TaskDuration": 6.198918,
+          "TaskOtherDuration": 0.451544,
+          "JSHeapUsedSize": 7179652
+        },
+        "cpuTop": [
+          {
+            "name": "(idle)",
+            "url": "",
+            "count": 3757
+          },
+          {
+            "name": "(anonymous)",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 597
+          },
+          {
+            "name": "(program)",
+            "url": "",
+            "count": 278
+          },
+          {
+            "name": "loop",
+            "url": "http://127.0.0.1:8095/",
+            "count": 256
+          },
+          {
+            "name": "(anonymous)",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 253
+          },
+          {
+            "name": "(anonymous)",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 169
+          },
+          {
+            "name": "updateMatrixWorld",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 132
+          },
+          {
+            "name": "(anonymous)",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 129
+          },
+          {
+            "name": "setup",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 122
+          },
+          {
+            "name": "renderBufferDirect",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 121
+          },
+          {
+            "name": "intersectsObject",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 98
+          },
+          {
+            "name": "It",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 83
+          }
+        ],
+        "sync": {
+          "count": 80,
+          "medianMs": 8.6,
+          "p95Ms": 18.84,
+          "maxConcurrent": 1
+        },
+        "errors": [],
+        "shadowOff": {
+          "fps": 56.72263634766061,
+          "calls": 565
+        }
+      },
+      {
+        "label": "mobile",
+        "fps": 60.06,
+        "p95FrameMs": 24.5,
+        "render": {
+          "calls": 295,
+          "triangles": 154938,
+          "geometries": 1732,
+          "textures": 18,
+          "pixelRatio": 0.9,
+          "shadows": true,
+          "shadowMap": [
+            1024,
+            1024
+          ],
+          "postprocessing": "none",
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        },
+        "costs": {
+          "collision": {
+            "count": 988,
+            "medianMs": 0,
+            "p95Ms": 0.1,
+            "totalMs": 11
+          },
+          "farmVisuals": {
+            "count": 722,
+            "medianMs": 0,
+            "p95Ms": 0.1,
+            "totalMs": 37
+          },
+          "inputDOM": {
+            "count": 722,
+            "medianMs": 0,
+            "p95Ms": 0,
+            "totalMs": 2
+          },
+          "camera": {
+            "count": 722,
+            "medianMs": 0.1,
+            "p95Ms": 0.3,
+            "totalMs": 102
+          },
+          "cameraChipDOM": {
+            "count": 722,
+            "medianMs": 0,
+            "p95Ms": 0,
+            "totalMs": 1
+          },
+          "shadow": {
+            "count": 722,
+            "medianMs": 0,
+            "p95Ms": 7.4,
+            "totalMs": 1011
+          },
+          "render": {
+            "count": 722,
+            "medianMs": 3.7,
+            "p95Ms": 11,
+            "totalMs": 3581
+          },
+          "stateApply": {
+            "count": 80,
+            "medianMs": 0.3,
+            "p95Ms": 0.5,
+            "totalMs": 27
+          },
+          "navigation": {
+            "count": 104,
+            "medianMs": 0,
+            "p95Ms": 0,
+            "totalMs": 0
+          },
+          "update": {
+            "count": 104,
+            "medianMs": 0.1,
+            "p95Ms": 0.2,
+            "totalMs": 7
+          }
+        },
+        "metrics": {
+          "LayoutDuration": 0.03068,
+          "RecalcStyleDuration": 0.005713,
+          "DevToolsCommandDuration": 0.01053800000000002,
+          "ScriptDuration": 4.42436,
+          "V8CompileDuration": 0,
+          "TaskDuration": 4.864431,
+          "TaskOtherDuration": 0.39314,
+          "JSHeapUsedSize": 12083456
+        },
+        "cpuTop": [
+          {
+            "name": "(idle)",
+            "url": "",
+            "count": 4475
+          },
+          {
+            "name": "(anonymous)",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 458
+          },
+          {
+            "name": "(anonymous)",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 254
+          },
+          {
+            "name": "(program)",
+            "url": "",
+            "count": 230
+          },
+          {
+            "name": "loop",
+            "url": "http://127.0.0.1:8095/",
+            "count": 198
+          },
+          {
+            "name": "(anonymous)",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 176
+          },
+          {
+            "name": "updateMatrixWorld",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 100
+          },
+          {
+            "name": "(anonymous)",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 96
+          },
+          {
+            "name": "setup",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 94
+          },
+          {
+            "name": "renderBufferDirect",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 82
+          },
+          {
+            "name": "intersectsObject",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 79
+          },
+          {
+            "name": "At",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 72
+          }
+        ],
+        "sync": {
+          "count": 80,
+          "medianMs": 5.33,
+          "p95Ms": 15.62,
+          "maxConcurrent": 1
+        },
+        "errors": [],
+        "shadowOff": {
+          "fps": 59.128785988720374,
+          "calls": 270
+        }
+      }
+    ]
+  },
+  "after": {
+    "measuredAt": "2026-11-13T04:29:22.238Z",
+    "scope": "Local client and development API; hosted endpoint unavailable",
+    "results": [
+      {
+        "label": "desktop",
+        "fps": 59.99,
+        "p95FrameMs": 18.2,
+        "render": {
+          "calls": 326,
+          "triangles": 109130,
+          "geometries": 679,
+          "textures": 36,
+          "pixelRatio": 0.9,
+          "shadows": false,
+          "shadowMap": [
+            1024,
+            1024
+          ],
+          "postprocessing": "none",
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        },
+        "costs": {
+          "collision": {
+            "count": 811,
+            "medianMs": 0,
+            "p95Ms": 0.1,
+            "totalMs": 11
+          },
+          "farmVisuals": {
+            "count": 721,
+            "medianMs": 0,
+            "p95Ms": 0.1,
+            "totalMs": 32
+          },
+          "inputDOM": {
+            "count": 721,
+            "medianMs": 0,
+            "p95Ms": 0,
+            "totalMs": 2
+          },
+          "camera": {
+            "count": 721,
+            "medianMs": 0.1,
+            "p95Ms": 0.3,
+            "totalMs": 109
+          },
+          "cameraChipDOM": {
+            "count": 721,
+            "medianMs": 0,
+            "p95Ms": 0,
+            "totalMs": 1
+          },
+          "shadow": {
+            "count": 721,
+            "medianMs": 0,
+            "p95Ms": 0,
+            "totalMs": 3
+          },
+          "render": {
+            "count": 721,
+            "medianMs": 3.3,
+            "p95Ms": 6.5,
+            "totalMs": 2631
+          },
+          "stateApply": {
+            "count": 80,
+            "medianMs": 0.3,
+            "p95Ms": 0.6,
+            "totalMs": 28
+          },
+          "navigation": {
+            "count": 47,
+            "medianMs": 0,
+            "p95Ms": 0,
+            "totalMs": 0
+          },
+          "update": {
+            "count": 47,
+            "medianMs": 0.1,
+            "p95Ms": 0.2,
+            "totalMs": 4
+          }
+        },
+        "metrics": {
+          "LayoutDuration": 0.023342,
+          "RecalcStyleDuration": 0.004516,
+          "DevToolsCommandDuration": 0.010624000000000022,
+          "ScriptDuration": 3.1731730000000002,
+          "V8CompileDuration": 0,
+          "TaskDuration": 3.5961849999999997,
+          "TaskOtherDuration": 0.38453,
+          "JSHeapUsedSize": 7783148
+        },
+        "cpuTop": [
+          {
+            "name": "(idle)",
+            "url": "",
+            "count": 5302
+          },
+          {
+            "name": "(anonymous)",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 482
+          },
+          {
+            "name": "(program)",
+            "url": "",
+            "count": 217
+          },
+          {
+            "name": "At",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 173
+          },
+          {
+            "name": "updateMatrixWorld",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 124
+          },
+          {
+            "name": "renderBufferDirect",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 90
+          },
+          {
+            "name": "At",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 75
+          },
+          {
+            "name": "At",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 74
+          },
+          {
+            "name": "updateMatrixWorld",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 69
+          },
+          {
+            "name": "setup",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 69
+          },
+          {
+            "name": "updateMatrixWorld",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 63
+          },
+          {
+            "name": "updateMatrixWorld",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 52
+          }
+        ],
+        "sync": {
+          "count": 81,
+          "medianMs": 4.47,
+          "p95Ms": 10.75,
+          "maxConcurrent": 1
+        },
+        "errors": []
+      },
+      {
+        "label": "mobile",
+        "fps": 60.05,
+        "p95FrameMs": 27.6,
+        "render": {
+          "calls": 160,
+          "triangles": 100562,
+          "geometries": 407,
+          "textures": 17,
+          "pixelRatio": 1,
+          "shadows": false,
+          "shadowMap": [
+            1024,
+            1024
+          ],
+          "postprocessing": "none",
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        },
+        "costs": {
+          "collision": {
+            "count": 838,
+            "medianMs": 0,
+            "p95Ms": 0.1,
+            "totalMs": 16
+          },
+          "farmVisuals": {
+            "count": 722,
+            "medianMs": 0.1,
+            "p95Ms": 0.2,
+            "totalMs": 50
+          },
+          "inputDOM": {
+            "count": 722,
+            "medianMs": 0,
+            "p95Ms": 0,
+            "totalMs": 2
+          },
+          "camera": {
+            "count": 722,
+            "medianMs": 0.2,
+            "p95Ms": 1.2,
+            "totalMs": 208
+          },
+          "cameraChipDOM": {
+            "count": 722,
+            "medianMs": 0,
+            "p95Ms": 0,
+            "totalMs": 2
+          },
+          "shadow": {
+            "count": 722,
+            "medianMs": 0,
+            "p95Ms": 0,
+            "totalMs": 3
+          },
+          "render": {
+            "count": 722,
+            "medianMs": 3.5,
+            "p95Ms": 8.7,
+            "totalMs": 3086
+          },
+          "stateApply": {
+            "count": 80,
+            "medianMs": 0.4,
+            "p95Ms": 0.8,
+            "totalMs": 39
+          },
+          "navigation": {
+            "count": 48,
+            "medianMs": 0,
+            "p95Ms": 0,
+            "totalMs": 0
+          },
+          "update": {
+            "count": 48,
+            "medianMs": 0.1,
+            "p95Ms": 0.2,
+            "totalMs": 5
+          }
+        },
+        "metrics": {
+          "LayoutDuration": 0.03078,
+          "RecalcStyleDuration": 0.005882,
+          "DevToolsCommandDuration": 0.011273000000000005,
+          "ScriptDuration": 3.932101,
+          "V8CompileDuration": 0,
+          "TaskDuration": 4.4814490000000005,
+          "TaskOtherDuration": 0.501413,
+          "JSHeapUsedSize": -5156828
+        },
+        "cpuTop": [
+          {
+            "name": "(idle)",
+            "url": "",
+            "count": 4705
+          },
+          {
+            "name": "(anonymous)",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 366
+          },
+          {
+            "name": "(program)",
+            "url": "",
+            "count": 287
+          },
+          {
+            "name": "At",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 182
+          },
+          {
+            "name": "updateMatrixWorld",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 156
+          },
+          {
+            "name": "At",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 122
+          },
+          {
+            "name": "updateMatrixWorld",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 95
+          },
+          {
+            "name": "updateMatrixWorld",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 90
+          },
+          {
+            "name": "updateMatrixWorld",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 89
+          },
+          {
+            "name": "setup",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 88
+          },
+          {
+            "name": "At",
+            "url": "http://127.0.0.1:8095/vendor/three.min.js",
+            "count": 87
+          },
+          {
+            "name": "loop",
+            "url": "http://127.0.0.1:8095/",
+            "count": 70
+          }
+        ],
+        "sync": {
+          "count": 81,
+          "medianMs": 5.57,
+          "p95Ms": 14,
+          "maxConcurrent": 1
+        },
+        "errors": []
+      }
+    ]
+  }
+}

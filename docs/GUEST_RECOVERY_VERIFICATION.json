@@ -1,0 +1,9 @@
+{
+  "at": "2026-11-13T08:50:43.116Z",
+  "scope": "Local candidate HTML/client/CSS in mobile Chrome using the real hosted guest and session APIs; not deployed",
+  "guestRequests": 1,
+  "guestToLoadedMs": 8237,
+  "loaded": true,
+  "managedIdentityInsideCollapsedDetails": true,
+  "errors": []
+}

@@ -1,8 +1,33 @@
-# README claim audit — November 12, 2026
+# README claim audit — November 13, 2026
 
 Scope matters: local checks, earlier testnet evidence, the current hosted game,
 and the unpublished candidate are separate results. The public host is
 **https://aftmarket.xyz**, supplied by the owner and verified over HTTPS.
+
+## Latest local candidate and hosted verification
+
+- Hosted `demo:check` with optional sale verification passed guest/gather/craft,
+  the real seven-day preview, changed prices, merchant identity and final mint
+  and burn receipts. `DEMO_SALE_CHECK_EVIDENCE.json` records the new result. This
+  supersedes the older table limitation saying no hosted sale was verified.
+- Back Alley Credit is local: finite reserves, debt persistence, concurrent-command
+  protection, fixed fees and offline due dates have server tests; real Chrome
+  borrow/partial/full repayment passed at 1280, 390 and 320 pixels. No live loan
+  receipt or hosted loan functionality is claimed.
+- Optional Groq dialogue/business proposals are implemented and mocked-provider
+  API tests pass. No key is configured, no live Groq call was made and the hosted
+  merchants remain autonomous rule-based merchants with contract-ledger identities.
+- `PERFORMANCE.md` and `HOSTED_PERFORMANCE_PROFILE.json` record the latest
+  published-client/local-candidate comparison against real hosted API calls.
+  GPU acceleration was verified. Roughly 60 FPS before/after in these samples
+  does not reproduce the earlier 22/32 FPS report or verify a physical phone.
+- A real guest request took 36.1s, exceeding the published 20s client timeout.
+  The local recovery/timeout fix is tested; it has not been deployed.
+- This task made separate local commits only. No push, tag, remote or default
+  branch change, mainnet transaction, social post or submission was performed.
+
+The following table and November 12 measurements retain their historical scopes;
+the latest evidence above supersedes their earlier open verification limits.
 
 | README claim | Verified where / how | Limit |
 |---|---|---|

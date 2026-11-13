@@ -17,7 +17,7 @@ async function check(){
   const parsed=new URL(base);if(!['http:','https:'].includes(parsed.protocol)||parsed.username||parsed.password)throw Error('Use a plain HTTP(S) demo URL without credentials.');
   let token,state,lastSyncSeconds=.3;
   async function api(route,body){
-    const started=performance.now(),response=await fetch(base.replace(/\/$/,'')+'/api/'+route,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(25000)});
+    const started=performance.now(),response=await fetch(base.replace(/\/$/,'')+'/api/'+route,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(['config','guest'].includes(route)?60000:25000)});
     const data=await response.json();if(route==='sync')lastSyncSeconds=(performance.now()-started)/1000;if(!response.ok)throw Error('API '+route+': '+(data.error||'HTTP '+response.status));return data;
   }
   const config=await api('config');
@@ -76,7 +76,26 @@ async function check(){
   console.log('On-chain item: furniture = 1 | contract '+config.chain.contractId+' | owner '+wallet);
   console.log('Verified testnet mint: https://testnet.nearblocks.io/txns/'+hash);
   console.log('Autonomous merchant owner: '+merchant.wallet+' (contract-ledger identity; not a funded native account)');
-  console.log('PASS: API guest, managed wallet, craft, seven-day economy, changing prices, NPC trades and real NEP-245 mint.');
-  require('node:fs').writeFileSync(require('node:path').join(__dirname,'../docs/DEMO_CHECK_EVIDENCE.json'),JSON.stringify({verifiedAt:new Date().toISOString(),network:'testnet',contract:config.chain.contractId,wallet,item:'furniture',balance:'1',transaction:hash,prices:{before,after},merchantWallet:merchant.wallet,simulatedSeconds:state.state.time-startTime},null,2)+'\n');
+  let sale=null;
+  if(process.env.DEMO_CHECK_SELL==='true'){
+    const cash=state.state.economy.player.cash,revision=state.revision;await action('sellFurniture');
+    if(state.state.economy.player.inv.furniture!==0||state.state.economy.player.cash!==cash+5000)throw Error('Sale did not exchange owned furniture for the correct game cash.');
+    const saleUntil=Date.now()+180000;let burnHash;
+    while(Date.now()<saleUntil&&!burnHash){
+      const owner=await api('ownership');
+      if(owner.balances[owner.token_ids.indexOf('furniture')]==='0')for(const row of (await api('settlements')).settlements.filter(r=>r.status==='confirmed'&&r.transaction_hash&&r.revision>revision)){
+        const tx=await rpc(rpcUrl,'tx',{tx_hash:row.transaction_hash,sender_account_id:config.chain.signerId||'aftermarket-ctrl.testnet',wait_until:'FINAL'});
+        if(tx.transaction.receiver_id!==config.chain.contractId||!tx.status?.SuccessValue)continue;
+        const logs=tx.receipts_outcome.filter(r=>r.outcome.executor_id===config.chain.contractId).flatMap(r=>r.outcome.logs).filter(l=>l.startsWith('EVENT_JSON:')).map(l=>JSON.parse(l.slice(11)));
+        if(logs.some(e=>e.standard==='nep245'&&e.event==='mt_burn'&&e.data.some(d=>d.owner_id===wallet&&d.token_ids.includes('furniture')))){burnHash=row.transaction_hash;break;}
+      }
+      if(!burnHash)await sleep(3000);
+    }
+    if(!burnHash)throw Error('Sale completed in game, but final ownership and matching burn receipt were not confirmed.');
+    sale={finalFurnitureBalance:'0',cashReceivedCents:5000,transaction:burnHash};console.log('Verified sale: furniture = 0, +$50 game cash | https://testnet.nearblocks.io/txns/'+burnHash);
+  }
+  console.log('PASS: API guest, managed wallet, craft, seven-day economy, changing prices, NPC trades, real NEP-245 mint'+(sale?' and verified sale/burn.':'.'));
+  const evidenceFile=sale?'DEMO_SALE_CHECK_EVIDENCE.json':'DEMO_CHECK_EVIDENCE.json';
+  require('node:fs').writeFileSync(require('node:path').join(__dirname,'../docs/'+evidenceFile),JSON.stringify({verifiedAt:new Date().toISOString(),network:'testnet',contract:config.chain.contractId,wallet,item:'furniture',balance:'1',transaction:hash,prices:{before,after},merchantWallet:merchant.wallet,simulatedSeconds:state.state.time-startTime,...(sale?{balanceVerifiedBeforeSale:true,sale}:{})},null,2)+'\n');
 }
 check().catch(error=>{console.error('DEMO CHECK FAILED: '+error.message);process.exitCode=1;}).finally(async()=>{if(managed)await managed.shutdown();process.exit(process.exitCode||0);});

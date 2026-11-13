@@ -6,11 +6,13 @@ The economy is the gameplay: autonomous rule-based merchants buy inputs, produce
 
 **[Play now](https://aftmarket.xyz)** — Play as guest, one click, no signup.
 
-**Demo video:** `<DEMO_VIDEO_URL>` · **X demo post:** `<X_POST_URL>`
+
 
 ![Aftermarket island exchange and merchant economy](docs/images/economy-desktop.png)
 
 Hosted guest entry, gathering, crafting, the seven-day preview and a final furniture mint passed on November 13. [Hosted API and chain evidence](docs/DEMO_CHECK_EVIDENCE.json) records the real transaction and changed prices. Selling and the Trading Post licence have separate earlier testnet evidence. Hosted evidence and local client measurements are distinguished in the [claim audit](docs/README_CLAIMS.md).
+
+A further [hosted sale check](docs/DEMO_SALE_CHECK_EVIDENCE.json) verified the full loop through a $50 game-credit sale, final furniture balance zero and a matching NEP-245 burn receipt. The default screener command retains its crafted item; optional sale verification is described in [operations](docs/OPERATIONS.md).
 
 ## Verify the chain without running anything
 
@@ -102,7 +104,9 @@ npm run contract:build
 npm run test:contract
 ```
 
-Credentials-free local play, Supabase configuration, Render deployment, managed-key custody and recovery commands are in [OPERATIONS.md](docs/OPERATIONS.md). [Claim-by-claim verification](docs/README_CLAIMS.md) distinguishes hosted results, testnet evidence and local checks. [Movement measurements](docs/MOVEMENT_PROFILE.json) distinguish the deployed client from the unpublished candidate.
+Credentials-free local play, Supabase configuration, Render deployment, managed-key custody and recovery commands are in [OPERATIONS.md](docs/OPERATIONS.md). [Claim-by-claim verification](docs/README_CLAIMS.md) distinguishes hosted results, testnet evidence and local checks. [November 13 performance measurements](docs/PERFORMANCE.md) compare the published client with a local candidate using the real hosted API.
+
+The local candidate adds [Back Alley Credit in the phone](docs/GAME_LOOP.md) and [optional Groq merchant dialogue and bounded business proposals](docs/MERCHANT_AI.md). Borrowing/repayment passed local desktop/mobile browser and server checks. Groq passed mocked provider/API checks; no live Groq key is configured, and neither addition is claimed on the hosted deployment yet.
 
 ### Known limitations
 
@@ -111,6 +115,6 @@ Credentials-free local play, Supabase configuration, Render deployment, managed-
 - Settlement is asynchronous; failed or backlogged checkpoints can delay final ownership. The recorded hosted headless check confirms one real mint, not an uptime guarantee.
 - Google is disabled in the observed hosted configuration; personal email delivery, OAuth callbacks and cross-device login are unverified.
 - Desktop/mobile viewport checks do not establish physical-device FPS. Render cold starts and shared public RPCs affect response and confirmation time.
-- Hosted assets matched the reviewed build on November 13. The recorded November 12 FPS comparison used the earlier deployment; physical-device performance remains unverified.
+- The November 13 candidate has smaller geometry/shadow budgets and fewer idle syncs. Short GPU-accelerated samples were around 60 FPS before and after, with lower p95 frame intervals; they do not reproduce the earlier 22/32 FPS report or establish physical-device performance. Candidate changes await publication approval.
 
 The server supports a private QuickNode NEAR testnet fallback for reads and settlement. [Real fallback verification](docs/QUICKNODE_VERIFICATION.json) and [verification mint receipt](docs/QUICKNODE_SETTLEMENT_EVIDENCE.json) record a deliberately unavailable primary provider. Operators configure it privately through [OPERATIONS.md](docs/OPERATIONS.md#quicknode-fallback).

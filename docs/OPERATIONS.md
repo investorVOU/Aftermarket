@@ -1,5 +1,36 @@
 # AFTERMARKET operations
 
+## November 13 local candidate
+
+No publication or default-branch change is authorized for this update yet. The
+phone credit system needs no new migration or credential: debt and lender cash
+use the existing atomic snapshot/outbox save. Its live chain settlement still
+needs verification after deployment. Keep the existing wallet master key.
+
+See [performance and connection evidence](PERFORMANCE.md) for the measured guest
+timeout, hosted/client comparison and Render guidance. The current Blueprint's
+free service may sleep; choosing an always-on instance is an owner action and was
+not performed here. No Supabase setting change was identified as necessary to fix
+the observed client timeout. Personal email/Google callbacks remain unverified.
+
+Optional Groq setup is in [MERCHANT_AI.md](MERCHANT_AI.md). Add `GROQ_API_KEY` only
+to private server environment variables and enable `GROQ_AGENTS_ENABLED=true`
+when ready to verify a real provider request. Disabled is the safe default.
+
+The normal screener command retains the crafted item. For an additional real
+sale and matching burn receipt check:
+
+```powershell
+$env:BASE_URL='https://aftmarket.xyz'
+$env:DEMO_CHECK_SELL='true'
+npm run demo:check
+```
+
+The optional run writes `docs/DEMO_SALE_CHECK_EVIDENCE.json`; it does not replace
+the original retained-item proof. It creates a real guest and uses testnet gas
+through the hosted operator. Configuration/guest requests allow 60 seconds for
+service startup, and failures still exit non-zero.
+
 This release is **testnet-only**. Never put signing keys, Supabase secret keys,
 database credentials, refresh tokens or the wallet master key in Git, screenshots
 or public logs. The deployment key is not needed by the web server.

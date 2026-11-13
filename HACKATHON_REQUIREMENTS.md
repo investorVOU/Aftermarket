@@ -1,6 +1,6 @@
 # Track 09 — Games With Real Economies
 
-Updated November 12, 2026. Implementation, local verification, live testnet evidence
+Updated November 13, 2026. Implementation, local verification, live testnet evidence
 and a public hosted deployment are different states.
 
 Sources: [live organizer rules](https://nearhackathon.com/HACKATHON.md),
@@ -28,9 +28,12 @@ frictionless authentication. It does not claim NEAR Auth/MPC or Intents.
 | [x] On-chain inspector | Player/merchant selector reads final RPC balances; `npm run near:items -- <owner-id>` works without a signing key. Phone NEAR app links to it. |
 | [x] Documentation and licence | Screener-ordered README, MIT, operations guide, explicit custody/game-credit/baseline/AI disclosures. |
 | [x] Baseline disclosure | Existing import/checkpoint/diff and published historical tags verified through GitHub API. November 9 import is not mislabelled as untouched pre-window code. Current candidate remains unpublished. `docs/BASELINE.md`. |
-| [x] Public repository | Unauthenticated GitHub API reports public review branch `58d2cca` and main `b478308`; review branch currently default. No visibility/default change in this task. |
+| [x] Public repository | Published main and review branch reached `1bdd1df`; GitHub default main was verified in the preceding publication task. This performance/credit/Groq update is local only; no push or default-branch change in this task. |
 | [~] Public hosted demonstration | `https://aftmarket.xyz` serves the game; real hosted guest/session verified. Hosted API guest/gather/craft/week and final furniture balance plus matching mint receipt passed November 13; `docs/DEMO_CHECK_EVIDENCE.json`. `docs/HOSTED_VERIFICATION.json`. |
 | [ ] Human demo post and final submission | Owner must record the video, publish X post, provide payout/contact details and confirm the exact API payload. Nothing submitted or posted by the agent. |
+| [~] Phone borrowing | Back Alley Credit, finite lender treasury, one active debt, fixed fees, partial/full repayment and offline due dates; local rules/API/three viewport checks pass. Hosted loan/settlement verification pending deployment. |
+| [~] Optional Groq agents | Dialogue and bounded restock/surplus-sale proposals implemented behind an explicit flag. Mocked provider and authenticated API tests pass. No local key or live Groq verification; hosted merchants remain rule-based. |
+| [~] Performance and guest timeout update | GPU-accelerated hosted-API client comparison and a 36.1s guest response measured; candidate reduces rendering work and improves error recovery. Candidate is not deployed; physical phones and Render CPU are unverified. `docs/PERFORMANCE.md`. |
 
 ## Verified evidence
 

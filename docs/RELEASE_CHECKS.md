@@ -1,5 +1,31 @@
 # Release verification — November 10, 2026
 
+## November 13 performance, credit and optional Groq candidate
+
+These changes are local and await publication approval. No push or default-branch
+change was made in this task. Small commits separate renderer/movement, connection
+recovery, lending, and optional Groq work.
+
+- `npm run build`: passed.
+- `npm run lint`: passed, 64 JavaScript modules plus the inline renderer.
+- `npm test`: 63 backend/API/database/client tests and 322 original game checks,
+  all passed (385 total).
+- `npm run test:contract`: all six compiled-WASM checks passed; contract unchanged.
+- Local Chrome loan/repayment layout checks passed desktop, 390px and 320px; the
+  final visual pass also checks active app alignment and zero horizontal scroll.
+- Hosted-API profiling completed with GPU acceleration; client candidate only,
+  no physical-device or Render CPU benchmark. `PERFORMANCE.md` states the limits.
+- `BASE_URL=https://aftmarket.xyz DEMO_CHECK_SELL=true npm run demo:check`: passed
+  real guest, gather, craft, week, changed merchant prices, real merchant ledger
+  identity, furniture mint and sale/burn verification. See
+  `DEMO_SALE_CHECK_EVIDENCE.json`. This checks the existing hosted backend, not the
+  unpublished credit/Groq endpoints.
+- Optional Groq tests use mocked provider responses. Live verification is blocked
+  on a private API key and enablement; no successful provider call is claimed.
+- Candidate mobile Chrome guest entry against real hosted services passed with
+  one guest POST, island loaded in 8,237 ms, no page errors and technical identity
+  collapsed by default. `GUEST_RECOVERY_VERIFICATION.json`. It is not deployed.
+
 ## November 13 publication and QuickNode
 
 The owner authorized publishing the reviewed game to main. Publication uses a
