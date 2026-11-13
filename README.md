@@ -1,118 +1,95 @@
 # AFTERMARKET: Supply & Survival
 
-http://aftmarket.xyz/
+The economy is the gameplay: autonomous rule-based merchants buy inputs, produce goods, run out of cash, close, and reopen when a player invests. Items settle as real NEP-245 tokens on NEAR testnet through a managed in-game wallet; normal play needs no wallet setup, keys or gas prompts.
 
-A persistent 3D market-town game where shortages, merchant cash reserves and operating costs create the opportunities: gather, craft, trade and own a shop while the economy keeps moving offline.
+**[Play now](https://aftmarket.xyz)** — Play as guest, one click, no signup.
 
-## Try it in 3 minutes
+**Demo video:** `<DEMO_VIDEO_URL>` · **X demo post:** `<X_POST_URL>`
 
-1. **Browser-free screener check:** run `npm ci`, then `npm run demo:check`. On an operator-configured local checkout it starts the real server or reuses the running connected server. From a fresh clone, set `DEMO_BASE_URL` to the verified hosted demo first; that client needs no signing keys, browser, email or CAPTCHA. The hosted URL is still pending below. The command creates an API guest, gathers three timber, crafts furniture, runs the actual seven-day preview for about a minute, and prints before/after prices, the managed owner, on-chain furniture balance and a matching testnet mint link. It exits non-zero unless every check passes. A fresh clone without a configured server cannot pass a real blockchain check. [Setup and recovery](docs/OPERATIONS.md#browser-free-screener-check).
+![Aftermarket island exchange and merchant economy](docs/images/economy-desktop.png)
 
-Browser walkthrough:
+Hosted guest authentication and world loading were verified on November 12. The complete economic loop has earlier local/testnet evidence; the latest hosted end-to-end result is recorded in [verification notes](docs/README_CLAIMS.md). Hosted evidence and local client measurements are distinguished in the verification notes.
 
-For a fresh local clone, install Node 22.14+ and run:
+## Verify the chain without running anything
+
+- **Contract:** [aftermarket-game.testnet](https://testnet.nearblocks.io/address/aftermarket-game.testnet)
+- **WASM SHA-256:** `6c18475191ba6237338f18acaa15426e3d84f6f2284ea6cf8205ef0c716bda3c`
+- **Receipts:** [contract deployment](https://testnet.nearblocks.io/txns/ANjnywCznt4y1ZnsPuShySypLXyvSNL2GPvfw7Reb17e), [verified timber mint](https://testnet.nearblocks.io/txns/C7Ppi3bMkt4L5f5CSFqvgkcWYmukqGNR6wXnuaZXV35W).
+
+The IDs and hash match [testnet evidence](docs/TESTNET_EVIDENCE.json). [Game-loop evidence](docs/LIVE_GAME_EVIDENCE.json) separately records actual gather/craft/sell receipts and a Trading Post licence. Explorer receipt logs show ownership even when the explorer does not index multi-token inventory on its account page.
+
+The explorer returned HTTP 403 to automated link checks in this environment. Its canonical links match the recorded hashes; the public RPC inspector below provides a verification path without its web interface. [Link-check results](docs/README_LINK_CHECK.json).
+
+Optional read-only check of the recorded player, without a signing key:
 
 ```sh
 npm ci
-npm start
+npm run near:items -- 047db926e52e94b6f4ecf8cb6a2b00d7b12eb21bb728b3fc935b0d664f2fed20
 ```
 
-Open **http://localhost:8080**. Without a private operator configuration this is clearly labelled **LOCAL DEVELOPMENT**: click **Enter development island**. It exercises the game and saves locally; it does not mint blockchain items. Do not overwrite an existing private .env.
+## Try it in 60 seconds
 
-On an operator-configured connected testnet server, click **Play as guest / demo account** instead. It creates your own real Supabase session and managed contract identity, without email confirmation or a wallet popup. [Connected setup and hosting](docs/OPERATIONS.md) require server credentials that are deliberately absent from Git. Guest creation is capped; personal email sign-in is also available. Google needs the operator's provider setup.
+**Terminal-only verification comes first.** A fresh clone can check the hosted API without email, CAPTCHA, a browser or private operator credentials:
 
-1. Open the bottom-right phone, choose **Map**, then **Forest**. Close the map, walk to a tree and use the displayed gather action three times. **See three timber in your pack.** WASD/arrows move; on mobile use the left joystick. F interacts; G is the secondary action when a nearby NPC takes the primary slot.
-2. Walk to **Oak & Iron** (24, 7 on the map). Open **Phone → Business → Craft furniture**. It consumes three timber and $2 game credits; wait eight island seconds. **See one furniture in your inventory.** No browser animation decides the balance.
-3. Open **Phone → Marketplace → Sell**, and sell the furniture. **See $50 game credits added**, leaving $98 from the initial $50 after labour. On the connected server, open the top-right island exchange, wait for a confirmed receipt and choose **Read testnet balances**. **See final contract balances under your managed owner ID.** Pending gameplay and final chain state are explicitly different.
-4. In the exchange, start **Seven days. One minute.** **See prices, treasury and trade counts change**, with the timber price history and actual economic events. Trading pauses while the same simulation rules run at 49× speed.
-5. The timber yard's thin margin must cover a **$90 daily lease**. In the seeded opening week it runs out of cash and closes. Use **Invest $20 toward recovery** until the bill is paid and working capital is restored. **See the closure/reopening events and trading resume.** The investment spends your actual game balance; it is not a cosmetic recovery animation.
-6. On testnet, open a receipt's explorer link and inspect its NEP-245 logs: **owner_id identifies the player or merchant, token_ids identifies the item, and amounts shows the mint/burn**. The contract inspector reads balances directly; the explorer may not index every NEP-245 token in its account UI. In local development, use the verified public examples below to inspect real NEAR activity separately.
+```sh
+npm ci
+BASE_URL=https://aftmarket.xyz npm run demo:check
+```
 
-Approach an NPC and press F: conversations now appear **inside the phone**, with incoming/outgoing bubbles and reply choices. **Phone → Messages** also lets you message known contacts remotely. **Track NPC** follows their current location; **Call NPC** records an in-game text call and a state-based response. This is game dialogue, not a real telephone or voice connection. Close/Hide, P or Escape releases the conversation and resumes walking. History persists with the world. [Mobile capture](docs/images/phone-chat-mobile.png).
+This creates an isolated guest, gathers three timber, crafts furniture, runs the actual seven-day preview, and checks final ownership plus a matching mint receipt. It prints before/after merchant prices, the item, owner and explorer transaction link; any failed check exits non-zero. Allow several minutes for the complete check, including the one-minute preview and settlement. [PowerShell syntax and operations](docs/OPERATIONS.md#browser-free-screener-check).
 
-The complete gather/craft/sell path has been run through the real authenticated API and final testnet queries. Public evidence: [LIVE_GAME_EVIDENCE.json](docs/LIVE_GAME_EVIDENCE.json). The one-minute browser preview/recovery check is recorded separately in the requirements checklist; physical-device and remote-host verification are distinct.
+For browser play, start the core loop in about a minute; the week preview takes another minute:
 
-To keep playing, buy and sell timber to unlock the Trading Post, fulfil workshop supply contracts, and acquire it for $150. Stock your own timber, set its selling price, deposit/withdraw working capital and upgrade storage through its world management panel. NPCs choose the cheapest available supplier.
+1. Open [aftmarket.xyz](https://aftmarket.xyz) and choose **Play as guest / demo account**.
+2. Open the bottom-right **Phone → Map → Forest**. Walk to a tree and gather three timber. Use WASD/arrows or the touch joystick; F interacts, G performs the secondary action.
+3. Walk to **Oak & Iron** (24, 7). **Phone → Business → Craft furniture** consumes three timber and $2 game credits; wait eight island seconds.
+4. **Phone → Marketplace → Sell** sells furniture for game credits. The server validates ownership and merchant funds.
+5. Open the island exchange and choose **Seven days. One minute.** Watch prices, stock, cash and trade counts change. If a merchant closes, invest until its arrears are paid and working capital is restored.
+6. Open **Inventory → Verify on-chain**, then **Refresh verified inventory**. Receipts and identities are inside this collapsed section; normal play keeps the chain out of the way. This revision includes the friendly inventory layout; the recorded hosted checks used the earlier deployment.
+
+NPC conversations live in the phone as message threads. Known contacts also offer tracking and in-game text calls based on current activity; these are not real telephone or voice calls.
+
+## Track 9 checklist
+
+| Game requirement | Implementation and evidence |
+|---|---|
+| The economy drives play | Finite cash/stock, production, changing quotes and recovery investment; local checks and earlier testnet loop |
+| Autonomous rule-based merchants | [Simulation](shared/core.js), [readable merchant rules](shared/merchant-rules.js); no LLM balance calculations |
+| Merchant decisions are explainable | Quote reasons and tooltips; stock, treasury, closure and arrears |
+| Player-owned market | Trading Post progression and bound licence; [recorded testnet evidence](docs/LIVE_GAME_EVIDENCE.json) |
+| Offline evolution and week preview | [Elapsed-time scheduler](server/simulation.cjs); same fixed-step economy at normal and accelerated speed |
+| NEP-245 items | [Single Rust contract](contracts/economy/src/lib.rs), deployed hash and public receipts above |
+| Frictionless entry | Hosted API guest/session verified; managed in-game wallet. Personal email/Google callbacks remain unverified |
 
 ## How NEAR is used
 
 | System | On-chain | Off-chain / trust boundary |
 |---|---|---|
-| Resources and crafted goods | One NEP-245 contract: timber, furniture, ore, gold, maize, cassava and milk | Server validates gathering, production and trades; ordered checkpoints mint/burn net deltas |
-| Player identity | Stable managed Ed25519 owner ID and real token balances in the contract | Derived from Supabase user ID and a server-held master key; managed custody, not MPC |
-| Merchant identities | Separate per-island owner IDs and balances for Timber Supply, workshop, farm, market, port, forestry, mine and Trading Post | These are **contract-ledger identities**, not separately funded native NEAR accounts or subaccounts; deterministic agents run on the server |
-| Credits | The existing `cash` token ID mirrors integer game cents in the same contract | Non-redeemable game credits; customer demand creates them, costs consume them. No native NEAR or fiat backing |
-| Player business | A bound `trading-post:<world-id>` licence records ownership | Operations, prices, upgrades and simulation are server-authoritative; licences cannot be externally transferred |
-| Gas and storage | Controller pays **testnet** NEAR; unused storage funding is refunded | No player seed phrases, wallet popups or gas prompts in ordinary play |
-| Persistence | Contract stores confirmed ownership and replay-protected revisions | Supabase stores progress, inventories, jobs, transactions, prices, events and the atomic settlement outbox |
+| Items | NEP-245 balances for timber, furniture, ore, gold and farm goods | Server validates gathering, production and trades; ordered checkpoints mint/burn net changes |
+| Player wallet | A stable contract-held owner identity and confirmed balances | Managed in-game wallet derived from the user ID and a server-held managed key; custodial, not MPC |
+| Merchants | Separate contract-held ledger identities and balances derived from the managed key | Autonomous rule-based merchants, not AI agents and not individually funded native NEAR accounts |
+| Credits | The `cash` token mirrors integer game cents | Non-redeemable game credits, without NEAR or fiat backing |
+| Business | Bound `trading-post:<world-id>` licence | Server validates ownership, investment, prices and upgrades |
+| Fees | Operator pays testnet gas/storage | Players do not manage keys, wallet prompts or gas during normal play |
+| Persistence | Confirmed ownership and replay-protected revisions | Supabase stores progress, economic history and the transactional outbox; settlement is asynchronous |
 
-**Contract:** [aftermarket-game.testnet](https://testnet.nearblocks.io/address/aftermarket-game.testnet)
+## Baseline, hackathon work and AI disclosure
 
-**Controller:** aftermarket-ctrl.testnet
+Available history starts with a [November 9 import](https://github.com/investorVOU/Aftermarket/tree/957283d) of the earlier v0.6 game. That import already includes backend/contract work, so it is not an untouched pre-hackathon baseline. The island, characters, camera, phone and original local simulation are disclosed as baseline.
 
-**WASM SHA-256:** `6c18475191ba6237338f18acaa15426e3d84f6f2284ea6cf8205ef0c716bda3c`
+[Published review checkpoint](https://github.com/investorVOU/Aftermarket/tree/58d2cca) · [import-to-checkpoint diff](https://github.com/investorVOU/Aftermarket/compare/957283d...58d2cca) · [baseline and branch details](docs/BASELINE.md). Existing tags are historical checkpoints; none is presented as an unpublished final release.
 
-- [Deployment](https://testnet.nearblocks.io/txns/ANjnywCznt4y1ZnsPuShySypLXyvSNL2GPvfw7Reb17e)
-- [Independent verified timber mint](https://testnet.nearblocks.io/txns/C7Ppi3bMkt4L5f5CSFqvgkcWYmukqGNR6wXnuaZXV35W)
-- [Timber gathered by the actual game API](https://testnet.nearblocks.io/txns/6mSJWoZvaKBm7frVy6Yv656523w1cjJyTGe8PRthxSY1)
-- [Crafted furniture mint](https://testnet.nearblocks.io/txns/GQh1M49kqr6K4siDaxp5FwGR7qYzuiT1rkTy9JXroRAf)
-- [Furniture sale: burn item and credit game cash](https://testnet.nearblocks.io/txns/6vUNRJdqDm63dJpn4m6psvg9Zhocn3QEFCUKidBhkxc4)
-
-[Live Trading Post licence mint](https://testnet.nearblocks.io/txns/HRBPwwe4UAX6FVNR6Ajhh6PZmRZX56H1XuJptBcqrYmu). The extended verifier earned the purchase through First Trade and a real workshop contract, then read the licence balance as 1.
-
-Example verified player owner ID: `047db926e52e94b6f4ecf8cb6a2b00d7b12eb21bb728b3fc935b0d664f2fed20`. The explorer's receipt logs and direct contract query show the ownership; it need not have an activated native account. Read its current balances without a signing key:
-
-```sh
-npm run near:items -- 047db926e52e94b6f4ecf8cb6a2b00d7b12eb21bb728b3fc935b0d664f2fed20
-```
-
-[Deployment evidence and exact deployed-code hash](docs/TESTNET_EVIDENCE.json). No mainnet operation is used or claimed.
-
-## Track 9 checklist
-
-| Track example / game feature | Where to verify |
-|---|---|
-| Economy drives gameplay | Scarcity changes quotes, cash limits purchases, production consumes inputs, the lease can close the yard, real investment restores operations |
-| Autonomous NPC merchants | `shared/core.js`, `shared/merchant-rules.js`; watch workshop procurement, farm deliveries, forestry truck and imports |
-| NPC inventories and wallet balances | Exchange → On-chain inventory selector; authenticated `GET /api/ownership?actor=ts`; separate contract owner IDs |
-| Player-owned market | First Trade milestone → Trading Post purchase, stocking, price competition and upgrades; bound on-chain licence |
-| Offline evolution | `server/simulation.cjs`, persisted wall timestamps and catch-up after restart/eviction |
-| Social/email entry | Supabase email magic-link / optional Google; server verifies tokens and maps every player to the same managed identity. Guest convenience verified; real email/Google callbacks still need operator verification |
-| NEP-245 items | `contracts/economy/`; deployed hash, actual receipts, metadata, storage, transfers/batches and callback checks |
-| Readable pricing and reasoning | `shared/merchant-rules.js`; explanation text and tooltip on each exchange quote |
-| Week in about a minute | Exchange preview: 49×, seven 420-second island days; same economic engine, no separate fake balances |
-| NEAR Intents | Not integrated; no swaps or mainnet quotes are required for this non-redeemable game-credit economy |
-
-[Detailed evidence and remaining submission work](HACKATHON_REQUIREMENTS.md). The [live organizer rules](https://nearhackathon.com/HACKATHON.md) allow testnet-only entries and treat track integrations as hints. NEP-245 and frictionless entry are deliberate implementation choices here.
-
-## Baseline, hackathon work and disclosure
-
-The owner supplied a Claude-generated **v0.6** local game: Three.js island, characters, navigation, phone, local trades, contracts, forestry and agriculture. These are baseline, not claimed as new NEAR work. [Audit](PROJECT_AUDIT.md).
-
-The available history starts at [957283d](https://github.com/investorVOU/Aftermarket/tree/957283d), a November 9 import that already includes backend and contract work. There is no authentic pre-window commit to tag. The conservative comparison baseline is `baseline-import` at that commit; the review branch is `hackathon/track-09-testnet`. This excludes earlier upgrades from the reviewed diff rather than falsely dating the import.
-
-This branch adds the verified testnet deployment/receipts, real guest-to-managed-identity flow, on-chain inspection, daily operating costs/closure/recovery, screener evidence, operations guide and release hygiene. The published submission tag records the verified November 10 checkpoint. Subsequent fixes live on the review branch. [Baseline-to-current-branch diff](https://github.com/investorVOU/Aftermarket/compare/baseline-import...hackathon/track-09-testnet). [Exact plan and limitations](docs/BASELINE.md). No history rewrite is used.
-
-AI disclosure: Claude generated the supplied baseline; Codex assisted the backend, economic rules, contract integration, UI and documentation. Intermediate edits from another model were replaced from the known published baseline before the UI corrections. Human review and final submission remain the owner's responsibility.
-
-Libraries: Three.js 0.128, Supabase JS, Postgres.js, near-api-js 7, Rust near-sdk 5.17.2 and near-sys, esbuild, PGlite and jsdom. The unused NEAR Auth adapter/dependencies are not a working MPC integration. Third-party licences remain with their authors; project code is [MIT](LICENSE). No other-chain deployment or swap integration is used.
+AI disclosure: the baseline was generated with Claude; backend, NEAR integration and subsequent improvements were developed with Codex assistance. Libraries include Three.js, Supabase JS, Postgres.js, near-api-js, Rust near-sdk, esbuild, PGlite and jsdom. Project code is [MIT](LICENSE); third-party licences remain with their authors. No other-chain deployment, NEAR Intents integration or NEAR Auth/MPC login is claimed.
 
 ## Architecture and commands
 
 ```text
-Three.js browser / phone → authenticated intents → single Node simulation
-                                                    ↓ atomic PostgreSQL RPC
-                                  Supabase saves + history + settlement outbox
-                                                    ↓ sponsored ordered worker
-                                  NEAR testnet NEP-245 ownership + licences
+Three.js game / phone → authenticated server intents → economic simulation
+                                      ↓ atomic PostgreSQL save + outbox
+                                 sponsored NEAR testnet settlement
 ```
 
-- `shared/core.js`: isolated seeded economy, NPCs, gathering and persistent production jobs.
-- `shared/merchant-rules.js`: stock/demand prices, explanations, daily lease and financial recovery.
-- `server/`: validated intents, collision-checked movement, catch-up, auth, persistence and relayer.
-- `game/`: preserved world, responsive bottom-right phone, map and camera controls, exchange and contract inspector.
-- `supabase/migrations/`: RLS, atomic saves/outbox, history and durable command deduplication.
-- `contracts/economy/`: Rust multi-token contract and locked dependencies.
+The [shared economy](shared/core.js) owns deterministic game rules. The server owns transaction validation, persistence and offline catch-up. Client movement predicts presentation only; it does not authorize money, inventory or ownership.
 
 ```sh
 npm ci
@@ -121,28 +98,17 @@ npm run lint
 npm test
 npm run contract:build
 npm run test:contract
-npm run near:preflight
-npm run demo:check
 ```
 
-`lint` is syntax checking, including the preserved inline renderer. Unit/API checks use SQLite and embedded PostgreSQL/PGlite; they do not pretend to be live Supabase checks. Contract tests execute compiled WASM against an emulated host. The separate opt-in `npm run verify:live` creates a real testnet guest and verifies the complete live loop; it requires private operator configuration. See [OPERATIONS.md](docs/OPERATIONS.md) for database migrations, auth callbacks, account provisioning, deployment, secrets and Render variables.
-
-The HTML entry filename is an implementation detail: run the Node app rather than opening the file directly. WASD/arrows move, drag/Q/E orbit, scroll/pinch/+/- zoom, Shift-drag/two fingers pan, C follows the player, R resets the view, M toggles the map and P toggles the phone. Mobile has joystick and camera buttons. Map clicks set waypoints, not ownership or player coordinates.
-
-Actual connected testnet captures: [desktop economy](docs/images/economy-desktop.png) and [mobile contract inspector](docs/images/testnet-inventory-mobile.png). [Verification details](docs/RELEASE_CHECKS.md).
+Credentials-free local play, Supabase configuration, Render deployment, managed-key custody and recovery commands are in [OPERATIONS.md](docs/OPERATIONS.md). [Claim-by-claim verification](docs/README_CLAIMS.md) distinguishes hosted results, testnet evidence and local checks. [Movement measurements](docs/MOVEMENT_PROFILE.json) distinguish the deployed client from the unpublished candidate.
 
 ### Known limitations
 
-- Single-instance, separate island per player; no shared multiplayer or P2P market.
-- Managed custody and a privileged mint/burn controller; no NEAR Auth/MPC, account export or external-transfer indexing. Contract transfer methods exist but external transfers are not reconciled into gameplay.
-- Settlement is asynchronous; a failed head outbox job delays later jobs. Inspector balances come from final RPC state and can lag gameplay.
-- Google was disabled when checked; real email delivery and cross-device social-login callbacks are not yet verified. Guest signup and a real testnet game loop are verified separately.
-- Chrome desktop/mobile viewport checks do not substitute for testing physical devices. Hosted Render verification needs the actual deployment URL and configured environment.
-- Free Render services can sleep. Keep the demo available through November 18; the owner must arrange an always-on service if cold starts are unacceptable. No paid service has been started.
+- Separate island per player and one supported backend instance; no shared multiplayer/P2P market.
+- Managed custody and privileged settlement controller; no MPC, key export or external-transfer indexing.
+- Pending checkpoints can delay final ownership; a failed head job blocks later settlement. Hosted guest entry alone does not prove the full on-chain loop.
+- Google is disabled in the observed hosted configuration; personal email delivery, OAuth callbacks and cross-device login are unverified.
+- Desktop/mobile viewport checks do not establish physical-device FPS. Render cold starts and shared public RPCs affect response and confirmation time.
+- Hosted verification of this revision requires a Render redeploy. Recorded November 12 measurements distinguish the deployed game from the locally tested client.
 
-### Release links for the owner
-
-- Demo URL: **TODO — supply the verified Render URL**
-- Demo video: **TODO — record and supply the public video URL**
-- X demo post: **TODO — owner posts with @NEARProtocol and #NEARHackathon**
-- Submission: **not sent**; the owner must confirm the exact payload. Do not invent a payout address or create its mainnet account.
+The server supports a private QuickNode NEAR testnet fallback for reads and settlement. [Real fallback verification](docs/QUICKNODE_VERIFICATION.json) and [verification mint receipt](docs/QUICKNODE_SETTLEMENT_EVIDENCE.json) record a deliberately unavailable primary provider. Operators configure it privately through [OPERATIONS.md](docs/OPERATIONS.md#quicknode-fallback).

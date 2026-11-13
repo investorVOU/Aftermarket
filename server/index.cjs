@@ -10,11 +10,14 @@ const {world,action}=require('./world.cjs');
 const State=require('../shared/state.js');
 const Rules=require('../shared/merchant-rules.js');
 const Simulation=require('./simulation.cjs');
+const {serial}=require('./world-queue.cjs');
 const env=process.env,root=path.join(__dirname,'..'),runtime=require('./runtime.cjs').runtime(env),{development}=runtime;
 const {DevelopmentStore,DevelopmentChain,OffchainChain}=require('./development.cjs');
 const store=development?new DevelopmentStore():new Store(env),chain=development?new DevelopmentChain():env.NEAR_SETTLEMENT_ENABLED==='true'?new Chain(env):new OffchainChain();
 const guest=development?null:new (require('./guest.cjs').GuestAuth)(env,store.sql);
 const worlds=new Map(),tokens=new Map(),limits=new Map();
+// Covers observed hosted RTTs while bounding movement after a lost connection.
+const MOVEMENT_TTL_MS=1000;
 const json=(res,status,data)=>{res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(data));};
 function fail(message,status=400){return Object.assign(new Error(message),{status});}
 async function body(req){let text='';for await(const b of req){text+=b;if(text.length>8192)throw fail('Request too large',413);}try{return JSON.parse(text||'{}');}catch{throw fail('Invalid JSON');}}
@@ -41,8 +44,7 @@ async function save(user,w,command=null){
   const revision=await store.save(user.id,w.revision,snapshot,balances,chain.wallet(user.id),payload,command);
   w.revision=revision;w.balances=balances;w.lastSave=Date.now();
 }
-function snapshot(user,w){return {state:State.capture(w.game),revision:w.revision,events:w.events,sequence:w.sequence,wallet:chain.wallet(user.id),chain:chain.publicConfig(),movement:Date.now()-w.movement.at<350&&!w.game.Sim.harvesting&&!w.game.Sim.Talk.cur?w.movement:{x:0,z:0},demo:{active:w.demoUntil>Date.now(),secondsRemaining:Math.max(0,Math.ceil((w.demoUntil-Date.now())/1000))}};}
-function serial(w,fn){const task=w.queue.then(async()=>{w.busy=true;try{return await fn();}finally{w.busy=false;}});w.queue=task.catch(()=>{});return task;}
+function snapshot(user,w){return {state:State.capture(w.game),revision:w.revision,events:w.events,sequence:w.sequence,wallet:chain.wallet(user.id),chain:chain.publicConfig(),movement:Date.now()-w.movement.at<MOVEMENT_TTL_MS&&!w.game.Sim.harvesting&&!w.game.Sim.Talk.cur?w.movement:{x:0,z:0},demo:{active:w.demoUntil>Date.now(),secondsRemaining:Math.max(0,Math.ceil((w.demoUntil-Date.now())/1000))}};}
 
 const server=http.createServer(async(req,res)=>{
   res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','same-origin');res.setHeader('X-Frame-Options','DENY');
@@ -69,7 +71,7 @@ const server=http.createServer(async(req,res)=>{
       if(route==='/api/sync'&&req.method==='POST'){
         const data=await body(req);const x=data.x,z=data.z;
         if(typeof x!=='number'||typeof z!=='number'||!Number.isFinite(x)||!Number.isFinite(z)||Math.hypot(x,z)>1.001)throw fail('Invalid movement');
-        w.movement={x,z,at:Date.now()};if(Date.now()-w.lastSave>8000)await serial(w,()=>save(user,w));return json(res,200,snapshot(user,w));
+        w.movement={x,z,at:Date.now()};return json(res,200,snapshot(user,w));
       }
       if(route==='/api/action'&&req.method==='POST'){
         const data=await body(req);if(typeof data.id!=='string'||!/^[\w-]{8,80}$/.test(data.id))throw fail('Invalid action ID');
@@ -106,13 +108,13 @@ const server=http.createServer(async(req,res)=>{
 
 let settling=false,settlementRetryAt=0;
 const ticker=setInterval(()=>{const now=Date.now();for(const [id,promise] of worlds){promise.then(w=>{
-  if(w.busy)return;
+  if(w.busy&&!w.backgroundSaving)return;
   const actual=Math.max(0,(now-w.wallTimestamp)/1000);
   const accelerated=w.demoUntil>w.wallTimestamp?Math.max(0,(Math.min(now,w.demoUntil)-w.wallTimestamp)/1000):0;
   const remaining=actual+accelerated*48;
-  if(!w.demoUntil||w.demoUntil<=now){const m=w.movement;if(now-m.at<350&&!w.game.Sim.harvesting&&!w.game.Sim.Talk.cur)w.game.Sim.player.move(m.x*6*Math.min(actual,.1),m.z*6*Math.min(actual,.1));}
+  if(!w.demoUntil||w.demoUntil<=now){const m=w.movement;if(now-m.at<MOVEMENT_TTL_MS&&!w.game.Sim.harvesting&&!w.game.Sim.Talk.cur)w.game.Sim.player.move(m.x*6*Math.min(actual,.1),m.z*6*Math.min(actual,.1));}
   Simulation.advance(w.game,remaining);w.wallTimestamp=now;
-  if(now-w.lastSave>10000)serial(w,()=>save({id},w)).catch(e=>{console.error('Autosave:',e.message);worlds.delete(id);});
+  if(!w.busy&&now-w.lastSave>10000)serial(w,()=>save({id},w),{background:true}).catch(e=>{console.error('Autosave:',e.message);worlds.delete(id);});
 }).catch(e=>{console.error('Simulation stopped:',e.message);worlds.delete(id);});}
 },50);
 const worker=setInterval(async()=>{

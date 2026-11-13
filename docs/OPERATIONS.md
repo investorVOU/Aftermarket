@@ -209,18 +209,18 @@ run multiple connected server instances against the same island/database.
 To use the hosted demo from a fresh clone without operator keys:
 
 ```sh
-DEMO_BASE_URL=https://YOUR-VERIFIED-DEMO-HOST npm run demo:check
+BASE_URL=https://aftmarket.xyz npm run demo:check
 ```
 
 PowerShell:
 
 ```powershell
-$env:DEMO_BASE_URL='https://YOUR-VERIFIED-DEMO-HOST'
+$env:BASE_URL='https://aftmarket.xyz'
 npm run demo:check
 ```
 
-Replace the host with the actual service URL; no public URL is embedded until
-the deployment is verified. `DEMO_RPC_URL` optionally selects a testnet RPC for
+The HTTPS custom domain and actual guest/session requests were verified on
+November 12. `DEMO_BASE_URL` remains a supported alias. `DEMO_RPC_URL` selects a testnet RPC for
 independent receipt queries. The default is the FASTNEAR testnet endpoint.
 Development/off-chain targets fail explicitly. Movement uses collision-checked
 `/api/sync`; gathering/crafting use normal validated actions, without teleporting
@@ -259,8 +259,72 @@ live positions without teleporting. Calls do not connect to real phone numbers o
 voice services.
 
 Presentation movement predicts collision-checked steps between server responses,
-reconciles snapshots and stops predicting after 500 ms without an update. Server
+reconciles snapshots above a 0.65 m error and stops predicting after one second without an update. Server
 position/range checks, inventory and all economic mutations stay authoritative.
 Close walls raise the camera; a minimum-distance overhead fallback avoids placing
 it inside the player's head. Browser viewport checks with added network delay
 are recorded in `PLAYABILITY_EVIDENCE.json`; physical-device frame rate is unverified.
+
+## aftmarket.xyz deployment handoff
+
+Hosted `/api/config` returned connected testnet with `configured:true` and
+`guestEnabled:true`. An actual guest session loaded successfully with
+`Origin: https://aftmarket.xyz`. No Supabase or Render credential change is
+currently established as necessary for guest entry.
+
+Keep Render `APP_ORIGIN=https://aftmarket.xyz`, `GAME_MODE=connected`,
+`NEAR_NETWORK=testnet`, `NEAR_SETTLEMENT_ENABLED=true`, and
+`DEMO_GUEST_ENABLED=true`. The Blueprint now supplies that exact public origin.
+The existing signer/master/Supabase secret keys must remain unchanged and private.
+Use the prepared publication plan before redeploying the candidate; no Git push,
+default-branch change or Render settings change is performed by these file edits.
+
+For personal email/Google login, the operator must set Supabase Site URL and
+allowed redirect URLs to `https://aftmarket.xyz` (and configure SMTP/Google if
+offered). These callbacks remain unverified; Google is disabled in observed
+hosted config. Do not enable its button until the provider works end to end.
+
+After approved publication, deploy the reviewed commit in Render and rerun:
+
+```powershell
+$env:BASE_URL='https://aftmarket.xyz'
+npm run demo:check
+```
+
+The checker slows near route waypoints based on measured HTTP latency so it does
+not repeatedly overshoot them on a distant server. This uses ordinary bounded
+movement input, not a teleport or balance bypass. Its complete route/week/chain
+result is distinct from guest authentication alone; see `README_CLAIMS.md`.
+
+The candidate removes synchronous persistence from movement responses. A single
+background save captures a snapshot, then permits simulation while its database
+commit is pending; financial actions still queue behind it and remain exclusive.
+Autosaves are not enqueued repeatedly while a save is active. Snapshot revisions,
+outbox checkpoints and command deduplication retain their existing atomic commit.
+
+## QuickNode fallback
+
+Set `QUICKNODE_RPC_URL` to the private **NEAR testnet** endpoint in the local
+`.env` and Render secret environment. Its URL contains a credential and must
+never be placed in browser code, README examples, screenshots or Git. The local
+`.env` also stores `QUICKNODE_API_KEY` as supplied by the operator; the endpoint
+itself authenticates JSON-RPC, so that broader API key is not transmitted for RPC
+or used for account/billing management. No additional SDK dependency is needed.
+
+Primary RPC remains `NEAR_RPC_URL`; the private endpoint is the fallback. Both
+reads and the existing NEAR SDK's transaction transport use the same bounded
+router. Each provider must report `chain_id: testnet` before receiving queries
+or signed transactions. A failed provider cools down for 30 seconds; transport
+retries reuse exactly the same signed transaction bytes. Deterministic nonce or
+contract errors do not get disguised as network failover. Endpoint URLs and
+upstream response bodies are excluded from error messages and public config.
+
+Use NEAR `status`, `block` and `query` methods. `eth_blockNumber` is an Ethereum
+method and is not used. QuickNode documents direct JSON-RPC access; its separate
+SDK does not support native Windows. Read-only real fallback verification with a
+deliberately failed primary is recorded in `QUICKNODE_VERIFICATION.json`.
+
+The local `.env` is not uploaded during Git publication. Set the two secret
+QuickNode variables in the existing Render service to activate its fallback,
+then redeploy the reviewed commit. Keep signer and wallet-master credentials
+unchanged. The Blueprint has secret placeholders rather than actual credentials.

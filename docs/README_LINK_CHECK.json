@@ -1,0 +1,112 @@
+{
+  "checkedAt": "2026-11-12T19:23:53.733Z",
+  "relative": [
+    {
+      "target": "docs/images/economy-desktop.png",
+      "exists": true
+    },
+    {
+      "target": "docs/README_CLAIMS.md",
+      "exists": true
+    },
+    {
+      "target": "docs/TESTNET_EVIDENCE.json",
+      "exists": true
+    },
+    {
+      "target": "docs/LIVE_GAME_EVIDENCE.json",
+      "exists": true
+    },
+    {
+      "target": "docs/README_LINK_CHECK.json",
+      "exists": true
+    },
+    {
+      "target": "docs/OPERATIONS.md",
+      "exists": true
+    },
+    {
+      "target": "shared/core.js",
+      "exists": true
+    },
+    {
+      "target": "shared/merchant-rules.js",
+      "exists": true
+    },
+    {
+      "target": "docs/LIVE_GAME_EVIDENCE.json",
+      "exists": true
+    },
+    {
+      "target": "server/simulation.cjs",
+      "exists": true
+    },
+    {
+      "target": "contracts/economy/src/lib.rs",
+      "exists": true
+    },
+    {
+      "target": "docs/BASELINE.md",
+      "exists": true
+    },
+    {
+      "target": "LICENSE",
+      "exists": true
+    },
+    {
+      "target": "shared/core.js",
+      "exists": true
+    },
+    {
+      "target": "docs/OPERATIONS.md",
+      "exists": true
+    },
+    {
+      "target": "docs/README_CLAIMS.md",
+      "exists": true
+    },
+    {
+      "target": "docs/MOVEMENT_PROFILE.json",
+      "exists": true
+    }
+  ],
+  "external": [
+    {
+      "url": "https://testnet.nearblocks.io/address/aftermarket-game.testnet",
+      "status": 403,
+      "finalUrl": "https://testnet.nearblocks.io/address/aftermarket-game.testnet"
+    },
+    {
+      "url": "https://testnet.nearblocks.io/txns/ANjnywCznt4y1ZnsPuShySypLXyvSNL2GPvfw7Reb17e",
+      "status": 403,
+      "finalUrl": "https://testnet.nearblocks.io/txns/ANjnywCznt4y1ZnsPuShySypLXyvSNL2GPvfw7Reb17e"
+    },
+    {
+      "url": "https://aftmarket.xyz",
+      "status": 200,
+      "finalUrl": "https://aftmarket.xyz/"
+    },
+    {
+      "url": "https://testnet.nearblocks.io/txns/C7Ppi3bMkt4L5f5CSFqvgkcWYmukqGNR6wXnuaZXV35W",
+      "status": 403,
+      "finalUrl": "https://testnet.nearblocks.io/txns/C7Ppi3bMkt4L5f5CSFqvgkcWYmukqGNR6wXnuaZXV35W"
+    },
+    {
+      "url": "https://github.com/investorVOU/Aftermarket/tree/58d2cca",
+      "status": 200,
+      "finalUrl": "https://github.com/investorVOU/Aftermarket/tree/58d2cca"
+    },
+    {
+      "url": "https://github.com/investorVOU/Aftermarket/tree/957283d",
+      "status": 200,
+      "finalUrl": "https://github.com/investorVOU/Aftermarket/tree/957283d"
+    },
+    {
+      "url": "https://github.com/investorVOU/Aftermarket/compare/957283d...58d2cca",
+      "status": 200,
+      "finalUrl": "https://github.com/investorVOU/Aftermarket/compare/957283d...58d2cca"
+    }
+  ],
+  "receiptMatchesEvidence": true,
+  "forbiddenReadmeText": []
+}

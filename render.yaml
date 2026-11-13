@@ -14,6 +14,8 @@ services:
         value: 22.22.2
       - key: GAME_MODE
         value: connected
+      - key: APP_ORIGIN
+        value: https://aftmarket.xyz
       - key: HOST
         value: 0.0.0.0
       - key: NEAR_NETWORK
@@ -22,6 +24,10 @@ services:
         value: "true"
       - key: NEAR_RPC_URL
         value: https://test.rpc.fastnear.com
+      - key: QUICKNODE_RPC_URL
+        sync: false
+      - key: QUICKNODE_API_KEY
+        sync: false
       - key: NEAR_CONTRACT_ID
         value: aftermarket-game.testnet
       - key: NEAR_SIGNER_ID

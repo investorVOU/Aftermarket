@@ -1,0 +1,11 @@
+{
+  "verifiedAt": "2026-11-13T03:46:15.705Z",
+  "provider": "QuickNode",
+  "forcedPrimaryTransportFailure": true,
+  "network": "testnet",
+  "finalBlockHeight": 277456966,
+  "contract": "aftermarket-game.testnet",
+  "deployedWasmSha256": "6c18475191ba6237338f18acaa15426e3d84f6f2284ea6cf8205ef0c716bda3c",
+  "activeProvider": "fallback",
+  "readOnly": true
+}

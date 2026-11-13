@@ -1,0 +1,11 @@
+{
+  "network": "testnet",
+  "contractId": "aftermarket-game.testnet",
+  "transactionHash": "7yT5Uec8gUApUq6fh1pCyLgzbwxu3v9nq96MLwTqHhBv",
+  "wasmSha256": "6c18475191ba6237338f18acaa15426e3d84f6f2284ea6cf8205ef0c716bda3c",
+  "deployedWasmSha256": "6c18475191ba6237338f18acaa15426e3d84f6f2284ea6cf8205ef0c716bda3c",
+  "verifiedAt": "2026-11-13T03:48:20.670Z",
+  "provider": "QuickNode",
+  "forcedPrimaryTransportFailure": true,
+  "purpose": "Independent verification mint; not a player gather/craft receipt"
+}

@@ -1,0 +1,119 @@
+{
+  "checkedAt": "2026-11-12T19:01:42.445Z",
+  "host": "https://aftmarket.xyz",
+  "requests": [
+    {
+      "route": "/api/config",
+      "status": 200,
+      "url": "https://aftmarket.xyz/api/config",
+      "ms": 766,
+      "contentType": "application/json",
+      "config": {
+        "mode": "connected",
+        "configured": true,
+        "guestEnabled": true,
+        "googleEnabled": false,
+        "chain": {
+          "network": "testnet",
+          "configured": true,
+          "contractId": "aftermarket-game.testnet",
+          "signerId": "aftermarket-ctrl.testnet",
+          "settlement": true
+        }
+      }
+    },
+    {
+      "route": "/api/health",
+      "status": 200,
+      "url": "https://aftmarket.xyz/api/health",
+      "ms": 773,
+      "contentType": "application/json"
+    },
+    {
+      "route": "/",
+      "status": 200,
+      "url": "https://aftmarket.xyz/",
+      "ms": 943,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "route": "/client.js",
+      "status": 200,
+      "url": "https://aftmarket.xyz/client.js",
+      "ms": 952,
+      "contentType": "text/javascript; charset=utf-8",
+      "sha256": "c5eb151bb910243860fd922a7b57d7c5684b5a1a58080bb00b6944ff726ab4c2"
+    }
+  ],
+  "github": {
+    "repository": {
+      "status": 200,
+      "public": true,
+      "defaultBranch": "hackathon/track-09-testnet"
+    },
+    "branch": {
+      "status": 200,
+      "name": "hackathon/track-09-testnet",
+      "sha": "58d2cca1d26a5fc1d8f21867d85f37bff3e02126"
+    },
+    "main": {
+      "status": 200,
+      "name": "main",
+      "sha": "b4783084a6e63c5921be7a1173d7dd53bec00f2c"
+    },
+    "tags": {
+      "status": 200,
+      "tags": [
+        {
+          "name": "hackathon-submission",
+          "sha": "586d638b786777c5d4b75012e8746cbcbfa23a5d"
+        },
+        {
+          "name": "baseline-import",
+          "sha": "957283d672769fcf265b3e7c16c4df72ae22e8a5"
+        }
+      ]
+    },
+    "readme": {
+      "checkedAt": "2026-11-12T19:27:14.450Z",
+      "status": 200,
+      "ref": "hackathon/track-09-testnet",
+      "bytes": 15535,
+      "sha": "71308aaa7449199a9bc218b95417c5b5cd359549",
+      "readableWithoutAuthentication": true
+    }
+  },
+  "guest": {
+    "status": 200,
+    "ms": 4778,
+    "origin": "https://aftmarket.xyz",
+    "sessionIssued": true
+  },
+  "session": {
+    "status": 200,
+    "ms": 588,
+    "loaded": true,
+    "managedWallet": true,
+    "network": "testnet"
+  },
+  "hostedGuestVerifiedAt": "2026-11-12T19:02:42.974Z",
+  "previousGuestCheckErrors": [
+    "fetch failed"
+  ],
+  "headlessCheck": {
+    "result": "failed",
+    "guest": true,
+    "gather": true,
+    "craft": true,
+    "sevenDayPreview": true,
+    "changedMerchantPrices": 6,
+    "finalOnChainReceipt": false,
+    "error": "Furniture balance and matching real NEP-245 mint receipt were not both confirmed."
+  },
+  "settlementDiagnostic": {
+    "checkedAt": "2026-11-12T19:23:48.875Z",
+    "pendingCheckpoints": 344,
+    "checkedGuestPendingCheckpoints": 33,
+    "reason": "Settlement backlog; no final mint receipt claimed"
+  }
+}

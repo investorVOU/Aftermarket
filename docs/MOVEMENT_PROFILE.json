@@ -1,0 +1,160 @@
+{
+  "measuredAt": "2026-11-12T19:15:48.527Z",
+  "environment": "Headless installed Chrome on this Windows machine; same real hosted API; no CPU/network throttling. Six seconds of alternating movement after warm-up. Physical-device FPS unverified.",
+  "before": {
+    "client": "Unmodified deployed game",
+    "results": [
+      {
+        "label": "desktop",
+        "elapsedMs": 6006.9000000003725,
+        "fps": 21.64,
+        "p95FrameMs": 58.5,
+        "frames": 131,
+        "stationaryFrames": 73,
+        "maxVisualStep": 1.278599180477022,
+        "requestMetrics": null,
+        "sync": {
+          "count": 6,
+          "medianMs": 473,
+          "p95Ms": 5378,
+          "maxConcurrent": 1
+        },
+        "errors": []
+      },
+      {
+        "label": "mobile",
+        "elapsedMs": 5969.799999999814,
+        "fps": 26.3,
+        "p95FrameMs": 55.5,
+        "frames": 158,
+        "stationaryFrames": 10,
+        "maxVisualStep": 0.8768980180964783,
+        "requestMetrics": null,
+        "sync": {
+          "count": 13,
+          "medianMs": 426,
+          "p95Ms": 1232,
+          "maxConcurrent": 1
+        },
+        "errors": []
+      }
+    ]
+  },
+  "after": {
+    "client": "Local candidate renderer/client intercepted in Chrome against hosted API; not deployed",
+    "results": [
+      {
+        "label": "desktop",
+        "elapsedMs": 5962,
+        "fps": 22.31,
+        "p95FrameMs": 113.2,
+        "frames": 134,
+        "stationaryFrames": 0,
+        "maxVisualStep": 0.9923279033251569,
+        "render": {
+          "calls": 278,
+          "triangles": 157398,
+          "pixelRatio": 0.9
+        },
+        "requestMetrics": {
+          "syncLatencyMs": [
+            949.8000000007451,
+            640.7999999998137,
+            474.8999999994412,
+            523.7000000001863,
+            566.5999999996275,
+            837.2999999998137,
+            709,
+            705.3999999994412,
+            600.8999999994412,
+            790.5999999996275,
+            481.90000000037253,
+            603.5
+          ],
+          "applyMs": [
+            10.799999999813735,
+            4.5,
+            3.099999999627471,
+            2.6000000005587935,
+            3.2999999998137355,
+            2.5,
+            2.6000000005587935,
+            2.7000000001862645,
+            8.200000000186265,
+            3.8999999994412065,
+            2.7000000001862645,
+            3.7000000001862645,
+            2.7999999998137355,
+            3.099999999627471
+          ],
+          "ignoredSnapshots": 0,
+          "authoritativePositionWrites": 7,
+          "maxConcurrentStateRequests": 1
+        },
+        "sync": {
+          "count": 12,
+          "medianMs": 547,
+          "p95Ms": 1027,
+          "maxConcurrent": 1
+        },
+        "errors": []
+      },
+      {
+        "label": "mobile",
+        "elapsedMs": 5992.5999999996275,
+        "fps": 32.37,
+        "p95FrameMs": 70.8,
+        "frames": 195,
+        "stationaryFrames": 0,
+        "maxVisualStep": 0.7709488198535113,
+        "render": {
+          "calls": 283,
+          "triangles": 152644,
+          "pixelRatio": 0.9
+        },
+        "requestMetrics": {
+          "syncLatencyMs": [
+            476.20000000018626,
+            461.70000000018626,
+            958.5,
+            491.29999999981374,
+            591.4000000003725,
+            571.8999999994412,
+            466.8999999994412,
+            466.19999999925494,
+            518.3999999994412,
+            500.70000000018626,
+            634,
+            471.09999999962747
+          ],
+          "applyMs": [
+            33.200000000186265,
+            3.099999999627471,
+            2.900000000372529,
+            2.6000000005587935,
+            3.5,
+            2.5,
+            3.099999999627471,
+            2.7999999998137355,
+            2.800000000745058,
+            3.800000000745058,
+            3.900000000372529,
+            2.5,
+            2.8999999994412065,
+            2.7000000001862645
+          ],
+          "ignoredSnapshots": 0,
+          "authoritativePositionWrites": 9,
+          "maxConcurrentStateRequests": 1
+        },
+        "sync": {
+          "count": 12,
+          "medianMs": 479,
+          "p95Ms": 929,
+          "maxConcurrent": 1
+        },
+        "errors": []
+      }
+    ]
+  }
+}

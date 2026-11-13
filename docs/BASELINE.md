@@ -1,41 +1,22 @@
-# Baseline and review plan
+# Baseline and review history
 
-The owner supplied a Claude-generated v0.6 Three.js game. Its island, characters,
-navigation, phone, local trades, contracts, forestry and agriculture are disclosed
-as baseline in PROJECT_AUDIT.md. No authentic pre-window commit or untouched
-v0.6 source snapshot is present in the available Git history.
+The available history starts with `957283d`, a November 9 import of the earlier Claude-generated v0.6 game. The import already contains backend and contract work. It is not an untouched pre-hackathon snapshot, and no earlier authentic commit is available. The island, characters, navigation, phone and original local simulation are disclosed as baseline.
 
-The oldest available commit, `957283d` (November 9), is an import that already
-contains backend and contract work. It must not be falsely dated or tagged as
-a pre-window commit. We conservatively use it as the comparison baseline, excluding
-earlier in-window upgrades from the reviewed diff.
+The published review checkpoint `58d2cca` preserves both the original main history and a separate import history. Local ancestor checks confirmed that it includes `1a65fc1` (Render binding/responsive UI) and `b478308` (narrow-screen camera controls). Those fixes must remain in the final main release.
 
-Proposed commands were shown to the owner before local execution:
+An unauthenticated GitHub API check on November 12 reported:
 
-```sh
-git tag baseline-import 957283d
-git switch -c hackathon/track-09-testnet
-# Commit verified testnet changes locally, then:
-git tag hackathon-submission
-git diff baseline-import..hackathon-submission
-```
+| Reference | Existing public commit |
+|---|---|
+| `main` | `b478308` |
+| `hackathon/track-09-testnet` | `58d2cca` |
+| `baseline-import` tag | `957283d` |
+| `hackathon-submission` tag | `586d638` |
 
-The baseline tag and dedicated branch have been created locally in the writable
-publication checkout. No history has been rewritten. The submission tag is created
-only after final verification. Pushing any branch or tag still requires the owner's
-explicit confirmation. The original workspace's `.git` is protected read-only in
-this environment; the publication checkout is a clean, secret-scanned copy.
+The API reported `hackathon/track-09-testnet` as the current default branch. Thus the older context saying main was the default and no tags had been pushed is outdated. The branch API is publicly readable; a web-reader cache miss is not a repository permission failure.
 
-[Existing imported baseline](https://github.com/investorVOU/Aftermarket/tree/957283d).
-The intended [review diff](https://github.com/investorVOU/Aftermarket/compare/baseline-import...hackathon-submission)
-becomes available after the owner approves publishing those tags. Until then,
-review it locally with `git diff baseline-import..hackathon-submission`.
+[Existing import](https://github.com/investorVOU/Aftermarket/tree/957283d) · [published checkpoint](https://github.com/investorVOU/Aftermarket/tree/58d2cca) · [existing comparison](https://github.com/investorVOU/Aftermarket/compare/957283d...58d2cca).
 
-November 12: the owner explicitly authorized publication. Both named tags were
-pushed without force. The remote review branch had a separate imported history
-with the same source snapshot plus two label changes. That history is preserved
-by a normal merge alongside the local history; the current phone/movement changes
-retain those labels. The submission tag remains the November 10 verified checkpoint
-and is not moved. Follow-up work belongs to the review branch, so inspect the
-[current branch diff](https://github.com/investorVOU/Aftermarket/compare/baseline-import...hackathon/track-09-testnet)
-for the latest fixes. No commit history is rewritten.
+The historical submission tag is not the latest release. It will not be moved or recreated. The README links the existing immutable checkpoint rather than pretending an unpublished final tag exists. Movement/UI/documentation publication to main was authorized on November 13; release verification is recorded in `RELEASE_CHECKS.md`.
+
+[Proposed exact commands](PUBLICATION_APPROVAL.md) merge both current branches, preserve history and update main/review atomically without force or a default-branch setting change. An optional new reviewed tag needs explicit approval after checks. No Git tag/remote mutation was performed during this review task.

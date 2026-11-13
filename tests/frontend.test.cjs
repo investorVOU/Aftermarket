@@ -19,6 +19,9 @@ test('development onboarding, authenticated trade, market and action feedback us
     await until(()=>app.Net.online);assert.equal(w.document.getElementById('am-welcome').hidden,true);
     await app.Net.command('buyTimber');assert.equal(app.Game.Eco.player.inv.timber,1);assert.match(w.document.getElementById('am-cash').textContent,/\$30\.00/);
     w.document.getElementById('am-menu').click();assert.equal(w.document.getElementById('am-market').hidden,false);assert.equal(w.document.querySelectorAll('.am-quote').length,6);
+    assert.equal(w.document.getElementById('am-chain-verify').open,false,'technical ownership details stay collapsed');
+    assert.match(w.document.getElementById('am-inventory-items').textContent,/Timber: 1/);
+    assert.ok(w.document.getElementById('am-chain-verify').contains(w.document.getElementById('am-wallet')),'owner ID is inside the collapsed verification section');
     await app.Net.command('craft');assert.equal(app.Net.online,true);assert.match(w.document.getElementById('am-toast').textContent,/Visit Oak & Iron/);
     w.document.getElementById('am-guide').click();assert.match(w.document.getElementById('am-toast').textContent,/Destination marked/);
     const map=w.document.getElementById('am-map-panel');assert.equal(map.hidden,false);
@@ -45,5 +48,5 @@ test('development onboarding, authenticated trade, market and action feedback us
     w.document.getElementById('am-camera-reset').click();assert.equal(app.CamRig.gz,1);assert.equal(app.CamRig.gp,.69);
     w.dispatchEvent(new w.KeyboardEvent('keydown',{key:'m',bubbles:true}));assert.equal(map.hidden,false);
     w.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));assert.equal(map.hidden,true);
-  }finally{dom.window.close();}
+  }finally{await app.Net.stop?.();dom.window.close();}
 });

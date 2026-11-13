@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {Account,JsonRpcProvider} from 'near-api-js';
+import {Account} from 'near-api-js';
+import rpcRouter from '../server/rpc-router.cjs';
 import nearRpc from '../server/near-rpc.cjs';
 const root=path.join(path.dirname(fileURLToPath(import.meta.url)),'..');
 try{process.loadEnvFile(path.join(root,'.env'));}catch(e){if(e.code!=='ENOENT')throw e;}
@@ -10,7 +11,7 @@ const network=process.env.NEAR_NETWORK||'testnet';
 if(network!=='testnet')throw new Error('This hackathon deployment command is testnet-only.');
 if(!NEAR_CONTRACT_ID||!NEAR_SIGNER_ID||!NEAR_SIGNER_PRIVATE_KEY)throw new Error('Configure .env with the funded contract account and controller credentials.');
 if(network==='mainnet'&&[NEAR_CONTRACT_ID,NEAR_SIGNER_ID].some(id=>id.endsWith('.testnet')))throw new Error('Mainnet cannot use testnet accounts.');
-const provider=new JsonRpcProvider({url:NEAR_RPC_URL||'https://test.rpc.fastnear.com'});
+const {provider}=await rpcRouter.createProvider(process.env);
 const status=await nearRpc.rpc(NEAR_RPC_URL||'https://test.rpc.fastnear.com','status',[]);
 if(status.chain_id!==network)throw new Error('NEAR_RPC_URL does not match NEAR_NETWORK.');
 const contract=new Account(NEAR_CONTRACT_ID,provider,NEAR_DEPLOY_PRIVATE_KEY||NEAR_SIGNER_PRIVATE_KEY);

@@ -1,5 +1,58 @@
 # Release verification — November 10, 2026
 
+## November 13 publication and QuickNode
+
+The owner authorized publishing the reviewed game to main. Publication uses a
+history-preserving update of main and the review branch; existing tags and the
+GitHub default-branch setting remain unchanged.
+
+QuickNode NEAR testnet fallback was verified with a deliberately unavailable
+primary. It returned final block 277456966 and the exact deployed WASM hash.
+A separate real verification mint completed through the new SDK transport:
+`7yT5Uec8gUApUq6fh1pCyLgzbwxu3v9nq96MLwTqHhBv`.
+`QUICKNODE_VERIFICATION.json` and `QUICKNODE_SETTLEMENT_EVIDENCE.json` contain
+public evidence only. The URL token and API key remain in ignored local `.env`.
+
+Build, syntax lint (57 modules plus renderer), 51 backend/API/database/client/RPC
+checks and 322 game checks passed. The contract is unchanged; six WASM checks
+are run separately. A private fallback must also be configured in Render's
+environment; Git publication never uploads the local `.env`.
+
+## Current unpublished review — November 12
+
+This section supersedes earlier release handoff text for the current candidate.
+No Git push/fetch, tag mutation, default-branch change or Render deployment was
+performed in this review task. Exact proposed commands are in
+`PUBLICATION_APPROVAL.md` and await the owner's approval.
+
+- Build and syntax lint passed (55 modules plus inline renderer); 46 backend/API/
+  database/DOM/movement/queue checks and 322 game checks passed. Six compiled-WASM
+  checks passed separately: 374 checks total.
+- Hosted `https://aftmarket.xyz` game/config/health/client returned HTTP 200.
+  Config reported connected testnet, configured and guest enabled. Real guest
+  authentication with the custom-domain Origin and session/world loading passed.
+- Hosted headless gather/craft/week completed and all six merchant quotes changed.
+  Final furniture ownership/receipt verification failed. A subsequent read found
+  344 pending checkpoints and this guest's 33 checkpoints still pending. A passing
+  hosted chain loop is not claimed.
+- The read-only inspector ran in a clean checkout without a signing key and read
+  the recorded player's Trading Post licence as 1 at final block 277405388.
+- Candidate desktop/mobile Chrome inventory and receipt UI passed against the real
+  hosted API with local renderer/client/CSS interception, not a deployment.
+  Verification details stay closed by default. Current/candidate FPS and latency
+  samples are in `MOVEMENT_PROFILE.json`; no physical-device performance claim.
+- README local targets exist and GitHub checkpoint/diff URLs returned HTTP 200.
+  Canonical explorer links match recorded hashes but returned HTTP 403 to this
+  automated client; the README documents the RPC fallback.
+- GitHub API reports the review branch as current default and both historical
+  tags already published. Both November 9 main fixes are ancestors of checkpoint
+  `58d2cca`; no published tag is proposed for moving.
+
+The new backend moves autosave persistence off the movement response, permits
+simulation during a background save, and retains exclusive durable economic
+actions. Local queue/transaction checks passed. Hosted backend latency after that
+change remains unverified until an approved deployment.
+
 ## November 12 follow-up
 
 - Movement prediction, camera clearance, persistent in-phone conversation, NPC text

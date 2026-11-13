@@ -7,7 +7,7 @@ const {rpc}=require('../server/near-rpc.cjs');
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 let managed;
 async function check(){
-  let base=process.env.DEMO_BASE_URL;
+  let base=process.env.BASE_URL||process.env.DEMO_BASE_URL;
   if(!base){
     // Reuse an already-running local worker: two settlement workers must not
     // operate the same database. Otherwise start the actual game server.
@@ -15,10 +15,10 @@ async function check(){
     if(!base){managed=require('../server/index.cjs');await new Promise((resolve,reject)=>{managed.server.once('error',reject);managed.server.listen(0,'127.0.0.1',resolve);});base='http://127.0.0.1:'+managed.server.address().port;}
   }
   const parsed=new URL(base);if(!['http:','https:'].includes(parsed.protocol)||parsed.username||parsed.password)throw Error('Use a plain HTTP(S) demo URL without credentials.');
-  let token,state;
+  let token,state,lastSyncSeconds=.3;
   async function api(route,body){
-    const response=await fetch(base.replace(/\/$/,'')+'/api/'+route,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(25000)});
-    const data=await response.json();if(!response.ok)throw Error('API '+route+': '+(data.error||'HTTP '+response.status));return data;
+    const started=performance.now(),response=await fetch(base.replace(/\/$/,'')+'/api/'+route,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(25000)});
+    const data=await response.json();if(route==='sync')lastSyncSeconds=(performance.now()-started)/1000;if(!response.ok)throw Error('API '+route+': '+(data.error||'HTTP '+response.status));return data;
   }
   const config=await api('config');
   if(config.mode!=='connected'||config.chain?.network!=='testnet'||!config.chain?.settlement||!config.guestEnabled)throw Error('Real demo requires connected testnet settlement and guest entry. Set DEMO_BASE_URL to the configured demo, or follow docs/OPERATIONS.md for a private local .env. Development mode cannot pass this check.');
@@ -29,8 +29,8 @@ async function check(){
   const action=async(name,args={})=>state=await api('action',{id:crypto.randomUUID(),name,args});
   async function walkTo(x,z){
     const p=state.state.player,route=planner.Sim.PN.route(p.x,p.z,x,z);if(!route)throw Error('No walkable route to resource/workshop.');
-    const deadline=Date.now()+60000;
-    for(const target of route)while(true){const p=state.state.player,dx=target.x-p.x,dz=target.z-p.z,d=Math.hypot(dx,dz);if(d<.65)break;if(Date.now()>deadline)throw Error('Server movement timed out.');state=await api('sync',{x:dx/d,z:dz/d});await sleep(100);}
+    const deadline=Date.now()+120000;
+    for(const target of route)while(true){const p=state.state.player,dx=target.x-p.x,dz=target.z-p.z,d=Math.hypot(dx,dz);if(d<.65)break;if(Date.now()>deadline)throw Error('Server movement timed out.');const speed=Math.min(1,d/(6*Math.max(.2,lastSyncSeconds*1.5+.1)));state=await api('sync',{x:dx/d*speed,z:dz/d*speed});await sleep(50);}
     await refresh();
   }
   let approach,tree;

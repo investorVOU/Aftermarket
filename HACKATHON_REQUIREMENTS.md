@@ -27,9 +27,9 @@ frictionless authentication. It does not claim NEAR Auth/MPC or Intents.
 | [~] Personal email / Google | Code and server verification implemented. Google disabled when checked; actual inbox, OAuth redirects and cross-device social sign-in still need operator verification. Guest convenience is not claimed as verified Google/email ownership. |
 | [x] On-chain inspector | Player/merchant selector reads final RPC balances; `npm run near:items -- <owner-id>` works without a signing key. Phone NEAR app links to it. |
 | [x] Documentation and licence | Screener-ordered README, MIT, operations guide, explicit custody/game-credit/baseline/AI disclosures. |
-| [~] Baseline separation | Local `baseline-import` tag and `hackathon/track-09-testnet` branch. Oldest available import already contains in-window backend work; not mislabelled as pre-window. Review diff/submission tag publication awaits approval. `docs/BASELINE.md`. |
-| [x] Public repository | GitHub read-only API confirmed `private:false`. No visibility change was made. Current new branch remains local until approved. |
-| [ ] Complete public hosted demonstration | Render Blueprint and environment handoff prepared. Real remote service URL/access and approved Git publication are still needed. |
+| [x] Baseline disclosure | Existing import/checkpoint/diff and published historical tags verified through GitHub API. November 9 import is not mislabelled as untouched pre-window code. Current candidate remains unpublished. `docs/BASELINE.md`. |
+| [x] Public repository | Unauthenticated GitHub API reports public review branch `58d2cca` and main `b478308`; review branch currently default. No visibility/default change in this task. |
+| [~] Public hosted demonstration | `https://aftmarket.xyz` serves the game; real hosted guest/session verified. Hosted gather/craft/week succeeded; final mint verification failed with a settlement backlog. `docs/HOSTED_VERIFICATION.json`. |
 | [ ] Human demo post and final submission | Owner must record the video, publish X post, provide payout/contact details and confirm the exact API payload. Nothing submitted or posted by the agent. |
 
 ## Verified evidence

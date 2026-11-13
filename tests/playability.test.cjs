@@ -14,9 +14,15 @@ test('movement predicts between responses, respects collision and stops on loss 
 });
 test('position corrections converge and a reconnect resets large divergence',()=>{
   const col={move(p,dx,dz){p.x+=dx;p.z+=dz;}},v=new MovementView(col);v.accept({x:0,z:0});
-  v.step(.05,{x:1,z:0},true);v.accept({x:0,z:0});const first=v.x;
+  v.step(.2,{x:1,z:0},true);v.accept({x:0,z:0});const first=v.x;
   for(let i=0;i<60;i++)v.step(1/60,{x:0,z:0},false);
-  assert.ok(v.x<first/100);v.accept({x:20,z:5});assert.equal(v.x,20);assert.equal(v.z,5);
+  assert.ok(first>v.threshold);assert.ok(v.x<.025);v.accept({x:20,z:5});assert.equal(v.x,20);assert.equal(v.z,5);
+});
+test('small snapshot noise does not pull back local movement; prediction is bounded during outage',()=>{
+ const col={move(p,dx,dz){p.x+=dx;p.z+=dz;}},v=new MovementView(col);v.accept({x:0,z:0});v.step(.05,{x:1,z:0},true);
+ v.accept({x:.1,z:0});assert.ok(Math.abs(v.x-.3)<1e-9);assert.equal(v.target,null);assert.equal(v.corrections,0);
+ for(let i=0;i<90;i++)v.step(1/60,{x:1,z:0},true);const stopped=v.x;
+ for(let i=0;i<30;i++)v.step(1/60,{x:1,z:0},true);assert.equal(v.x,stopped);
 });
 test('phone conversations persist both sides, calls use NPC state and unknown contacts fail',()=>{
   const g=world(),s=g.Sim,n=s.npcs[10];n.vis=true;n.x=s.player.x;n.z=s.player.z;
