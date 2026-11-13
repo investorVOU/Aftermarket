@@ -1,0 +1,29 @@
+{
+  "verifiedAt": "2026-11-13T03:58:03.875Z",
+  "network": "testnet",
+  "contract": "aftermarket-game.testnet",
+  "wallet": "0aa0bedd6ff98b42a7a590cc6eccffa56a3eb030fa365cfa351ca90ad9b24a36",
+  "item": "furniture",
+  "balance": "1",
+  "transaction": "J2NJm9TAymoEym8PYgryd5vxxxbym13bvY8UsMqpszSd",
+  "prices": {
+    "before": {
+      "timber": 1875,
+      "workshop": 1725,
+      "furniture": 8700,
+      "maize": 600,
+      "cassava": 550,
+      "milk": 500
+    },
+    "after": {
+      "timber": 1375,
+      "workshop": 1700,
+      "furniture": 9375,
+      "maize": 325,
+      "cassava": 300,
+      "milk": 400
+    }
+  },
+  "merchantWallet": "4fdb953da944286d6e2e444ecd02db8dfdd260af1fc6aa74fee606d85d4e036e",
+  "simulatedSeconds": 2954.2999999983613
+}

@@ -34,33 +34,35 @@ and the unpublished candidate are separate results. The public host is
 | No other-chain, Intents or NEAR Auth/MPC claim | Current code and integration boundaries | Unused NEAR Auth dependencies do not constitute a working integration |
 | Google disabled and email/OAuth unverified | Hosted config `googleEnabled:false`; no callback/inbox check performed | Operator must configure and verify these if offered |
 
-## Hosted terminal rerun
+## Hosted terminal rerun — November 13
 
-The latency-aware candidate checker successfully created a real hosted guest,
-gathered three timber, crafted furniture and ran the seven-day preview. Observed
-quotes in game dollars:
+The latest latency-aware checker **passed** against `https://aftmarket.xyz`:
+real API guest, gathering three timber, crafting one furniture, the actual
+seven-day preview, distinct merchant owner, final player furniture balance = 1
+and its matching NEP-245 mint event. No email, CAPTCHA or player signing key was
+used for gameplay. Independent RPC checking used the operator's locally configured
+primary/fallback transport; a fresh clone defaults to the public primary.
+
+Receipt: `J2NJm9TAymoEym8PYgryd5vxxxbym13bvY8UsMqpszSd`.
+Public evidence: `DEMO_CHECK_EVIDENCE.json`. This check retains furniture to verify
+the mint; it does not claim a new hosted furniture sale or business acquisition.
+The November 12 failures/backlog are historical observations, preserved in
+`HOSTED_VERIFICATION.json`. A later operator recovery read found no pending head
+before this new test. No checkpoint was manually marked confirmed.
 
 | Quote | Before | After |
 |---|---:|---:|
-| Timber | 19.50 | 13.00 |
-| Workshop timber bid | 17.25 | 16.25 |
-| Furniture | 87.00 | 88.00 |
-| Maize | 6.00 | 3.25 |
-| Cassava | 5.50 | 3.00 |
-| Milk | 5.00 | 4.25 |
+| timber | 18.75 | 13.75 |
+| workshop | 17.25 | 17.00 |
+| furniture | 87.00 | 93.75 |
+| maize | 6.00 | 3.25 |
+| cassava | 5.50 | 3.00 |
+| milk | 5.00 | 4.00 |
 
-The final hosted ownership/receipt check failed: furniture balance and its matching
-NEP-245 mint receipt were not both confirmed within the timeout. There is no
-passing `DEMO_CHECK_EVIDENCE.json` for this hosted run. `HOSTED_VERIFICATION.json`
-records the failure. Do not treat the configured flag or changed prices as proof
-of final on-chain settlement.
-
-A subsequent server-side read found **344 pending checkpoints**, with this guest's
-33 recorded checkpoints still pending. This is a settlement backlog, not a missing
-Supabase guest setting. Stop duplicate connected relayers, drain the queue through
-the legitimate recovery path and rerun verification; do not mark rows confirmed
-manually. The existing local server could not be stopped from the restricted
-agent session, so its owning terminal remains an operator action.
+QuickNode fallback separately passed a forced-primary-outage test, final testnet
+block/code queries and a real verification mint. See `QUICKNODE_VERIFICATION.json`
+and `QUICKNODE_SETTLEMENT_EVIDENCE.json`. Endpoint credentials stay private. The
+hosted fallback configuration itself still depends on Render environment settings.
 
 ## Movement observations
 

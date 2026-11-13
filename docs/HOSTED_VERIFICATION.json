@@ -101,19 +101,33 @@
     "fetch failed"
   ],
   "headlessCheck": {
-    "result": "failed",
+    "verifiedAt": "2026-11-13T03:58:03.875Z",
+    "result": "passed",
     "guest": true,
     "gather": true,
     "craft": true,
     "sevenDayPreview": true,
     "changedMerchantPrices": 6,
-    "finalOnChainReceipt": false,
-    "error": "Furniture balance and matching real NEP-245 mint receipt were not both confirmed."
+    "finalOnChainReceipt": true,
+    "transaction": "J2NJm9TAymoEym8PYgryd5vxxxbym13bvY8UsMqpszSd",
+    "evidence": "DEMO_CHECK_EVIDENCE.json"
   },
   "settlementDiagnostic": {
     "checkedAt": "2026-11-12T19:23:48.875Z",
     "pendingCheckpoints": 344,
     "checkedGuestPendingCheckpoints": 33,
     "reason": "Settlement backlog; no final mint receipt claimed"
-  }
+  },
+  "previousHeadlessChecks": [
+    {
+      "result": "failed",
+      "guest": true,
+      "gather": true,
+      "craft": true,
+      "sevenDayPreview": true,
+      "changedMerchantPrices": 6,
+      "finalOnChainReceipt": false,
+      "error": "Furniture balance and matching real NEP-245 mint receipt were not both confirmed."
+    }
+  ]
 }

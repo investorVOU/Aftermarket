@@ -13,6 +13,13 @@ A separate real verification mint completed through the new SDK transport:
 `QUICKNODE_VERIFICATION.json` and `QUICKNODE_SETTLEMENT_EVIDENCE.json` contain
 public evidence only. The URL token and API key remain in ignored local `.env`.
 
+The November 13 hosted headless rerun **passed** API guest entry, gathering,
+crafting, seven-day acceleration, price changes, merchant identity and final
+furniture balance/mint receipt verification. Its transaction is
+`J2NJm9TAymoEym8PYgryd5vxxxbym13bvY8UsMqpszSd`;
+`DEMO_CHECK_EVIDENCE.json` contains public proof. The earlier November 12 failures
+below remain historical records rather than current release status.
+
 Build, syntax lint (57 modules plus renderer), 51 backend/API/database/client/RPC
 checks and 322 game checks passed. The contract is unchanged; six WASM checks
 are run separately. A private fallback must also be configured in Render's

@@ -8,7 +8,7 @@ The economy is the gameplay: autonomous rule-based merchants buy inputs, produce
 
 ![Aftermarket island exchange and merchant economy](docs/images/economy-desktop.png)
 
-Hosted guest authentication and world loading were verified on November 12. The complete economic loop has earlier local/testnet evidence; the latest hosted end-to-end result is recorded in [verification notes](docs/README_CLAIMS.md). Hosted evidence and local client measurements are distinguished in the verification notes.
+Hosted guest entry, gathering, crafting, the seven-day preview and a final furniture mint passed on November 13. [Hosted API and chain evidence](docs/DEMO_CHECK_EVIDENCE.json) records the real transaction and changed prices. Selling and the Trading Post licence have separate earlier testnet evidence. Hosted evidence and local client measurements are distinguished in the [claim audit](docs/README_CLAIMS.md).
 
 ## Verify the chain without running anything
 
@@ -106,7 +106,7 @@ Credentials-free local play, Supabase configuration, Render deployment, managed-
 
 - Separate island per player and one supported backend instance; no shared multiplayer/P2P market.
 - Managed custody and privileged settlement controller; no MPC, key export or external-transfer indexing.
-- Pending checkpoints can delay final ownership; a failed head job blocks later settlement. Hosted guest entry alone does not prove the full on-chain loop.
+- Settlement is asynchronous; failed or backlogged checkpoints can delay final ownership. The recorded hosted headless check confirms one real mint, not an uptime guarantee.
 - Google is disabled in the observed hosted configuration; personal email delivery, OAuth callbacks and cross-device login are unverified.
 - Desktop/mobile viewport checks do not establish physical-device FPS. Render cold starts and shared public RPCs affect response and confirmation time.
 - Hosted verification of this revision requires a Render redeploy. Recorded November 12 measurements distinguish the deployed game from the locally tested client.

@@ -29,7 +29,7 @@ frictionless authentication. It does not claim NEAR Auth/MPC or Intents.
 | [x] Documentation and licence | Screener-ordered README, MIT, operations guide, explicit custody/game-credit/baseline/AI disclosures. |
 | [x] Baseline disclosure | Existing import/checkpoint/diff and published historical tags verified through GitHub API. November 9 import is not mislabelled as untouched pre-window code. Current candidate remains unpublished. `docs/BASELINE.md`. |
 | [x] Public repository | Unauthenticated GitHub API reports public review branch `58d2cca` and main `b478308`; review branch currently default. No visibility/default change in this task. |
-| [~] Public hosted demonstration | `https://aftmarket.xyz` serves the game; real hosted guest/session verified. Hosted gather/craft/week succeeded; final mint verification failed with a settlement backlog. `docs/HOSTED_VERIFICATION.json`. |
+| [~] Public hosted demonstration | `https://aftmarket.xyz` serves the game; real hosted guest/session verified. Hosted API guest/gather/craft/week and final furniture balance plus matching mint receipt passed November 13; `docs/DEMO_CHECK_EVIDENCE.json`. `docs/HOSTED_VERIFICATION.json`. |
 | [ ] Human demo post and final submission | Owner must record the video, publish X post, provide payout/contact details and confirm the exact API payload. Nothing submitted or posted by the agent. |
 
 ## Verified evidence
