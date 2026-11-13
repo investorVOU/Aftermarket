@@ -38,3 +38,16 @@ test('permission errors and malformed provider responses never leak credentials 
     let writes=0;await assert.rejects(configure({env,apply:true,fetchImpl:async(url,opts)=>{if(opts.method==='PATCH')writes++;return response;}}),error=>!error.message.includes(env.RESEND_API_KEY)&&!error.message.includes(env.SUPABASE_ACCESS_TOKEN));assert.equal(writes,0);
   }
 });
+test('branded templates preserve native verification and never change SMTP or OAuth',async()=>{
+  const {configureTemplates,templatePatch}=require('../scripts/email-templates.cjs'),{JSDOM}=require('jsdom');
+  const patch=templatePatch(),dom=new JSDOM(patch.mailer_templates_magic_link_content),links=[...dom.window.document.querySelectorAll('a')].map(a=>a.getAttribute('href'));
+  assert.deepEqual(links,['{{ .ConfirmationURL }}','https://aftmarket.xyz']);assert.equal(dom.window.document.querySelectorAll('script,form,img').length,0);dom.window.close();
+  const original={external_google_enabled:true,smtp_host:'smtp.resend.com',uri_allow_list:'https://aftmarket.xyz'},calls=[];let current={...original};
+  const fetchImpl=async(url,opts)=>{calls.push(opts.method||'GET');if(opts.method==='PATCH'){const body=JSON.parse(opts.body);assert.deepEqual(Object.keys(body).sort(),Object.keys(patch).sort());current={...current,...body};}return{ok:true,json:async()=>current};};
+  const preview=await configureTemplates({env,fetchImpl});assert.equal(preview.mode,'preview');assert.deepEqual(calls,['GET']);
+  const result=await configureTemplates({env,fetchImpl,apply:true});assert.equal(result.configurationVerified,true);assert.equal(result.emailSent,false);assert.equal(current.external_google_enabled,true);assert.equal(current.uri_allow_list,original.uri_allow_list);
+});
+test('template setup reports failed read-back without claiming success or exposing credentials',async()=>{
+  const {configureTemplates}=require('../scripts/email-templates.cjs');
+  await assert.rejects(configureTemplates({env,apply:true,fetchImpl:async()=>({ok:true,json:async()=>({})})}),/read-back did not match/);
+});

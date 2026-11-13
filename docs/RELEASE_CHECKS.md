@@ -1,5 +1,23 @@
 # Release verification — November 10, 2026
 
+## November 13 narration brief and branded email templates
+
+Added a factual voice-over feature brief for Rackz, with footage suggestions,
+GPT handoff prompt and explicit testnet/custody/AI/island boundaries. Replaced
+Supabase's magic-link and confirmation messages with a restrained branded HTML
+template. Native confirmation URLs are preserved; no SMTP, OAuth, user or game
+economy settings were changed. Preview ran before apply, and live read-back
+matched the template hash. Domain audit found verified SPF/DKIM, public DMARC and
+disabled tracking. `EMAIL_TEMPLATE_VERIFICATION.json` is separate from the earlier
+actual email-flow proof; fresh-message inbox placement is unverified.
+
+Build and lint passed. Desktop 800px and mobile 320px Chrome template previews had
+no horizontal overflow or remote images. Exact credential scan included the
+browser bundle and public sources/docs, with no findings. Template application
+sends no messages; a further test email awaits the owner's one-message approval.
+All 89 backend/API/DB/client/configuration checks and 322 original game checks
+passed (411 total).
+
 ## November 13 live email integration follow-up
 
 The Windows PowerShell npm wrapper dropped forwarded `--apply`; the dedicated

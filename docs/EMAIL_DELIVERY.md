@@ -90,6 +90,45 @@ Review Auth rate limits for expected judging traffic rather than disabling limit
 
 ## Verify actual delivery and login
 
+### Branded templates and spam placement
+
+The default confirmation and magic-link messages were replaced with
+[`supabase/templates/sign-in.html`](../supabase/templates/sign-in.html). The
+subjects are **Confirm your email for Aftermarket** and **Your Aftermarket
+sign-in link**. The HTML uses inline styles and presentation tables, one native
+Supabase confirmation button, no remote images/tracking, and a clear explanation
+for someone who did not request a sign-in. It previews without horizontal overflow
+at 800px and 320px. Supabase's confirmation URL is preserved, not reconstructed.
+
+```powershell
+npm.cmd run email:templates
+npm.cmd run email:templates:apply
+```
+
+Preview is read-only. Apply changes only the two subjects and their HTML bodies,
+then reads them back; SMTP, callbacks, OAuth and account settings are preserved.
+Changing these templates does not send an email. They are installed directly on
+Supabase and do not require a Render redeployment.
+[Template read-back and domain audit](EMAIL_TEMPLATE_VERIFICATION.json) records
+the installed HTML hash and separates these checks from the earlier live email test.
+
+The sender-domain audit found verified SPF/DKIM, public DMARC
+`v=DMARC1; p=none;`, and disabled click/open tracking. The owner reported that the
+earlier default email landed in spam. Those checks and improved copy do not
+guarantee future inbox placement: a new domain's reputation and the recipient's
+filters also matter. Mark an expected message **Not spam** and check a fresh
+message. Provider `delivered` means the recipient's mail server accepted it,
+not that Gmail placed it in the primary inbox.
+
+Resend also recommends a custom Supabase authentication domain for link-domain
+alignment. That is a separate infrastructure decision; no custom auth domain,
+paid add-on or new DNS change was introduced for this template update.
+
+See [Resend's Supabase deliverability guidance](https://resend.com/docs/knowledge-base/how-do-i-maximize-deliverability-for-supabase-auth-emails)
+and [Supabase templates](https://supabase.com/docs/guides/auth/auth-email-templates).
+
+### Manual verification
+
 1. Open the hosted game in a fresh browser, enter an inbox you control and choose
    **Email me a sign-in link** once. A successful API response means accepted for
    delivery, not received.

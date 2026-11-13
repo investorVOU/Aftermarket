@@ -1,0 +1,54 @@
+{
+  "at": "2026-11-13T19:07:07.364Z",
+  "scope": "Live Supabase template read-back and Resend/public DNS audit; synthetic-link Chrome layout previews; no fresh email sent",
+  "project": "ytfioiujcitikvgbfxwg",
+  "templates": [
+    "magic_link",
+    "confirmation"
+  ],
+  "subjects": {
+    "signIn": "Your Aftermarket sign-in link",
+    "confirmation": "Confirm your email for Aftermarket"
+  },
+  "htmlSha256": "39aecca14499f40f1b7de7ed0ebdcffc3fc095723dfcfd2b9a867e400aa04cad",
+  "configurationVerified": true,
+  "domain": {
+    "at": "2026-11-13T19:04:28.621Z",
+    "domain": "aftmarket.xyz",
+    "status": "verified",
+    "openTracking": false,
+    "clickTracking": false,
+    "records": [
+      {
+        "record": "DKIM",
+        "name": "resend._domainkey",
+        "type": "TXT",
+        "status": "verified"
+      },
+      {
+        "record": "SPF",
+        "name": "rsend",
+        "type": "CNAME",
+        "status": "verified"
+      },
+      {
+        "record": "SPF",
+        "name": "send",
+        "type": "CNAME",
+        "status": "verified"
+      }
+    ],
+    "dmarcQueryStatus": 0,
+    "dmarc": [
+      "\"v=DMARC1; p=none;\""
+    ]
+  },
+  "layout": {
+    "desktopWidth": 800,
+    "mobileWidth": 320,
+    "horizontalOverflow": false,
+    "remoteImages": 0
+  },
+  "freshEmailSent": false,
+  "inboxPlacementVerified": false
+}

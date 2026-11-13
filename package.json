@@ -23,7 +23,9 @@
     "demo:check": "node scripts/demo-check.cjs",
     "settlement:drain": "node scripts/settlement-drain.cjs",
     "email:configure": "node scripts/configure-email.cjs",
-    "email:configure:apply": "node scripts/configure-email.cjs --apply"
+    "email:configure:apply": "node scripts/configure-email.cjs --apply",
+    "email:templates": "node scripts/email-templates.cjs",
+    "email:templates:apply": "node scripts/email-templates.cjs --apply"
   },
   "engines": {
     "node": ">=22.14.0"

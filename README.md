@@ -102,6 +102,8 @@ Three.js island + phone → authenticated server intents → deterministic econo
 
 Local movement is predicted immediately and reconciled with authoritative state. Economy, inventory and ownership remain server-authoritative. [Architecture](docs/ARCHITECTURE.md), [merchant jobs](docs/JOBS.md), [operations and local setup](docs/OPERATIONS.md), [Resend email setup](docs/EMAIL_DELIVERY.md), [claim audit](docs/README_CLAIMS.md).
 
+[Feature brief for the narrated demo](docs/AFTERMARKET_FEATURES_FOR_VOICEOVER.md) includes gameplay facts, footage suggestions and the boundaries a voice-over should preserve.
+
 ```sh
 npm ci
 npm run build
