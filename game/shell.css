@@ -84,3 +84,10 @@ body.market-open .am-camera,body.market-open #pbtn,body.market-open .abtn,body.m
 @media(max-width:760px){.am-brand .am-mark{width:28px;height:28px;padding:3px;border-radius:6px}.am-welcome-logo{width:66px;height:40px;padding:5px;margin-bottom:12px}}
 @media(max-height:700px){.am-welcome-logo{display:none}}
 #ph-merchant-question{box-sizing:border-box;width:100%;min-height:40px;padding:8px;margin:6px 0 10px;border:1px solid #7d8a7e;border-radius:8px;background:#fff;color:#17251d;font:inherit}
+/* Off-screen app transitions must not make the phone itself scroll sideways. */
+.am-enhanced #phone .ph-screen{overflow:clip}
+.am-enhanced #phone .ph-app{min-width:0;width:100%;box-sizing:border-box}
+.am-enhanced #phone .ph-app:not(.on){visibility:hidden;pointer-events:none}
+.am-enhanced #phone .ph-scroll{min-width:0;min-height:0;overflow-x:hidden;overflow-y:auto;overflow-wrap:anywhere}
+.am-enhanced #phone .ph-nav .tt{min-width:0;overflow-wrap:anywhere}
+.am-enhanced #phone .hero b{font-size:27px;letter-spacing:-.5px}
