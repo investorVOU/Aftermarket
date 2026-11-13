@@ -195,23 +195,23 @@ const Input=(()=>{
   addEventListener('blur',()=>S.reset());S.apply();};
  return S;})();
 // ===== WORLD: renderer, coast, terrain =====
-const R=new THREE.WebGLRenderer({antialias:!COARSE});R.setSize(innerWidth,innerHeight);R.setPixelRatio(Math.min(devicePixelRatio,COARSE?1.5:2));R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;R.shadowMap.autoUpdate=false;R.shadowMap.needsUpdate=true;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.05;document.body.appendChild(R.domElement);
+const R=new THREE.WebGLRenderer({antialias:!COARSE,powerPreference:'high-performance'});R.setSize(innerWidth,innerHeight);R.setPixelRatio(Math.min(devicePixelRatio,COARSE?1.5:2));R.shadowMap.enabled=!COARSE;R.shadowMap.type=THREE.PCFShadowMap;R.shadowMap.autoUpdate=false;R.shadowMap.needsUpdate=true;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.05;document.body.appendChild(R.domElement);
 const S=new THREE.Scene(),SKY=0xaed0e0;S.background=new THREE.Color(SKY);S.fog=new THREE.Fog(SKY,80,200);
 const cam=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,.5,300);
 S.add(new THREE.HemisphereLight(0xdcecff,0x7b6f50,.65));
-const sun=new THREE.DirectionalLight(0xffe9c4,1.1);sun.position.set(30,50,20);sun.castShadow=true;sun.shadow.mapSize.set(COARSE?1024:2048,COARSE?1024:2048);sun.shadow.bias=-.0004;Object.assign(sun.shadow.camera,{left:-55,right:55,top:55,bottom:-55,far:160});S.add(sun,sun.target);
+const sun=new THREE.DirectionalLight(0xffe9c4,1.1);sun.position.set(30,50,20);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.bias=-.0004;Object.assign(sun.shadow.camera,{left:-55,right:55,top:55,bottom:-55,far:160});S.add(sun,sun.target);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),sm=(a,b,v)=>{const t=clamp((v-a)/(b-a),0,1);return t*t*(3-2*t)};
 const mix=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];
 const n2=(x,z)=>Math.sin(x*.7+Math.sin(z*.5)*2)*Math.cos(z*.6+Math.sin(x*.4)*2);
 let seed=11;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647,rn=(a,b)=>a+Math.random()*(b-a);
 const dShore=Sim.Geo.dShore,tY=Sim.Geo.tY,PZ=Sim.Geo.PZ,onPier=Sim.Geo.onPier;
 {const SAND=[.78,.7,.5],DEEP=[.1,.22,.3],G1=[.34,.5,.22],G2=[.25,.4,.18],SOIL=[.42,.34,.22];
- const g=new THREE.PlaneGeometry(270,270,190,190);g.rotateX(-Math.PI/2);const p=g.attributes.position,col=new Float32Array(p.count*3);
+ const g=new THREE.PlaneGeometry(270,270,128,128);g.rotateX(-Math.PI/2);const p=g.attributes.position,col=new Float32Array(p.count*3);
  for(let i=0;i<p.count;i++){const x=p.getX(i),z=p.getZ(i),d=dShore(x,z);p.setY(i,tY(x,z));let c;
   if(d<0)c=mix(SAND,DEEP,clamp(-d/5,0,1));else{let b=mix(G1,G2,n2(x*.3,z*.3)*.5+.5);b=mix(b,SOIL,sm(.5,.9,n2(x*.15+9,z*.15)*.5+.5)*.45);b=mix(b,[.17,.3,.14],sm(-14,-24,z)*sm(-4,-20,x)*.8);c=mix(SAND,b,sm(1.5,5,d+n2(x*.4,z*.4)*1.2));}
   col.set(c,i*3);}
  g.setAttribute('color',new THREE.BufferAttribute(col,3));g.computeVertexNormals();const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));m.receiveShadow=true;S.add(m);}
-const WG=new THREE.PlaneGeometry(320,320,60,60);WG.rotateX(-Math.PI/2);const wbase=Float32Array.from(WG.attributes.position.array);
+const WG=new THREE.PlaneGeometry(320,320,32,32);WG.rotateX(-Math.PI/2);const wbase=Float32Array.from(WG.attributes.position.array);
 const water=new THREE.Mesh(WG,new THREE.MeshStandardMaterial({color:0x3b8fb5,transparent:true,opacity:.74,roughness:.12,metalness:.2,depthWrite:false}));water.position.y=-.12;S.add(water);
 // ===== helpers, textures =====
 const M=(c,r=.9,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:r},o));
@@ -643,12 +643,12 @@ spots.push({n:()=>'Process ore ('+(Eco.player.inv.ore||0)+') into gold',g:()=>''
 spots.push({n:()=>'Inspect Greenfield Farm: goods, crops, cattle',g:()=>'',x:21,z:-29.2,r:3.8,f:()=>UI.showFarm()},{n:()=>'Sell farm produce at the market',g:()=>'',x:-4,z:14.3,r:3.2,f:()=>Eco.sellAgri()});
 // ===== LOOP =====
 const clock=new THREE.Clock();let tt=0,camInit=0;const camP=new THREE.Vector3(),camL=new THREE.Vector3(),cw=new THREE.Vector3();
-let shadowElapsed=0,qualityElapsed=0,qualityFrames=0;
+let shadowElapsed=0,qualityElapsed=0,qualityFrames=0,waterElapsed=0;
 function loop(){requestAnimationFrame(loop);const elapsed=clock.getDelta(),dt=Math.min(elapsed,.05);tt+=dt;
   // Shadows need fewer updates than movement. Reduce fill cost only after a
   // measured slow interval; high-frame-rate devices retain their native detail.
-  shadowElapsed+=elapsed;if(shadowElapsed>=1/15){shadowElapsed=0;R.shadowMap.needsUpdate=true;}
-  qualityElapsed+=elapsed;qualityFrames++;if(qualityElapsed>=4){const fps=qualityFrames/qualityElapsed,ratio=R.getPixelRatio();if(fps<40&&ratio>.9){R.setPixelRatio(Math.max(.9,ratio*.85));}qualityElapsed=qualityFrames=0;}
+  shadowElapsed+=elapsed;if(R.shadowMap.enabled&&shadowElapsed>=1/8){shadowElapsed=0;R.shadowMap.needsUpdate=true;}
+  qualityElapsed+=elapsed;qualityFrames++;if(qualityElapsed>=4){const fps=qualityFrames/qualityElapsed,ratio=R.getPixelRatio();if(fps<45){if(R.shadowMap.enabled){R.shadowMap.enabled=false;R.shadowMap.needsUpdate=true;}else if(ratio>.9)R.setPixelRatio(Math.max(.9,ratio*.85));}qualityElapsed=qualityFrames=0;}
   Input.frame(dt);const I=Input.I;
   if(Net.enabled&&(!Net.online||Net.blocked)){I.mx=I.mz=I.act1=I.act2=I.talk=I.phone=I.pick=I.choice=0;}
   if(I.cancel){if(Sim.Talk.cur)Sim.Talk.close();else if(Phone.open)Phone.minimize();else if(UI.open)UI.close();else CamRig.recenter();}
@@ -657,16 +657,16 @@ function loop(){requestAnimationFrame(loop);const elapsed=clock.getDelta(),dt=Ma
   if(I.reset)CamRig.reset();if(I.recenter)CamRig.recenter();if(I.track)CamRig.trackNearest(Sim.player.x,Sim.player.z);
   if(I.pick){const pi=CamRig.pick(I.pick.x,I.pick.y,innerWidth,innerHeight);if(pi!==null){if(CamRig.follow===pi&&Sim.Talk.canTalk(Sim.npcs[pi])&&!UI.open){if(!Sim.Talk.cur||Sim.Talk.cur.id!==pi)Sim.Talk.open(pi);}else CamRig.track(pi);}}
   CamRig.input(I,dt);
-  let sp=0;Net.movement={x:0,z:0};
+  let sp=0;Net.movement.x=Net.movement.z=0;
   if((I.mx||I.mz)&&!harvest&&!UI.open&&!Phone.open){const m=Math.hypot(I.mx,I.mz),k=Math.min(1,m),ux=I.mx/m,uz=I.mz/m,sn=Math.sin(CamRig.yaw),cs=Math.cos(CamRig.yaw),dx=(ux*cs+uz*sn)*6*k*dt,dz=(-ux*sn+uz*cs)*6*k*dt;
-    if(Net.enabled)Net.movement={x:dx/(6*dt),z:dz/(6*dt)};else Sim.player.move(dx,dz);
+    if(Net.enabled){Net.movement.x=dx/(6*dt);Net.movement.z=dz/(6*dt);}else Sim.player.move(dx,dz);
     let df=Math.atan2(dx,dz)-P.rotation.y;df=Math.atan2(Math.sin(df),Math.cos(df));P.rotation.y+=df*Math.min(1,dt*14);sp=6*k;}
   if(Net.enabled&&Net.view?.ready){Net.view.step(dt,Net.movement,Net.online&&!Net.blocked&&!Sim.harvesting&&!Sim.Talk.cur);P.position.x=Net.view.x;P.position.z=Net.view.z;}else{P.position.x=Sim.player.x;P.position.z=Sim.player.z;}P.position.y=gy(P.position.x,P.position.z);
   harvest=Sim.harvesting?{node:nodes[Sim.harvesting.id],t:Sim.harvesting.t}:null;
   animChar(P,dt,sp,harvest?'chop':'idle');
   nodes.forEach((n,id)=>{const state=Sim.nodes[id];if(state){n.qty=state.qty;n.regen=state.regen;n.g.visible=n.qty>0;}n.g.scale.y=n.g.visible?.8+.2*n.qty/n.max:1;});
   if(!Net.enabled)Sim.update(dt);syncView(dt);
-  {const a=WG.attributes.position;for(let i=0;i<a.count;i++){const x=wbase[i*3],z=wbase[i*3+2];a.setY(i,Math.sin(x*.18+tt*1.1)*.06+Math.sin(z*.23+tt*.8)*.05);}a.needsUpdate=true;}
+  waterElapsed+=elapsed;if(waterElapsed>=.05){waterElapsed=0;const a=WG.attributes.position;for(let i=0;i<a.count;i++){const x=wbase[i*3],z=wbase[i*3+2];a.setY(i,Math.sin(x*.18+tt*1.1)*.06+Math.sin(z*.23+tt*.8)*.05);}a.needsUpdate=true;}
   flag.material.color.setHex(!Eco.ms.trade?0x888888:Eco.post.owner?0x2ecc71:0xe74c3c);
   near=null;let best=1e9;const px=P.position.x,pz=P.position.z;
   for(const n of nodes){if(!n.g.visible)continue;const d=Math.hypot(px-n.x,pz-n.z);if(d<3&&d<best){best=d;near={node:n,n:()=>`${n.label||'Harvest tree'} (${n.qty} left)`};}}

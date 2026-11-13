@@ -39,13 +39,13 @@ const toast=message=>{const el=$('am-toast');el.textContent=message;el.classList
 const navigation=setupNavigation({document,window,Sim:S,Input,CamRig,Phone,Net:N,Bus,toast});
 function setConnection(text,ok=false){$('am-connection').textContent=text;$('am-connection').classList.toggle('online',ok);}
 async function api(route,body){const headers={Authorization:`Bearer ${session?.access_token}`};if(body)headers['Content-Type']='application/json';const started=performance.now();const response=await fetch('/api/'+route,{method:body?'POST':'GET',headers,body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(15000)});const data=await response.json();data.roundTripMs=performance.now()-started;if(!response.ok)throw Object.assign(new Error(data.error||'Connection interrupted.'),{status:response.status});return data;}
-let phoneSignature='';
+let phoneSignature='',uiSignature='',lastHudUpdate=-Infinity;
 const stateTransport=new GameSync.StateTransport(api);
 N.stop=()=>{disposed=true;clearTimeout(syncTimer);N.movement={x:0,z:0};N.online=false;return stateTransport.tail;};
 window.addEventListener('pagehide',N.stop);
 window.addEventListener('pageshow',event=>{if(event.persisted)location.reload();});
-function normalPhoneRender(){if(!Phone.open||Phone.touching||Phone.app==='settings')return;const signature=JSON.stringify([Phone.app,S.Msg.rev,S.Talk.rev,E.player.cash,E.player.inv,E.ts.inv,E.ow.inv,E.farm.inv,Math.floor(S.time/2)]);if(signature!==phoneSignature){phoneSignature=signature;Phone.render();}}
-function apply(data){
+function normalPhoneRender(){if(!Phone.open||Phone.touching||Phone.app==='settings')return;const signature=JSON.stringify([Phone.app,S.Msg.rev,S.Talk.rev,E.player.cash,E.player.inv,E.ts.inv,E.ow.inv,E.farm.inv,Phone.app==='biz'?Math.floor(S.time):Math.floor(S.time/2)]);if(signature!==phoneSignature){phoneSignature=signature;Phone.render();}}
+function apply(data,immediate=false){
   if(disposed)return;
   // An older polling response must never overwrite a newer action response.
   if(!snapshotOrder.accept(data)){N.diagnostics.ignoredSnapshots++;return;}
@@ -53,14 +53,14 @@ function apply(data){
   const wasTalking=Boolean(S.Talk.cur);globalThis.GameState.apply(G,data.state);N.revision=data.revision;chainInfo=data.chain;N.chain=data.chain;N.demo=data.demo;N.view.accept(data.state.player,data.movement||{x:0,z:0},data.roundTripMs);normalPhoneRender();
   for(const event of data.events||[])if(event.id>sequence){Bus.emit('notify',event.message);sequence=event.id;}
   if(!wasTalking&&S.Talk.cur)Bus.emit('talk:open',S.Talk.cur.id);
-  if(UI.open)UI.render();
-  $('am-wallet').textContent=data.wallet;setConnection('Saved · online',true);$('am-saved').textContent='Autosave on';renderInventory();update();
+  if(UI.open){const signature=JSON.stringify([UI.tab,E.player.cash,E.player.inv,E.ts,E.ow,E.post,E.farm,E.market,S.Talk.rev]);if(signature!==uiSignature){uiSignature=signature;UI.render();}}else uiSignature='';
+  text('am-wallet',data.wallet);setConnection('Saved · online',true);text('am-saved','Autosave on');if(!$('am-market').hidden)renderInventory();if(immediate||performance.now()-lastHudUpdate>=250)update();
   N.diagnostics.applyMs.push(performance.now()-started);N.diagnostics.applyMs=N.diagnostics.applyMs.slice(-60);N.diagnostics.maxConcurrentStateRequests=stateTransport.maxActive;
 }
 N.command=(name,args={})=>{
   if(!N.online){toast('Sign in and reconnect to continue.');return Promise.resolve();}
   const id=crypto.randomUUID();
-  const run=commandQueue.then(async()=>{setConnection('Saving…');try{apply(await stateTransport.request('action',{id,name,args}));}catch(error){toast(error.message);if(error.status&&error.status<500&&error.status!==401){setConnection('Saved · online',true);return;}N.online=false;N.blocked=true;setConnection('Reconnecting');await connect().catch(()=>{});}});
+  const run=commandQueue.then(async()=>{setConnection('Saving…');try{apply(await stateTransport.request('action',{id,name,args}),true);}catch(error){toast(error.message);if(error.status&&error.status<500&&error.status!==401){setConnection('Saved · online',true);return;}N.online=false;N.blocked=true;setConnection('Reconnecting');await connect().catch(()=>{});}});
   commandQueue=run.catch(()=>{});return run;
 };
 // Every money, inventory and dialogue mutation is sent as a validated server intent.
@@ -76,7 +76,9 @@ async function connect(){
   if(!session||disposed)return;const data=await stateTransport.request('session',{});if(disposed)return;if(data.catchingUp){setConnection('Island catching up');$('am-login-status').textContent=`Your island kept moving. Catching up… ${Math.round(data.progress*100)}%`;setTimeout(()=>connect().catch(e=>{if(!disposed)toast(e.message);}),1000);return;}apply(data);N.online=true;N.blocked=false;$('am-welcome').hidden=true;document.body.classList.remove('am-welcoming');setConnection('Saved · online',true);
 }
 async function sync(){if(disposed||!session||polling||!N.online)return;polling=true;try{const data=await stateTransport.request('sync',()=>N.blocked?{x:0,z:0}:{...N.movement});N.diagnostics.syncLatencyMs.push(data.roundTripMs);N.diagnostics.syncLatencyMs=N.diagnostics.syncLatencyMs.slice(-60);apply(data);}catch(error){if(disposed)return;N.online=false;N.blocked=true;setConnection('Connection lost');toast('Connection lost. Your last confirmed save is safe.');}finally{polling=false;}}
-async function pollMovement(){if(disposed)return;const started=performance.now();try{await sync();}finally{if(!disposed)syncTimer=setTimeout(pollMovement,Math.max(20,150-(performance.now()-started)));}}pollMovement();
+let lastMovement='',lastMovementSent=0;
+async function pollMovement(){if(disposed)return;const started=performance.now(),m=N.blocked?{x:0,z:0}:N.movement,key=m.x+','+m.z,moving=m.x!==0||m.z!==0;
+  try{if(key!==lastMovement||started-lastMovementSent>=(moving?150:1000)){lastMovement=key;lastMovementSent=started;await sync();}}finally{if(!disposed)syncTimer=setTimeout(pollMovement,Math.max(20,50-(performance.now()-started)));}}pollMovement();
 setInterval(async()=>{if(disposed||!session||settlementPolling)return;settlementPolling=true;try{if(!N.online)await connect();if(!$('am-chain-verify').open)return;settlement=(await api('settlements')).settlements;renderSettlement();}catch{/* Main gameplay reports connection failures. */}finally{settlementPolling=false;}},5000);
 let inventorySignature='';
 function renderInventory(){
@@ -92,8 +94,10 @@ function renderSettlement(){
   $('am-ownership').hidden=!chainInfo?.settlement;const el=$('am-settlement');el.replaceChildren();
   for(const row of settlement.slice(0,3)){const p=document.createElement('p');p.className='am-receipt';if(row.transaction_hash){const a=document.createElement('a');a.href=(chainInfo?.network==='testnet'?'https://testnet.nearblocks.io/txns/':'https://nearblocks.io/txns/')+encodeURIComponent(row.transaction_hash);a.target='_blank';a.rel='noopener noreferrer';a.textContent='Confirmed on NEAR ↗';p.appendChild(a);}else p.textContent=row.status==='confirmed'?'Checkpoint confirmed; original receipt unavailable':row.error?'Settlement needs attention':'Settling inventory…';el.appendChild(p);}
 }
+function text(id,value){const el=$(id),next=String(value??'');if(el.textContent!==next)el.textContent=next;}
 function update(){
   if(disposed)return;
+  lastHudUpdate=performance.now();
   document.body.classList.toggle('market-open',!$('am-market').hidden);$('am-cash').textContent=money(E.player.cash);$('am-rep').textContent=E.rep;
   $('am-time').textContent=String(Math.floor(S.clock.h)).padStart(2,'0')+':'+String(Math.floor(S.clock.h%1*60)).padStart(2,'0');
   $('am-pack').textContent=`${E.player.inv.timber} timber · ${E.player.inv.ore||0} ore`;

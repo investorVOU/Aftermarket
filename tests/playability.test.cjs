@@ -2,6 +2,14 @@ const {test}=require('node:test'),assert=require('node:assert/strict');
 const MovementView=require('../shared/movement-view.js');
 const {world,action}=require('../server/world.cjs');
 const State=require('../shared/state.js');
+
+test('idle time does not make the first movement wait for a sync response',()=>{
+ const col={move(p,dx,dz){p.x+=dx;p.z+=dz;}},v=new MovementView(col);v.accept({x:0,z:0});
+ for(let i=0;i<180;i++)v.step(1/60,{x:0,z:0},true);
+ v.step(1/60,{x:1,z:0},true);assert.ok(v.x>0);
+ for(let i=0;i<180;i++)v.step(1/60,{x:1,z:0},true);const end=v.x;
+ v.step(1/60,{x:1,z:0},true);assert.equal(v.x,end,'lost updates still bound prediction');
+});
 test('movement predicts between responses, respects collision and stops on loss of server updates',()=>{
   const col={move(p,dx,dz){p.x=Math.min(1,p.x+dx);p.z+=dz;}};
   const view=new MovementView(col),server={x:0,z:0};view.accept(server);

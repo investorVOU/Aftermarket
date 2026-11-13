@@ -15,7 +15,9 @@
     }
     step(dt,movement,enabled){
       if(!this.ready)return;
-      this.age+=dt;
+      // Idle polling is deliberately slower. Do not spend the prediction budget
+      // while standing still, otherwise the first keypress waits for a response.
+      if(enabled&&(movement.x||movement.z))this.age+=dt;
       const active=enabled&&this.age<1,dx=active?movement.x*6*dt:0,dz=active?movement.z*6*dt:0;
       this.collision.move(this,dx,dz,.4,'player');
       if(this.target){
