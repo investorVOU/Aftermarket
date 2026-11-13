@@ -1,5 +1,13 @@
 # Baseline and review history
 
+## Current published checkpoint — November 13
+
+Both `main` and `hackathon/track-09-testnet` reached `ccf254e`; GitHub default main
+and the hosted release were checked in that publication task. The README uses
+that existing immutable checkpoint and its real comparison to `957283d`.
+The November 12 branch table below is historical, not the current branch state.
+Neither historical tag was moved, and no force push was used.
+
 The available history starts with `957283d`, a November 9 import of the earlier Claude-generated v0.6 game. The import already contains backend and contract work. It is not an untouched pre-hackathon snapshot, and no earlier authentic commit is available. The island, characters, navigation, phone and original local simulation are disclosed as baseline.
 
 The published review checkpoint `58d2cca` preserves both the original main history and a separate import history. Local ancestor checks confirmed that it includes `1a65fc1` (Render binding/responsive UI) and `b478308` (narrow-screen camera controls). Those fixes must remain in the final main release.

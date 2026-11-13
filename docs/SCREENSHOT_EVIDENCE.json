@@ -1,0 +1,25 @@
+{
+  "at": "2026-11-13T18:31:04.157Z",
+  "url": "https://aftmarket.xyz",
+  "scope": "Unmodified hosted game in installed Chrome; one real guest session reused, no economy state injected",
+  "release": "ccf254e7f71f",
+  "configured": true,
+  "guestEnabled": true,
+  "screenshots": [
+    "island-exchange-live.png",
+    "merchant-jobs-live.png",
+    "merchant-jobs-mobile-live.png",
+    "playbook-mobile-live.png"
+  ],
+  "viewport": {
+    "desktop": "1440x900",
+    "mobile": "390x844 resized viewport, not a physical phone"
+  },
+  "errors": [],
+  "exchange": {
+    "at": "2026-11-13T18:35:34.521Z",
+    "scope": "Hosted UI after a real seven-day preview; guest entry and preview used normal buttons",
+    "stats": "ISLAND DAY\n8\nYARD TREASURY\n$0.00\nTRADES\n917",
+    "errors": []
+  }
+}

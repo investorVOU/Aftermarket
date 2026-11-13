@@ -1,5 +1,30 @@
 # Release verification — November 10, 2026
 
+## November 13 README, hosted screenshots and email delivery setup
+
+- `npm run build`: passed.
+- `npm run lint`: passed, 73 JavaScript modules and two inline scripts.
+- `npm test`: 84 backend/API/DB/client/configuration checks and 322 original
+  game checks passed (406 total). Four new SMTP setup checks mock the management
+  APIs; they do not send mail or prove live delivery.
+- Fresh unmodified hosted Chrome guest entry, Jobs, Playbook and seven-day preview
+  passed without observed page errors. Hosted configuration reported configured
+  and guest enabled; release `ccf254e7f71f`. Actual screenshots and timestamps are
+  in `SCREENSHOT_EVIDENCE.json`.
+- README relative image/code/doc paths exist; receipt hashes match their evidence
+  files. Public host, track/rules and GitHub checkpoint/diff links returned 200.
+  Explorer links returned 403 to this automated checker, disclosed in the README.
+- `npm run email:configure` correctly failed before making requests because the
+  private Resend key and Supabase management token are missing. SMTP was not
+  applied, and the owner's authorized test email was not sent. No inbox delivery,
+  email callback or cross-device personal login claim is made.
+- No game runtime, guest, settlement, contract or Groq behavior was changed in
+  this documentation/SMTP tooling update. Contract checks were not rerun because
+  the contract is unchanged; earlier results retain their own scope below.
+
+Older sections below are historical verification records, not current claims that
+the published performance/guest fixes are still awaiting deployment.
+
 ## November 13 performance, credit and optional Groq candidate
 
 These changes are local and await publication approval. No push or default-branch

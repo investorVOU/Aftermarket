@@ -1,12 +1,12 @@
 {
-  "checkedAt": "2026-11-12T19:23:53.733Z",
+  "checkedAt": "2026-11-13T18:34:44.086Z",
   "relative": [
     {
-      "target": "docs/images/economy-desktop.png",
+      "target": "docs/images/island-exchange-live.png",
       "exists": true
     },
     {
-      "target": "docs/README_CLAIMS.md",
+      "target": "docs/SCREENSHOT_EVIDENCE.json",
       "exists": true
     },
     {
@@ -14,15 +14,31 @@
       "exists": true
     },
     {
-      "target": "docs/LIVE_GAME_EVIDENCE.json",
+      "target": "docs/DEMO_CHECK_EVIDENCE.json",
       "exists": true
     },
     {
-      "target": "docs/README_LINK_CHECK.json",
+      "target": "docs/LIVE_JOB_EVIDENCE.json",
       "exists": true
     },
     {
       "target": "docs/OPERATIONS.md",
+      "exists": true
+    },
+    {
+      "target": "docs/GAME_LOOP.md",
+      "exists": true
+    },
+    {
+      "target": "server/near.cjs",
+      "exists": true
+    },
+    {
+      "target": "scripts/onchain-items.cjs",
+      "exists": true
+    },
+    {
+      "target": "docs/DEMO_CHECK_EVIDENCE.json",
       "exists": true
     },
     {
@@ -38,11 +54,23 @@
       "exists": true
     },
     {
+      "target": "contracts/economy/src/lib.rs",
+      "exists": true
+    },
+    {
+      "target": "docs/EMAIL_DELIVERY.md",
+      "exists": true
+    },
+    {
       "target": "server/simulation.cjs",
       "exists": true
     },
     {
-      "target": "contracts/economy/src/lib.rs",
+      "target": "HACKATHON_REQUIREMENTS.md",
+      "exists": true
+    },
+    {
+      "target": "docs/MERCHANT_AI.md",
       "exists": true
     },
     {
@@ -54,7 +82,11 @@
       "exists": true
     },
     {
-      "target": "shared/core.js",
+      "target": "docs/ARCHITECTURE.md",
+      "exists": true
+    },
+    {
+      "target": "docs/JOBS.md",
       "exists": true
     },
     {
@@ -62,20 +94,31 @@
       "exists": true
     },
     {
+      "target": "docs/EMAIL_DELIVERY.md",
+      "exists": true
+    },
+    {
       "target": "docs/README_CLAIMS.md",
       "exists": true
     },
     {
-      "target": "docs/MOVEMENT_PROFILE.json",
+      "target": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "target": "game/assets/aftermarket-mark.svg",
+      "exists": true
+    },
+    {
+      "target": "docs/images/merchant-jobs-mobile-live.png",
+      "exists": true
+    },
+    {
+      "target": "docs/images/playbook-mobile-live.png",
       "exists": true
     }
   ],
   "external": [
-    {
-      "url": "https://testnet.nearblocks.io/address/aftermarket-game.testnet",
-      "status": 403,
-      "finalUrl": "https://testnet.nearblocks.io/address/aftermarket-game.testnet"
-    },
     {
       "url": "https://testnet.nearblocks.io/txns/ANjnywCznt4y1ZnsPuShySypLXyvSNL2GPvfw7Reb17e",
       "status": 403,
@@ -87,14 +130,29 @@
       "finalUrl": "https://aftmarket.xyz/"
     },
     {
-      "url": "https://testnet.nearblocks.io/txns/C7Ppi3bMkt4L5f5CSFqvgkcWYmukqGNR6wXnuaZXV35W",
+      "url": "https://testnet.nearblocks.io/address/aftermarket-game.testnet",
       "status": 403,
-      "finalUrl": "https://testnet.nearblocks.io/txns/C7Ppi3bMkt4L5f5CSFqvgkcWYmukqGNR6wXnuaZXV35W"
+      "finalUrl": "https://testnet.nearblocks.io/address/aftermarket-game.testnet"
     },
     {
-      "url": "https://github.com/investorVOU/Aftermarket/tree/58d2cca",
+      "url": "https://testnet.nearblocks.io/txns/J2NJm9TAymoEym8PYgryd5vxxxbym13bvY8UsMqpszSd",
+      "status": 403,
+      "finalUrl": "https://testnet.nearblocks.io/txns/J2NJm9TAymoEym8PYgryd5vxxxbym13bvY8UsMqpszSd"
+    },
+    {
+      "url": "https://testnet.nearblocks.io/txns/26b9YefLP7En7gHJZa7i58hye9V7521URwK7KXVMeBoZ",
+      "status": 403,
+      "finalUrl": "https://testnet.nearblocks.io/txns/26b9YefLP7En7gHJZa7i58hye9V7521URwK7KXVMeBoZ"
+    },
+    {
+      "url": "https://github.com/nearai/near-hackathon-prompt-examples/blob/main/tracks/09-games.md",
       "status": 200,
-      "finalUrl": "https://github.com/investorVOU/Aftermarket/tree/58d2cca"
+      "finalUrl": "https://github.com/nearai/near-hackathon-prompt-examples/blob/main/tracks/09-games.md"
+    },
+    {
+      "url": "https://nearhackathon.com/HACKATHON.md",
+      "status": 200,
+      "finalUrl": "https://nearhackathon.com/HACKATHON.md"
     },
     {
       "url": "https://github.com/investorVOU/Aftermarket/tree/957283d",
@@ -102,9 +160,14 @@
       "finalUrl": "https://github.com/investorVOU/Aftermarket/tree/957283d"
     },
     {
-      "url": "https://github.com/investorVOU/Aftermarket/compare/957283d...58d2cca",
+      "url": "https://github.com/investorVOU/Aftermarket/tree/ccf254e",
       "status": 200,
-      "finalUrl": "https://github.com/investorVOU/Aftermarket/compare/957283d...58d2cca"
+      "finalUrl": "https://github.com/investorVOU/Aftermarket/tree/ccf254e"
+    },
+    {
+      "url": "https://github.com/investorVOU/Aftermarket/compare/957283d...ccf254e",
+      "status": 200,
+      "finalUrl": "https://github.com/investorVOU/Aftermarket/compare/957283d...ccf254e"
     }
   ],
   "receiptMatchesEvidence": true,
