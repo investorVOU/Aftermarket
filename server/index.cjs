@@ -98,10 +98,11 @@ const server=http.createServer(async(req,res)=>{
     const allowed={
       '/':'game/aftermarket.html','/aftermarket.html':'game/aftermarket.html','/client.js':'game/client.bundle.js','/shell.css':'game/shell.css',
       '/shared/movement-view.js':'shared/movement-view.js','/shared/core.js':'shared/core.js','/shared/state.js':'shared/state.js','/shared/merchant-rules.js':'shared/merchant-rules.js',
-      '/vendor/three.min.js':'node_modules/three/build/three.min.js'
+      '/vendor/three.min.js':'node_modules/three/build/three.min.js',
+      '/assets/aftermarket-logo.jpg':'game/assets/aftermarket-logo.jpg','/assets/aftermarket-mark.svg':'game/assets/aftermarket-mark.svg','/assets/favicon.svg':'game/assets/favicon.svg','/favicon.ico':'game/assets/favicon.svg'
     };
     if(!Object.hasOwn(allowed,route))throw fail('Not found',404);
-    const file=path.join(root,allowed[route]);const type=file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8';
+    const file=path.join(root,allowed[route]);const type=file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':file.endsWith('.svg')?'image/svg+xml':file.endsWith('.jpg')?'image/jpeg':'text/javascript; charset=utf-8';
     const data=await fs.promises.readFile(file);res.writeHead(200,{'Content-Type':type,'Cache-Control':'no-cache'});res.end(req.method==='HEAD'?undefined:data);
   }catch(e){if(e.status>=500||!e.status)console.error('Request failed:',e.message);json(res,e.status||500,{error:e.status?e.message:'The server could not complete this request.'});}
 });
