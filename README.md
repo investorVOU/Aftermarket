@@ -1,5 +1,7 @@
 # AFTERMARKET: Supply & Survival
 
+<img src="game/assets/aftermarket-mark.svg" width="100" alt="Aftermarket logo" align="right">
+
 The economy is the gameplay: autonomous rule-based merchants buy inputs, produce goods, run out of cash, close, and reopen when a player invests. Items settle as real NEP-245 tokens on NEAR testnet through a managed in-game wallet; normal play needs no wallet setup, keys or gas prompts.
 
 **[Play now](https://aftmarket.xyz)** — Play as guest, one click, no signup.
