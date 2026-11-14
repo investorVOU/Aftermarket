@@ -12,6 +12,7 @@ class GuestAuth {
   // One unused session may be prepared while the welcome page is open. Taking
   // the slot synchronously guarantees that two visitors never share an identity.
   prepare(){if(!this.ready||this.env.DEMO_GUEST_PREWARM==='false'||this.prepared)return;const slot=this.createNew().then(session=>({session,until:Date.now()+session.expires_in*1000}));this.prepared=slot;slot.catch(()=>{if(this.prepared===slot)this.prepared=null;});}
+  dailyLimit(){return Math.max(1,Math.min(200,Number(this.env.DEMO_GUEST_DAILY_LIMIT)||200));}
   async create(){const slot=this.prepared;this.prepared=null;if(slot){const ready=await slot;if(ready.until>Date.now()+60000)return ready.session;}return this.createNew();}
   createNew(){const request=this.busy.then(()=>this.issue());this.busy=request.catch(()=>{});return request;}
   prime(){if(!this.ready)return Promise.resolve();if(Date.now()-this.checkedAt<30000)return Promise.resolve();if(this.checking)return this.checking;
@@ -28,8 +29,8 @@ class GuestAuth {
     if(Date.now()-this.window>86400000){this.count=0;this.window=Date.now();}
     await this.prime();
     if(this.total>=1000)throw Object.assign(new Error('Guest capacity needs operator review. Please use email sign-in.'),{status:429});
-    const cap=Math.max(1,Math.min(200,Number(this.env.DEMO_GUEST_DAILY_LIMIT)||30));
-    if(this.count>=cap)throw Object.assign(new Error('Today’s demo account limit has been reached. Please use email sign-in.'),{status:429});
+    const cap=this.dailyLimit();
+    if(this.count>=cap)throw Object.assign(new Error('Guest entry has reached its rolling 24-hour capacity. Please use email sign-in or retry later.'),{status:429});
     this.count++;
     const email=`guest-${crypto.randomUUID()}@demo.aftermarket.invalid`,password=crypto.randomBytes(32).toString('base64url');
     const created=await this.admin.auth.admin.createUser({email,password,email_confirm:true,app_metadata:{aftermarket_demo:true}});

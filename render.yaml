@@ -39,7 +39,7 @@ services:
       - key: DEMO_GUEST_ENABLED
         value: "true"
       - key: DEMO_GUEST_DAILY_LIMIT
-        value: "30"
+        value: "200"
       - key: SUPABASE_URL
         value: https://ytfioiujcitikvgbfxwg.supabase.co
       - key: SUPABASE_PUBLISHABLE_KEY

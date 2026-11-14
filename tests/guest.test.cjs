@@ -16,3 +16,9 @@ test('one prepared identity is claimed once and simultaneous visitors receive di
  g.prepared=Promise.resolve({session:{access_token:'expired'},until:Date.now()-1});assert.notEqual((await g.create()).access_token,'expired');assert.equal(creates,3);
 });
 test('preparation can be disabled without changing ordinary guest creation',()=>{const g=new GuestAuth({...env,DEMO_GUEST_PREWARM:'false'},null,()=>({auth:{}}));g.prepare();assert.equal(g.prepared,undefined);});
+test('default quota permits judging traffic beyond 30 while an explicit operator quota remains enforced',async()=>{
+ let current,created=0;const users=Array.from({length:30},()=>({created_at:new Date().toISOString(),app_metadata:{aftermarket_demo:true}}));
+ const factory=(_url,key)=>key==='mock-secret'?{auth:{admin:{listUsers:async()=>({data:{users}}),createUser:async()=>{current={id:'quota-'+(++created)};return{data:{user:current}};}}}}:{auth:{signInWithPassword:async()=>({data:{user:current,session:{access_token:'mock-quota',expires_in:3600}}})}};
+ const larger=new GuestAuth({...env,DEMO_GUEST_DAILY_LIMIT:undefined},null,factory);assert.equal(larger.dailyLimit(),200);await larger.create();assert.equal(created,1);
+ await assert.rejects(new GuestAuth({...env,DEMO_GUEST_DAILY_LIMIT:'30'},null,factory).create(),e=>e.status===429&&/rolling 24-hour/.test(e.message));assert.equal(created,1);
+});
