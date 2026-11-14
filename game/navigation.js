@@ -64,7 +64,12 @@ export function setupNavigation({document,window,Sim,Input,CamRig,Phone,Net,Bus,
   for(const [id,act]of Object.entries(controls))$(id).addEventListener('click',act);
   for(const element of [panel,$('am-camera'),mission]){
     element.addEventListener('pointerdown',event=>{releaseInput();event.stopPropagation();});
-    element.addEventListener('keydown',event=>{if(event.key!=='Escape'&&event.key.toLowerCase()!=='m')event.stopPropagation();});
+    element.addEventListener('keydown',event=>{
+      // The map owns its keyboard while open. Camera/objective disclosures must
+      // still let WASD/F/P reach the game after a mouse click leaves them focused.
+      if(element===panel){if(event.key!=='Escape'&&event.key.toLowerCase()!=='m')event.stopPropagation();}
+      else if(event.key==='Enter'||event.key===' '||/^(INPUT|TEXTAREA|SELECT)$/.test(event.target?.tagName))event.stopPropagation();
+    });
   }
   window.addEventListener('pointerdown',event=>{if(camera.open&&!$('am-camera').contains(event.target))camera.open=false;});
   window.addEventListener('keydown',event=>{

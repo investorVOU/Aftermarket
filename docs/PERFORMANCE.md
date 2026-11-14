@@ -40,6 +40,13 @@ Rendering remains the largest CPU cost in these samples; state apply, collision
 and camera work were substantially smaller. Adaptive pixel ratio and the existing
 shadow budget remain unchanged. Physical-device performance remains unverified.
 
+After publication, [hosted verification](SMOOTH_HOSTED_VERIFICATION.json) recorded
+actual public guest entry with a live quota of 200, a completed seven-day preview
+visiting all four lighting periods and the server's bounded lease rejecting a
+client-supplied timeout. The earlier candidate measurements retain their original
+scope. A separate UI regression fixes focused camera/objective controls swallowing
+WASD; Enter/Space still activate the focused control normally.
+
 ## Historical November 13 profile
 
 **Candidate changes are local, not deployed. No push or default-branch change was made for this task.**

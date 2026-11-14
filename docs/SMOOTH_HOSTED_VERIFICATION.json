@@ -1,0 +1,37 @@
+{
+  "at": "2026-11-14T01:18:24.887Z",
+  "scope": "Actual hosted guest button and week preview on the movement release; separate authenticated server lease check. This record does not claim completed gathering/crafting/selling.",
+  "release": "b3cfd398eb7b",
+  "guestDailyLimit": 200,
+  "publicGuestEntrySucceeded": true,
+  "clockCycle": {
+    "seen": {
+      "Day": {
+        "hour": 9.088571428571324,
+        "seconds": 0
+      },
+      "Dusk": {
+        "hour": 18.40857142857146,
+        "seconds": 2.6
+      },
+      "Night": {
+        "hour": 20.64285714285772,
+        "seconds": 3.3
+      },
+      "Dawn": {
+        "hour": 6.260000000003703,
+        "seconds": 23.9
+      }
+    },
+    "finished": true
+  },
+  "browserErrors": 0,
+  "movementLease": {
+    "at": "2026-11-14T01:17:56.449Z",
+    "scope": "Authenticated isolated QA account against actual hosted movement API; normal server directions only, no position or balance edits",
+    "initialLeaseMs": 1000,
+    "observedSlowPacketLeaseMs": 2500,
+    "clientSuppliedTimeoutIgnored": true,
+    "explicitStopSent": true
+  }
+}

@@ -19,9 +19,12 @@ tolerates slow links while bounding movement after lost updates. No client
 position, speed, financial balance or ownership is trusted.
 
 Build/lint passed (75 modules, two inline scripts). All 94 backend/API/DB/client
-checks and 322 original game checks passed (416 total). Public guest entry remains
-blocked until the existing Render environment changes from 30 to 200; no Render
-API credentials or usable browser bridge were available to apply it here.
+checks and 322 original game checks passed (416 total). The deployed config then
+reported `guestDailyLimit:200`; actual public guest entry and the complete hosted
+week preview passed during a real browser recording. No manual account deletion
+or shared session was used to bypass the public cap. Browser inspection of the
+recording also found a keyboard-focus trap after camera/objective clicks; WASD
+now propagates to game input while Enter/Space remain with the focused control.
 
 ## November 14 lighting and collapsible controls
 

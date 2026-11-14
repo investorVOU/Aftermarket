@@ -108,6 +108,8 @@ tilt and reset controls. **Your next move** collapses to a compact objective and
 remembers its state on this browser. [Layout and lighting checks](docs/NIGHT_SIDEBAR_VERIFICATION.json)
 use local desktop/mobile Chrome; [clock-cycle verification](docs/CLOCK_CYCLE_VERIFICATION.json)
 uses the actual development week preview.
+The [November 14 hosted follow-up](docs/SMOOTH_HOSTED_VERIFICATION.json) verifies
+public guest entry at the live 200-account quota and the real hosted clock cycle.
 
 [Feature brief for the narrated demo](docs/AFTERMARKET_FEATURES_FOR_VOICEOVER.md) includes gameplay facts, footage suggestions and the boundaries a voice-over should preserve.
 

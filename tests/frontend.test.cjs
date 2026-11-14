@@ -46,6 +46,9 @@ test('development onboarding, authenticated trade, market and action feedback us
     const beforeZoom=app.CamRig.gz;w.document.getElementById('am-zoom-in').click();assert.ok(app.CamRig.gz<beforeZoom);
     w.document.getElementById('am-orbit-left').click();assert.ok(app.CamRig.gy<yaw);
     w.document.getElementById('am-camera-reset').click();assert.equal(app.CamRig.gz,1);assert.equal(app.CamRig.gp,.69);
+    const movementKeys=[];w.addEventListener('keydown',event=>{if(event.key==='w')movementKeys.push(event.target.id);});
+    for(const id of ['am-mission-toggle','am-camera-reset'])w.document.getElementById(id).dispatchEvent(new w.KeyboardEvent('keydown',{key:'w',bubbles:true}));
+    assert.deepEqual(movementKeys,['am-mission-toggle','am-camera-reset'],'focused objective/camera controls must not swallow gameplay movement keys');
     w.dispatchEvent(new w.KeyboardEvent('keydown',{key:'m',bubbles:true}));assert.equal(map.hidden,false);
     w.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));assert.equal(map.hidden,true);
   }finally{await app.Net.stop?.();dom.window.close();}
