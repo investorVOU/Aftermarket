@@ -1,5 +1,46 @@
 # Performance and connection checks
 
+## November 14 NPC presentation
+
+[NPC motion samples](NPC_MOVEMENT_PROFILE.json) compare the hosted `d50397f`
+renderer with local candidate assets against the same hosted API. Installed
+Chrome headless uses Intel UHD / ANGLE D3D11. Each run is fourteen seconds with
+an idle player; mobile means a 390 × 844 touch viewport, not a physical phone.
+The world evolves between runs, so these are not identical simulation traces.
+
+| Observation | Desktop before | Candidate | Mobile viewport before | Candidate |
+|---|---:|---:|---:|---:|
+| FPS | 60.0 | 60.0 | 60.0 | 60.0 |
+| p95 frame interval | 17.0 ms | 16.8 ms | 17.0 ms | 17.0 ms |
+| Nearly stopped NPC frames, weighted | 62.1% | 1.9% | 60.7% | 2.1% |
+| Median sync round trip | 443 ms | 422 ms | 409 ms | 453 ms |
+| p95 sync round trip | 699 ms | 695 ms | 684 ms | 549 ms |
+
+"Nearly stopped" means presented speed below 0.15 world units/second while the
+latest server snapshot reports that actor moving above 0.1 units/second. It is
+weighted by qualifying frames across NPCs with at least 120 qualifying frames.
+Real stops, path changes, visibility and delayed presentation can affect this
+metric; it is not a guarantee that every NPC is always walking. Raw per-actor
+counts and speeds are retained in the JSON.
+
+The old exponential easing rapidly approached each snapshot, then stalled until
+the next idle update (about one second apart). `shared/npc-view.js` plays a bounded
+buffer of confirmed positions on a delayed timeline instead. Delay adapts to
+recent packet spacing (250–2000 ms; typically about 1.2 seconds while idle).
+The timeline cannot rewind and never extrapolates past confirmed positions.
+Geometry checks constrain interpolated positions; long gaps, house entry/exit,
+conversation state changes and teleports reset the relevant visual trail.
+Heading follows the shortest turn and walking animation uses presented motion.
+Picking and camera tracking use the presented character location.
+
+This does not change NPC decisions, economic rules, sync frequency, guest entry,
+settlement or persisted state. Interactions still validate the current server
+position, which can be ahead of the displayed character. Under a connection loss
+NPCs hold rather than inventing new movement. No FPS or network-latency gain is
+claimed. [Local phone chat/call/track checks](NPC_PHONE_VERIFICATION.json) and
+[a complete local week preview](CLOCK_CYCLE_VERIFICATION.json) passed with no
+page errors. Physical-device behavior remains unverified.
+
 ## November 14 movement corrections
 
 [Latest raw samples](SMOOTH_PLAY_PROFILE.json) use a fresh isolated operator-created

@@ -1,26 +1,26 @@
 {
-  "at": "2026-11-14T00:45:08.979Z",
+  "at": "2026-11-14T07:11:43.792Z",
   "scope": "Unmodified local development API clock; actual seven-day preview via normal UI, no intercepted clock values",
   "seen": {
     "Day": {
-      "hour": 7.505714285714285,
+      "hour": 7.819999999999979,
       "seconds": 0,
       "night": 0
     },
-    "Night": {
-      "hour": 20.145714285714742,
-      "seconds": 4.4,
+    "Dusk": {
+      "hour": 19.322857142857398,
+      "seconds": 4,
       "night": 1
     },
-    "Dusk": {
-      "hour": 19.065714285715686,
-      "seconds": 12.7,
+    "Night": {
+      "hour": 22.322857142858133,
+      "seconds": 5.2,
       "night": 1
     },
     "Dawn": {
-      "hour": 6.540000000002476,
-      "seconds": 16.7,
-      "night": 0.1175658238637135
+      "hour": 6.048571428573937,
+      "seconds": 16.4,
+      "night": 0.5899051060778389
     }
   },
   "previewFinished": true,

@@ -1,5 +1,34 @@
 # Release verification — November 10, 2026
 
+## November 14 NPC interpolation
+
+Reproduced stop-start NPC presentation on the hosted `d50397f` game even with
+60 FPS rendering. Added a bounded, delayed snapshot buffer for NPC positions and
+heading, with collision checks, no extrapolation, and resets for house changes,
+conversation stops, teleports and long connection gaps. Animation follows the
+presented motion; clicking and tracking follow the visible character. No server,
+economic, wallet, settlement, save-format or guest-route code changed.
+
+[Raw before/candidate measurements](NPC_MOVEMENT_PROFILE.json) show weighted
+nearly stopped moving-NPC frames changing from 62.1% to 1.9% on desktop and 60.7%
+to 2.1% in the mobile viewport. FPS remained about 60; this is not a claim of
+lower network latency or physical-phone performance. The economy evolves
+between samples. Typical idle visual delay is about 1.2 seconds, bounded to
+250–2000 ms; interactions still use confirmed server positions.
+
+Build/lint passed (77 modules and two inline scripts). All 99 backend/API/DB/
+client checks and 322 original checks passed (421 total). The guest-restore test
+fixture now loads the new presentation module. One original wall-clock movement
+check failed while profiling browsers ran concurrently; it passed in isolation
+and in the subsequent complete run. The assertion was not weakened.
+[Phone chat, in-game call, tracking and closing](NPC_PHONE_VERIFICATION.json)
+passed on desktop and mobile viewports, and the actual local week preview
+completed with all four lighting periods and no page errors. The browser phone
+check walked into a wall, so its stationary-frame count is retained and is not
+used as evidence of player-motion performance. Candidate measurements use local
+assets against hosted APIs; deployment verification is recorded separately when
+available.
+
 ## November 14 guest capacity and movement correction follow-up
 
 Observed the hosted guest route rejecting entry at exactly 30 demo identities

@@ -1,0 +1,892 @@
+{
+  "environment": {
+    "browser": "Installed Chrome headless, no throttling; mobile viewport is not a physical phone",
+    "gpu": [
+      {
+        "vendor": "",
+        "device": "Intel(R) UHD Graphics"
+      },
+      {
+        "vendor": "",
+        "device": "Microsoft Basic Render Driver"
+      }
+    ],
+    "release": "d50397ff5027"
+  },
+  "before": {
+    "at": "2026-11-14T07:07:02.274Z",
+    "scope": "Hosted renderer, unmodified NPC motion, presentation readout only",
+    "results": [
+      {
+        "label": "desktop",
+        "fps": 60,
+        "p95FrameMs": 17,
+        "medianSnapshotGapMs": 1050.5,
+        "sync": {
+          "medianMs": 443.36,
+          "p95Ms": 699.43
+        },
+        "actors": [
+          {
+            "id": 0,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 60.6,
+            "medianSpeed": 0.04,
+            "p95Speed": 9.86
+          },
+          {
+            "id": 1,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 62.5,
+            "medianSpeed": 0.03,
+            "p95Speed": 8.33
+          },
+          {
+            "id": 2,
+            "movingFrames": 740,
+            "nearlyStoppedPercent": 61.2,
+            "medianSpeed": 0.04,
+            "p95Speed": 10.6
+          },
+          {
+            "id": 3,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 60.7,
+            "medianSpeed": 0.04,
+            "p95Speed": 10.16
+          },
+          {
+            "id": 4,
+            "movingFrames": 680,
+            "nearlyStoppedPercent": 60.4,
+            "medianSpeed": 0.04,
+            "p95Speed": 10.82
+          },
+          {
+            "id": 5,
+            "movingFrames": 560,
+            "nearlyStoppedPercent": 61.3,
+            "medianSpeed": 0.04,
+            "p95Speed": 9.77
+          },
+          {
+            "id": 6,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 59.9,
+            "medianSpeed": 0.05,
+            "p95Speed": 11.37
+          },
+          {
+            "id": 7,
+            "movingFrames": 740,
+            "nearlyStoppedPercent": 60.8,
+            "medianSpeed": 0.04,
+            "p95Speed": 10.34
+          },
+          {
+            "id": 8,
+            "movingFrames": 679,
+            "nearlyStoppedPercent": 61,
+            "medianSpeed": 0.04,
+            "p95Speed": 10.01
+          },
+          {
+            "id": 9,
+            "movingFrames": 740,
+            "nearlyStoppedPercent": 61.5,
+            "medianSpeed": 0.04,
+            "p95Speed": 10.3
+          },
+          {
+            "id": 10,
+            "movingFrames": 680,
+            "nearlyStoppedPercent": 62.4,
+            "medianSpeed": 0.03,
+            "p95Speed": 8.49
+          },
+          {
+            "id": 11,
+            "movingFrames": 616,
+            "nearlyStoppedPercent": 63.1,
+            "medianSpeed": 0.03,
+            "p95Speed": 8.13
+          },
+          {
+            "id": 12,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 62.3,
+            "medianSpeed": 0.04,
+            "p95Speed": 8.2
+          },
+          {
+            "id": 13,
+            "movingFrames": 616,
+            "nearlyStoppedPercent": 60.2,
+            "medianSpeed": 0.04,
+            "p95Speed": 10.95
+          },
+          {
+            "id": 14,
+            "movingFrames": 493,
+            "nearlyStoppedPercent": 62.1,
+            "medianSpeed": 0.03,
+            "p95Speed": 8.75
+          },
+          {
+            "id": 15,
+            "movingFrames": 784,
+            "nearlyStoppedPercent": 61.9,
+            "medianSpeed": 0.03,
+            "p95Speed": 9.67
+          },
+          {
+            "id": 16,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 62.9,
+            "medianSpeed": 0.03,
+            "p95Speed": 7.57
+          },
+          {
+            "id": 17,
+            "movingFrames": 680,
+            "nearlyStoppedPercent": 65,
+            "medianSpeed": 0.02,
+            "p95Speed": 7.9
+          },
+          {
+            "id": 18,
+            "movingFrames": 360,
+            "nearlyStoppedPercent": 60.6,
+            "medianSpeed": 0.04,
+            "p95Speed": 10.88
+          },
+          {
+            "id": 19,
+            "movingFrames": 680,
+            "nearlyStoppedPercent": 61.6,
+            "medianSpeed": 0.04,
+            "p95Speed": 9.61
+          },
+          {
+            "id": 20,
+            "movingFrames": 247,
+            "nearlyStoppedPercent": 62.3,
+            "medianSpeed": 0.03,
+            "p95Speed": 8.28
+          },
+          {
+            "id": 21,
+            "movingFrames": 560,
+            "nearlyStoppedPercent": 64.3,
+            "medianSpeed": 0.03,
+            "p95Speed": 6.88
+          },
+          {
+            "id": 22,
+            "movingFrames": 548,
+            "nearlyStoppedPercent": 65,
+            "medianSpeed": 0.02,
+            "p95Speed": 5.77
+          },
+          {
+            "id": 23,
+            "movingFrames": 310,
+            "nearlyStoppedPercent": 69,
+            "medianSpeed": 0.01,
+            "p95Speed": 4.88
+          },
+          {
+            "id": 24,
+            "movingFrames": 493,
+            "nearlyStoppedPercent": 63.1,
+            "medianSpeed": 0.03,
+            "p95Speed": 7.84
+          },
+          {
+            "id": 25,
+            "movingFrames": 680,
+            "nearlyStoppedPercent": 62.4,
+            "medianSpeed": 0.03,
+            "p95Speed": 9.17
+          },
+          {
+            "id": 26,
+            "movingFrames": 804,
+            "nearlyStoppedPercent": 62.2,
+            "medianSpeed": 0.03,
+            "p95Speed": 8.55
+          },
+          {
+            "id": 27,
+            "movingFrames": 740,
+            "nearlyStoppedPercent": 61.6,
+            "medianSpeed": 0.03,
+            "p95Speed": 9.09
+          },
+          {
+            "id": 28,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 64.5,
+            "medianSpeed": 0.03,
+            "p95Speed": 6.74
+          }
+        ],
+        "errors": []
+      },
+      {
+        "label": "mobile",
+        "fps": 60,
+        "p95FrameMs": 17,
+        "medianSnapshotGapMs": 1016.9,
+        "sync": {
+          "medianMs": 409.23,
+          "p95Ms": 683.99
+        },
+        "actors": [
+          {
+            "id": 0,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 59.8,
+            "medianSpeed": 0.05,
+            "p95Speed": 10.71
+          },
+          {
+            "id": 1,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 61.3,
+            "medianSpeed": 0.04,
+            "p95Speed": 8.63
+          },
+          {
+            "id": 2,
+            "movingFrames": 745,
+            "nearlyStoppedPercent": 60.1,
+            "medianSpeed": 0.04,
+            "p95Speed": 10.59
+          },
+          {
+            "id": 3,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 59.9,
+            "medianSpeed": 0.05,
+            "p95Speed": 10.17
+          },
+          {
+            "id": 4,
+            "movingFrames": 681,
+            "nearlyStoppedPercent": 58.4,
+            "medianSpeed": 0.05,
+            "p95Speed": 11.01
+          },
+          {
+            "id": 5,
+            "movingFrames": 562,
+            "nearlyStoppedPercent": 59.8,
+            "medianSpeed": 0.04,
+            "p95Speed": 10.51
+          },
+          {
+            "id": 6,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 58.7,
+            "medianSpeed": 0.05,
+            "p95Speed": 11.67
+          },
+          {
+            "id": 7,
+            "movingFrames": 745,
+            "nearlyStoppedPercent": 59.5,
+            "medianSpeed": 0.05,
+            "p95Speed": 10.33
+          },
+          {
+            "id": 8,
+            "movingFrames": 676,
+            "nearlyStoppedPercent": 60.8,
+            "medianSpeed": 0.04,
+            "p95Speed": 9.78
+          },
+          {
+            "id": 9,
+            "movingFrames": 745,
+            "nearlyStoppedPercent": 60.1,
+            "medianSpeed": 0.04,
+            "p95Speed": 10.3
+          },
+          {
+            "id": 10,
+            "movingFrames": 681,
+            "nearlyStoppedPercent": 60.9,
+            "medianSpeed": 0.04,
+            "p95Speed": 9.1
+          },
+          {
+            "id": 11,
+            "movingFrames": 625,
+            "nearlyStoppedPercent": 61.8,
+            "medianSpeed": 0.03,
+            "p95Speed": 8.17
+          },
+          {
+            "id": 12,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 61,
+            "medianSpeed": 0.04,
+            "p95Speed": 8.72
+          },
+          {
+            "id": 13,
+            "movingFrames": 625,
+            "nearlyStoppedPercent": 58.9,
+            "medianSpeed": 0.05,
+            "p95Speed": 11.06
+          },
+          {
+            "id": 14,
+            "movingFrames": 501,
+            "nearlyStoppedPercent": 60.7,
+            "medianSpeed": 0.04,
+            "p95Speed": 9.38
+          },
+          {
+            "id": 15,
+            "movingFrames": 777,
+            "nearlyStoppedPercent": 60.4,
+            "medianSpeed": 0.04,
+            "p95Speed": 9.87
+          },
+          {
+            "id": 16,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 61.7,
+            "medianSpeed": 0.04,
+            "p95Speed": 8.23
+          },
+          {
+            "id": 17,
+            "movingFrames": 681,
+            "nearlyStoppedPercent": 62.4,
+            "medianSpeed": 0.03,
+            "p95Speed": 7.94
+          },
+          {
+            "id": 18,
+            "movingFrames": 376,
+            "nearlyStoppedPercent": 58.8,
+            "medianSpeed": 0.05,
+            "p95Speed": 11.96
+          },
+          {
+            "id": 19,
+            "movingFrames": 681,
+            "nearlyStoppedPercent": 59.8,
+            "medianSpeed": 0.04,
+            "p95Speed": 9.55
+          },
+          {
+            "id": 20,
+            "movingFrames": 255,
+            "nearlyStoppedPercent": 58.8,
+            "medianSpeed": 0.05,
+            "p95Speed": 9.83
+          },
+          {
+            "id": 21,
+            "movingFrames": 562,
+            "nearlyStoppedPercent": 62.5,
+            "medianSpeed": 0.03,
+            "p95Speed": 7.47
+          },
+          {
+            "id": 22,
+            "movingFrames": 505,
+            "nearlyStoppedPercent": 64.2,
+            "medianSpeed": 0.03,
+            "p95Speed": 6.35
+          },
+          {
+            "id": 23,
+            "movingFrames": 315,
+            "nearlyStoppedPercent": 66,
+            "medianSpeed": 0.02,
+            "p95Speed": 6.51
+          },
+          {
+            "id": 24,
+            "movingFrames": 501,
+            "nearlyStoppedPercent": 61.3,
+            "medianSpeed": 0.04,
+            "p95Speed": 8.43
+          },
+          {
+            "id": 25,
+            "movingFrames": 681,
+            "nearlyStoppedPercent": 60.4,
+            "medianSpeed": 0.04,
+            "p95Speed": 9.22
+          },
+          {
+            "id": 26,
+            "movingFrames": 810,
+            "nearlyStoppedPercent": 60.9,
+            "medianSpeed": 0.04,
+            "p95Speed": 9.36
+          },
+          {
+            "id": 27,
+            "movingFrames": 745,
+            "nearlyStoppedPercent": 60.1,
+            "medianSpeed": 0.04,
+            "p95Speed": 9.19
+          },
+          {
+            "id": 28,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 63.6,
+            "medianSpeed": 0.03,
+            "p95Speed": 6.78
+          }
+        ],
+        "errors": []
+      }
+    ]
+  },
+  "after": {
+    "at": "2026-11-14T07:12:59.372Z",
+    "scope": "Local candidate HTML/client bundle against hosted API; not deployed",
+    "results": [
+      {
+        "label": "desktop",
+        "fps": 60,
+        "p95FrameMs": 16.8,
+        "medianSnapshotGapMs": 1000.1,
+        "sync": {
+          "medianMs": 421.73,
+          "p95Ms": 694.74
+        },
+        "actors": [
+          {
+            "id": 0,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 0,
+            "medianSpeed": 1.62,
+            "p95Speed": 1.77
+          },
+          {
+            "id": 1,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 0,
+            "medianSpeed": 1.3,
+            "p95Speed": 1.42
+          },
+          {
+            "id": 2,
+            "movingFrames": 728,
+            "nearlyStoppedPercent": 1.9,
+            "medianSpeed": 1.59,
+            "p95Speed": 1.73
+          },
+          {
+            "id": 3,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 0,
+            "medianSpeed": 1.54,
+            "p95Speed": 1.79
+          },
+          {
+            "id": 4,
+            "movingFrames": 728,
+            "nearlyStoppedPercent": 1.9,
+            "medianSpeed": 1.67,
+            "p95Speed": 1.81
+          },
+          {
+            "id": 5,
+            "movingFrames": 544,
+            "nearlyStoppedPercent": 2.4,
+            "medianSpeed": 1.58,
+            "p95Speed": 1.78
+          },
+          {
+            "id": 6,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 0,
+            "medianSpeed": 1.81,
+            "p95Speed": 1.93
+          },
+          {
+            "id": 7,
+            "movingFrames": 786,
+            "nearlyStoppedPercent": 1.1,
+            "medianSpeed": 1.53,
+            "p95Speed": 1.86
+          },
+          {
+            "id": 8,
+            "movingFrames": 733,
+            "nearlyStoppedPercent": 1.2,
+            "medianSpeed": 1.51,
+            "p95Speed": 1.62
+          },
+          {
+            "id": 9,
+            "movingFrames": 728,
+            "nearlyStoppedPercent": 1.9,
+            "medianSpeed": 1.54,
+            "p95Speed": 1.68
+          },
+          {
+            "id": 10,
+            "movingFrames": 728,
+            "nearlyStoppedPercent": 1.9,
+            "medianSpeed": 1.25,
+            "p95Speed": 1.35
+          },
+          {
+            "id": 11,
+            "movingFrames": 603,
+            "nearlyStoppedPercent": 1.8,
+            "medianSpeed": 1.23,
+            "p95Speed": 1.34
+          },
+          {
+            "id": 12,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 0,
+            "medianSpeed": 1.35,
+            "p95Speed": 1.47
+          },
+          {
+            "id": 13,
+            "movingFrames": 664,
+            "nearlyStoppedPercent": 1.2,
+            "medianSpeed": 1.66,
+            "p95Speed": 1.8
+          },
+          {
+            "id": 14,
+            "movingFrames": 544,
+            "nearlyStoppedPercent": 2.4,
+            "medianSpeed": 1.29,
+            "p95Speed": 1.45
+          },
+          {
+            "id": 15,
+            "movingFrames": 779,
+            "nearlyStoppedPercent": 14.1,
+            "medianSpeed": 1.39,
+            "p95Speed": 1.78
+          },
+          {
+            "id": 16,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 0,
+            "medianSpeed": 1.25,
+            "p95Speed": 1.35
+          },
+          {
+            "id": 17,
+            "movingFrames": 664,
+            "nearlyStoppedPercent": 1.2,
+            "medianSpeed": 1.19,
+            "p95Speed": 1.29
+          },
+          {
+            "id": 18,
+            "movingFrames": 362,
+            "nearlyStoppedPercent": 3.9,
+            "medianSpeed": 1.7,
+            "p95Speed": 2.14
+          },
+          {
+            "id": 19,
+            "movingFrames": 728,
+            "nearlyStoppedPercent": 1.9,
+            "medianSpeed": 1.38,
+            "p95Speed": 1.72
+          },
+          {
+            "id": 20,
+            "movingFrames": 295,
+            "nearlyStoppedPercent": 2,
+            "medianSpeed": 1.22,
+            "p95Speed": 1.65
+          },
+          {
+            "id": 21,
+            "movingFrames": 544,
+            "nearlyStoppedPercent": 2.4,
+            "medianSpeed": 1.11,
+            "p95Speed": 1.25
+          },
+          {
+            "id": 22,
+            "movingFrames": 542,
+            "nearlyStoppedPercent": 3.7,
+            "medianSpeed": 0.92,
+            "p95Speed": 1.05
+          },
+          {
+            "id": 23,
+            "movingFrames": 235,
+            "nearlyStoppedPercent": 17.4,
+            "medianSpeed": 1.05,
+            "p95Speed": 1.15
+          },
+          {
+            "id": 24,
+            "movingFrames": 544,
+            "nearlyStoppedPercent": 2.6,
+            "medianSpeed": 1.16,
+            "p95Speed": 1.3
+          },
+          {
+            "id": 25,
+            "movingFrames": 664,
+            "nearlyStoppedPercent": 1.2,
+            "medianSpeed": 1.38,
+            "p95Speed": 1.5
+          },
+          {
+            "id": 26,
+            "movingFrames": 786,
+            "nearlyStoppedPercent": 1,
+            "medianSpeed": 1.4,
+            "p95Speed": 1.52
+          },
+          {
+            "id": 27,
+            "movingFrames": 786,
+            "nearlyStoppedPercent": 1.1,
+            "medianSpeed": 1.37,
+            "p95Speed": 1.48
+          },
+          {
+            "id": 28,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 0,
+            "medianSpeed": 1.03,
+            "p95Speed": 1.1
+          }
+        ],
+        "errors": []
+      },
+      {
+        "label": "mobile",
+        "fps": 60,
+        "p95FrameMs": 17,
+        "medianSnapshotGapMs": 1016.9,
+        "sync": {
+          "medianMs": 452.8,
+          "p95Ms": 549.46
+        },
+        "actors": [
+          {
+            "id": 0,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 0,
+            "medianSpeed": 1.6,
+            "p95Speed": 1.78
+          },
+          {
+            "id": 1,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 0,
+            "medianSpeed": 1.29,
+            "p95Speed": 1.43
+          },
+          {
+            "id": 2,
+            "movingFrames": 718,
+            "nearlyStoppedPercent": 1.5,
+            "medianSpeed": 1.61,
+            "p95Speed": 1.77
+          },
+          {
+            "id": 3,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 0,
+            "medianSpeed": 1.56,
+            "p95Speed": 1.7
+          },
+          {
+            "id": 4,
+            "movingFrames": 655,
+            "nearlyStoppedPercent": 1.2,
+            "medianSpeed": 1.7,
+            "p95Speed": 1.88
+          },
+          {
+            "id": 5,
+            "movingFrames": 534,
+            "nearlyStoppedPercent": 2.2,
+            "medianSpeed": 1.62,
+            "p95Speed": 1.76
+          },
+          {
+            "id": 6,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 0,
+            "medianSpeed": 1.81,
+            "p95Speed": 1.98
+          },
+          {
+            "id": 7,
+            "movingFrames": 718,
+            "nearlyStoppedPercent": 1.5,
+            "medianSpeed": 1.55,
+            "p95Speed": 1.9
+          },
+          {
+            "id": 8,
+            "movingFrames": 675,
+            "nearlyStoppedPercent": 1.6,
+            "medianSpeed": 1.52,
+            "p95Speed": 1.67
+          },
+          {
+            "id": 9,
+            "movingFrames": 718,
+            "nearlyStoppedPercent": 1.5,
+            "medianSpeed": 1.57,
+            "p95Speed": 1.72
+          },
+          {
+            "id": 10,
+            "movingFrames": 655,
+            "nearlyStoppedPercent": 1.2,
+            "medianSpeed": 1.28,
+            "p95Speed": 1.4
+          },
+          {
+            "id": 11,
+            "movingFrames": 594,
+            "nearlyStoppedPercent": 1.7,
+            "medianSpeed": 1.25,
+            "p95Speed": 1.36
+          },
+          {
+            "id": 12,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 0,
+            "medianSpeed": 1.36,
+            "p95Speed": 1.48
+          },
+          {
+            "id": 13,
+            "movingFrames": 594,
+            "nearlyStoppedPercent": 1.7,
+            "medianSpeed": 1.67,
+            "p95Speed": 1.83
+          },
+          {
+            "id": 14,
+            "movingFrames": 473,
+            "nearlyStoppedPercent": 2.1,
+            "medianSpeed": 1.33,
+            "p95Speed": 1.44
+          },
+          {
+            "id": 15,
+            "movingFrames": 780,
+            "nearlyStoppedPercent": 12.9,
+            "medianSpeed": 1.34,
+            "p95Speed": 1.9
+          },
+          {
+            "id": 16,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 0,
+            "medianSpeed": 1.25,
+            "p95Speed": 1.37
+          },
+          {
+            "id": 17,
+            "movingFrames": 655,
+            "nearlyStoppedPercent": 1.4,
+            "medianSpeed": 1.21,
+            "p95Speed": 1.32
+          },
+          {
+            "id": 18,
+            "movingFrames": 351,
+            "nearlyStoppedPercent": 2.8,
+            "medianSpeed": 1.8,
+            "p95Speed": 1.88
+          },
+          {
+            "id": 19,
+            "movingFrames": 655,
+            "nearlyStoppedPercent": 1.2,
+            "medianSpeed": 1.45,
+            "p95Speed": 1.75
+          },
+          {
+            "id": 20,
+            "movingFrames": 232,
+            "nearlyStoppedPercent": 9.5,
+            "medianSpeed": 1.38,
+            "p95Speed": 1.44
+          },
+          {
+            "id": 21,
+            "movingFrames": 534,
+            "nearlyStoppedPercent": 2.2,
+            "medianSpeed": 1.14,
+            "p95Speed": 1.24
+          },
+          {
+            "id": 22,
+            "movingFrames": 474,
+            "nearlyStoppedPercent": 3.8,
+            "medianSpeed": 0.93,
+            "p95Speed": 1
+          },
+          {
+            "id": 23,
+            "movingFrames": 293,
+            "nearlyStoppedPercent": 27.6,
+            "medianSpeed": 1.08,
+            "p95Speed": 1.2
+          },
+          {
+            "id": 24,
+            "movingFrames": 473,
+            "nearlyStoppedPercent": 2.1,
+            "medianSpeed": 1.18,
+            "p95Speed": 1.23
+          },
+          {
+            "id": 25,
+            "movingFrames": 655,
+            "nearlyStoppedPercent": 1.4,
+            "medianSpeed": 1.41,
+            "p95Speed": 1.53
+          },
+          {
+            "id": 26,
+            "movingFrames": 778,
+            "nearlyStoppedPercent": 1,
+            "medianSpeed": 1.41,
+            "p95Speed": 1.55
+          },
+          {
+            "id": 27,
+            "movingFrames": 718,
+            "nearlyStoppedPercent": 1.5,
+            "medianSpeed": 1.38,
+            "p95Speed": 1.51
+          },
+          {
+            "id": 28,
+            "movingFrames": 840,
+            "nearlyStoppedPercent": 0.4,
+            "medianSpeed": 1.03,
+            "p95Speed": 1.12
+          }
+        ],
+        "errors": []
+      }
+    ]
+  }
+}

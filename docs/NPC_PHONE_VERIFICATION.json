@@ -1,0 +1,37 @@
+{
+  "verifiedAt": "2026-11-14T07:11:01.816Z",
+  "mode": "Local development API; phone chat/call/track after NPC interpolation; movement may meet a wall, no FPS or blockchain claim",
+  "views": [
+    {
+      "label": "desktop",
+      "width": 1280,
+      "height": 800,
+      "motion": {
+        "frames": 90,
+        "stationary": 47,
+        "maxStep": 0.1932000000011176,
+        "distance": 4.250400000002235
+      },
+      "chatReply": true,
+      "inGameCall": true,
+      "track": true,
+      "close": true
+    },
+    {
+      "label": "mobile",
+      "width": 390,
+      "height": 844,
+      "motion": {
+        "frames": 91,
+        "stationary": 47,
+        "maxStep": 0.1296000000033528,
+        "distance": 4.242599999997765
+      },
+      "chatReply": true,
+      "inGameCall": true,
+      "track": true,
+      "close": true
+    }
+  ],
+  "errors": []
+}
