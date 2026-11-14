@@ -1,0 +1,66 @@
+{
+  "at": "2026-11-14T07:48:22.337Z",
+  "scope": "Local Chrome and real development API/SQLite. Isolated seeded fixtures provide owned shop, supplies and delivery position; not hosted playthrough or blockchain evidence.",
+  "results": [
+    {
+      "label": "desktop",
+      "width": 1280,
+      "height": 800,
+      "customerReserveAndCollection": true,
+      "shopWithdrawal": true,
+      "reportRead": true,
+      "pauseRegular": true,
+      "projectFundedDeliveredCompleted": true,
+      "landmarkVisible": true,
+      "laterLandmarksHidden": true,
+      "retainedAfterReload": true,
+      "phoneFits": true,
+      "contentFits": true,
+      "performanceSample": {
+        "fps": 60,
+        "p95FrameMs": 16.9
+      },
+      "errors": []
+    },
+    {
+      "label": "mobile",
+      "width": 390,
+      "height": 844,
+      "customerReserveAndCollection": true,
+      "shopWithdrawal": true,
+      "reportRead": true,
+      "pauseRegular": true,
+      "projectFundedDeliveredCompleted": true,
+      "landmarkVisible": true,
+      "laterLandmarksHidden": true,
+      "retainedAfterReload": true,
+      "phoneFits": true,
+      "contentFits": true,
+      "performanceSample": {
+        "fps": 60,
+        "p95FrameMs": 17
+      },
+      "errors": []
+    },
+    {
+      "label": "small-mobile",
+      "width": 320,
+      "height": 568,
+      "customerReserveAndCollection": true,
+      "shopWithdrawal": true,
+      "reportRead": true,
+      "pauseRegular": true,
+      "projectFundedDeliveredCompleted": true,
+      "landmarkVisible": true,
+      "laterLandmarksHidden": true,
+      "retainedAfterReload": true,
+      "phoneFits": true,
+      "contentFits": true,
+      "performanceSample": {
+        "fps": 60,
+        "p95FrameMs": 16.9
+      },
+      "errors": []
+    }
+  ]
+}

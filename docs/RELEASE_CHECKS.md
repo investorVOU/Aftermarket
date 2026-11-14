@@ -1,5 +1,38 @@
 # Release verification — November 10, 2026
 
+## November 14 regular customers and community economy
+
+Added funded repeat orders for the workshop, market and farm; two Trading Post
+shelves with player pricing; paid-collection relationships; and a persistent
+report covering both standing orders and ordinary NPC shop sales. Merchant
+orders repeat at most once per island day when affordable and needed. Pausing
+refunds a pending reserve and stops future requests. Pending orders have no
+absence fine or expiry. Existing jobs/loans retain their own rules.
+
+Three port-funded town contracts pay per delivery and consume construction goods
+on completion, add planters/canopy/banner to the existing market footprint, and
+expand timber storage. The announced six-day preparation/festival/harvest cycle
+changes actual prices and customer budgets in the readable merchant rules.
+
+No schema/auth/provider or contract code changed. The reserve has a new stable
+per-island contract-ledger identity; its cash/items use existing checkpoints.
+All twelve actors × eight asset types plus licence fit the 100-change bound.
+The master key, existing owner derivation and islands are preserved.
+
+Build/lint passed (81 modules, two inline scripts); 113 backend/API/DB/client
+checks plus 322 original game checks passed, 435 total. Checks include new and
+restored snapshots, JSONB writes/reads, conservation, funded repeat purchases,
+automatic later-day ordering, report totals beyond receipt-list capacity,
+pause/refund, projects, duplicate/concurrent API requests and checkpoint bounds.
+
+[A fresh local playthrough](RETENTION_GAMEPLAY_EVIDENCE.json) gathered eight
+timber, crafted, bought maize, completed the paid garden, bought the shop and
+fulfilled a $20 customer order with no injected goods or position. The temporary
+$20 game-credit loan was repaid from income. [Local browser checks](RETENTION_BROWSER_VERIFICATION.json)
+use explicit seeded fixtures for owned-shop/phone testing, including 320px,
+390px and desktop layouts, visible landmarks and reload. These local records
+are separate from hosted testnet verification.
+
 ## November 14 NPC interpolation
 
 Reproduced stop-start NPC presentation on the hosted `d50397f` game even with

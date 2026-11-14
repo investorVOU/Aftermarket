@@ -1,0 +1,30 @@
+{
+  "at": "2026-11-14T07:49:26.179Z",
+  "scope": "Real local development API week preview; no intercepted clock or prices, no blockchain claim",
+  "phases": {
+    "0": {
+      "title": "Festival preparations",
+      "day": 0,
+      "furnitureBase": 6500,
+      "maizeBase": 500,
+      "time": 0.1
+    },
+    "1": {
+      "title": "Island furniture festival",
+      "day": 2,
+      "furnitureBase": 7800,
+      "maizeBase": 500,
+      "time": 882.3000000001321
+    },
+    "2": {
+      "title": "Harvest fair",
+      "day": 4,
+      "furnitureBase": 6500,
+      "maizeBase": 400,
+      "time": 1698.299999999551
+    }
+  },
+  "finished": true,
+  "secondsAdvanced": 2941.79999999842,
+  "errors": []
+}

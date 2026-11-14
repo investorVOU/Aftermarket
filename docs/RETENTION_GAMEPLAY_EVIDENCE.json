@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-14T07:45:09.507Z",
+  "url": "http://127.0.0.1:8105",
+  "mode": "development",
+  "release": "local",
+  "scope": "Fresh guest/local identity; real API gathering, crafting, paid town project, business acquisition and funded customer collection. No injected balances or position.",
+  "project": "garden",
+  "projectCompleted": true,
+  "shopOwned": true,
+  "customer": "farm",
+  "item": "timber",
+  "quantity": 2,
+  "shopReceivedCents": 2000,
+  "shopReport": {
+    "unread": 1,
+    "earned": 2000
+  },
+  "borrowedTwenty": true,
+  "loanRepaid": true,
+  "chainVerified": false
+}

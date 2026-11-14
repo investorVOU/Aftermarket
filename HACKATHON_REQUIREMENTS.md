@@ -32,6 +32,7 @@ server-managed), not a separately funded native NEAR account.
 | Browser-free screener | Implemented + hosted | `BASE_URL=https://aftmarket.xyz npm run demo:check`; guest, gather, craft, week, real final item/mint verification; fails non-zero |
 | Read-only on-chain inspector | Implemented + testnet | `npm run near:items -- <owner-id>`, no signing key; player/merchant selector in game |
 | Jobs and retention | Implemented + hosted job | Merchant cash reserves wages; delivery/cancel/expiry, reputation, courier ranks; [$55 job proof](docs/LIVE_JOB_EVIDENCE.json) |
+| Regular customers and community progress | Implemented + local checks | Funded repeat orders, relationships, offline shop report, three paid market improvements and announced price events; [details and verification scope](docs/RETENTION.md) |
 | Phone borrowing | Implemented + local checks | Finite treasury, fixed fees, due dates, partial/full repayment; no hosted loan receipt claimed |
 | Phone Playbook | Implemented + hosted UI | Controls, first sale, jobs, business, loans, chat, offline world and optional ownership; real screenshots |
 | Performance and guest recovery | Published + sampled | Prediction, serialized sync, renderer budgets, prewarm and retry; [measurements](docs/PERFORMANCE.md). Physical-device FPS unverified |

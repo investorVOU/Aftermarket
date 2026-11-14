@@ -50,6 +50,13 @@ The checker creates an isolated guest through the API, gathers three timber, cra
 
 *Earn wages from merchant shortages, then build toward your own Trading Post. The phone also holds messages, tracking, in-game text calls, inventory and the Playbook. These are real hosted screenshots in a mobile-sized viewport, not physical-device performance evidence.*
 
+**Build a business worth returning to.** Phone → **Regulars** lets merchants reserve
+funded orders, collect from your shelves and return on later island days. Paid
+collections build relationships and larger budgets; the shop report records
+sales and earnings while you are away. Phone → **Town** adds three paid community
+projects with visible market improvements and an announced festival/harvest
+calendar that changes real prices. [Rules, controls and verification](docs/RETENTION.md).
+
 ## Track 9: Games With Real Economies
 
 | Track example / game loop | Where to verify | Status |
@@ -60,6 +67,7 @@ The checker creates an isolated guest through the API, gathers three timber, cra
 | Prices from stock and demand; explain decisions | `shared/merchant-rules.js`; exchange quote reasons/tooltips | Implemented; hosted week changes all six recorded quotes |
 | Bankruptcy and investment recovery | Merchant cash, bills, arrears and closure rules | Engine/browser verified; not a new hosted recovery receipt |
 | Player-owned market | Trading Post stock, pricing, capital and upgrades; [licence evidence](docs/LIVE_GAME_EVIDENCE.json) | Real testnet bound licence; separate island per player |
+| Repeat customers, construction and economic events | [Retention loop](docs/RETENTION.md), `server/retention.cjs`, readable calendar/budget rules | Implemented; local browser, API and database checks; hosted proof is recorded separately |
 | NEP-245 items in one contract | [Rust contract](contracts/economy/src/lib.rs), deployed hash and receipts above | Deployed and verified on testnet |
 | Social **or email** sign-in, invisible chain | Supabase email links through Resend and managed in-game wallets; [live email proof](docs/EMAIL_VERIFICATION.json) | Hosted email send, provider delivery, actual link return, reload and guest verified; Google disabled |
 | One week in about a minute; offline evolution | [Elapsed-time scheduler](server/simulation.cjs), same fixed-step rules at 49× | Hosted preview verified; idle islands catch up when loaded |
@@ -86,7 +94,7 @@ Groq dialogue and bounded merchant proposals use the owner's configured `openai/
 
 Available history starts with a [November 9 import](https://github.com/investorVOU/Aftermarket/tree/957283d) of the earlier Claude-generated v0.6 game. That import already contains backend/contract work; it is not an untouched pre-hackathon baseline. The island, characters, camera, phone and original local simulation are disclosed as baseline.
 
-Persistent server economy, atomic saves/outbox, NEAR settlement, the screener checker, merchant jobs and guest recovery were developed during the hackathon. [Published November 13 checkpoint](https://github.com/investorVOU/Aftermarket/tree/ccf254e) · [import-to-checkpoint diff](https://github.com/investorVOU/Aftermarket/compare/957283d...ccf254e) · [history limitations](docs/BASELINE.md). Historical tags are not presented as the final release.
+Persistent server economy, atomic saves/outbox, NEAR settlement, the screener checker, merchant jobs, repeat customers, town projects and guest recovery were developed during the hackathon. [Published main branch](https://github.com/investorVOU/Aftermarket/tree/main) · [import-to-main diff](https://github.com/investorVOU/Aftermarket/compare/957283d...main) · [history limitations](docs/BASELINE.md). Historical tags are not presented as the final release.
 
 AI use: baseline generated with Claude; backend, NEAR work and subsequent improvements developed with Codex assistance. Libraries include Three.js, Supabase JS, Postgres.js, near-api-js, Rust near-sdk, esbuild, PGlite and jsdom. Project code is [MIT](LICENSE); third-party licences remain with their authors. No other-chain deployment, NEAR Intents integration or NEAR Auth/MPC login is claimed.
 
@@ -130,4 +138,4 @@ npm run test:contract
 - Custodial managed keys and a privileged settlement controller; no MPC, user key export or external-transfer indexer. Pending settlement can delay final ownership.
 - Short accelerated Chrome samples do not establish physical-phone FPS or universal smoothness. Render cold starts and upstream service latency affect entry and confirmations. [Measured performance](docs/PERFORMANCE.md).
 - Phone loans have local financial/API/browser verification; no hosted loan receipt is claimed. Groq live operation is owner-reported, not independently reverified here.
-- A demo video and public X demo-post URL have not been provided. The public repository and hosted game alone do not complete the organizer's final submission process.
+- A local gameplay overview is recorded; public video and X demo-post URLs have not been provided. The public repository and hosted game alone do not complete the organizer's final submission process.

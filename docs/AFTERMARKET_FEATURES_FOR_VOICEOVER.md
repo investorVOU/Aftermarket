@@ -40,6 +40,11 @@ NEAR Hackathon track: **Track 9 — Games With Real Economies**.
 
 ## The living economy — the main story
 
+- New retention loop: **Regulars** builds a book of funded repeat customers. Stock
+  your shop, earn merchant relationships, and return to a report of its sales.
+  **Town** offers three paid community projects that visibly improve the market,
+  plus an announced festival/harvest calendar with real pricing effects. These
+  additions have local checks; match hosted claims to new footage and evidence.
 - Autonomous rule-based merchants buy supplies, produce goods and trade with
   other merchants. The workshop needs inputs; farms supply market goods;
   forestry, the port and the timber yard participate in supply chains.

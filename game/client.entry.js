@@ -41,6 +41,7 @@ document.body.appendChild(shell);document.body.classList.add('am-enhanced');
 const $=id=>document.getElementById(id);
 const lenderOption=document.createElement('option');lenderOption.value='lender';lenderOption.textContent='Back Alley Credit';$('am-actor').append(lenderOption);
 const jobOption=document.createElement('option');jobOption.value='jobdesk';jobOption.textContent='Reserved job wages';$('am-actor').append(jobOption);
+const customerOption=document.createElement('option');customerOption.value='customerdesk';customerOption.textContent='Reserved customer and town payments';$('am-actor').append(customerOption);
 const retryConnection=document.createElement('button');retryConnection.type='button';retryConnection.className='am-secondary';retryConnection.textContent='Retry connection';retryConnection.hidden=true;retryConnection.addEventListener('click',()=>location.reload());$('am-login-status').after(retryConnection);
 const toast=message=>{const el=$('am-toast');el.textContent=message;el.classList.add('visible');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('visible'),4500);};
 const navigation=setupNavigation({document,window,Sim:S,Input,CamRig,Phone,Net:N,Bus,toast});
@@ -53,7 +54,7 @@ const stateTransport=new GameSync.StateTransport(api);
 N.stop=()=>{disposed=true;clearTimeout(syncTimer);N.movement={x:0,z:0};N.online=false;return stateTransport.tail;};
 window.addEventListener('pagehide',N.stop);
 window.addEventListener('pageshow',event=>{if(event.persisted)location.reload();});
-function normalPhoneRender(){if(!Phone.open||Phone.touching||Phone.app==='settings'||document.activeElement?.id==='ph-merchant-question')return;const signature=JSON.stringify([Phone.app,S.Msg.rev,S.Talk.rev,E.player.cash,E.player.inv,E.ts.inv,E.ow.inv,E.farm.inv,E.credit,E.lender?.cash,Phone.app==='jobs'?E.employment:null,Phone.app==='biz'?Math.floor(S.time):Math.floor(S.time/2)]);if(signature!==phoneSignature){phoneSignature=signature;Phone.render();}}
+function normalPhoneRender(){if(!Phone.open||Phone.touching||Phone.app==='settings'||document.activeElement?.id==='ph-merchant-question')return;const signature=JSON.stringify([Phone.app,S.Msg.rev,S.Talk.rev,E.player.cash,E.player.inv,E.ts.inv,E.ow.inv,E.farm.inv,E.credit,E.lender?.cash,Phone.app==='jobs'?E.employment:null,['regulars','town'].includes(Phone.app)?[E.post,E.retention,E.calendar]:null,Phone.app==='biz'?Math.floor(S.time):Math.floor(S.time/2)]);if(signature!==phoneSignature){phoneSignature=signature;Phone.render();}}
 function apply(data,immediate=false){
   if(disposed)return;
   // An older polling response must never overwrite a newer action response.
