@@ -2,7 +2,7 @@
 
 This is a factual brief to give GPT when writing the narration. It is not a
 finished script. Use the implemented features below, and match the narration to
-the actual screen recording. Updated November 13, 2026.
+the actual screen recording. Updated November 14, 2026.
 
 ## The game in two sentences
 
@@ -20,6 +20,11 @@ NEAR Hackathon track: **Track 9 — Games With Real Economies**.
 - Explore a low-poly island town on desktop or mobile-sized layouts. Walk with
   WASD/arrows or the touch joystick, orbit and zoom the camera, and use nearby
   interactions. The phone contains a map with destination markers.
+- The island clock drives dawn, daylight, dusk and night. Windows and streetlamps
+  brighten at night. Camera buttons sit inside a collapsible side panel, and the
+  objective card can be collapsed with its preference remembered on that browser.
+  These visuals and controls have local Chrome verification; match claims about
+  the hosted version to the actual deployed footage.
 - Gather timber in the forest. Bring three timber to Oak & Iron Workshop and
   craft furniture for $2 in game credits. Production takes eight island seconds.
 - Sell furniture through the phone marketplace for $50 in game credits when

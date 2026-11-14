@@ -84,6 +84,42 @@ body.market-open .am-camera,body.market-open #pbtn,body.market-open .abtn,body.m
 @media(max-width:760px){.am-brand .am-mark{width:28px;height:28px;padding:3px;border-radius:6px}.am-welcome-logo{width:66px;height:40px;padding:5px;margin-bottom:12px}}
 @media(max-height:700px){.am-welcome-logo{display:none}}
 #ph-merchant-question{box-sizing:border-box;width:100%;min-height:40px;padding:8px;margin:6px 0 10px;border:1px solid #7d8a7e;border-radius:8px;background:#fff;color:#17251d;font:inherit}
+
+/* Optional controls live in a right-side drawer, leaving the world clear. */
+.am-camera{top:calc(108px + env(safe-area-inset-top,0px));right:calc(22px + env(safe-area-inset-right,0px));bottom:auto}
+.am-camera summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;width:100px;margin-left:auto;padding:10px 12px;border:1px solid var(--am-edge);border-radius:10px;font-size:12px;box-shadow:0 5px 15px #10201933}
+.am-camera details[open]>summary span{transform:rotate(180deg)}
+.am-camera-options{right:0;top:calc(100% + 8px);bottom:auto;width:min(230px,calc(100vw - 44px));max-height:calc(100dvh - 190px);overflow:auto;box-sizing:border-box;padding:12px;touch-action:pan-y}
+.am-camera-options .am-camera-quick{grid-column:1/-1;justify-content:space-between;margin-bottom:4px}
+.am-camera-options .am-camera-quick button{font-size:22px!important;flex:1}
+.am-camera summary:focus-visible,.am-mission summary:focus-visible{outline:3px solid var(--am-gold);outline-offset:3px}
+.am-enhanced .abtn.rc,.am-enhanced .abtn.st,.am-enhanced .setp,.map-open .am-camera{display:none!important}
+
+/* Native details makes the objective keyboard accessible and removes hidden
+   body controls from the tab order. The stored choice is independent of saves. */
+.am-mission{padding:0;overflow:hidden}
+.am-mission>summary{padding:12px 16px;min-height:44px;box-sizing:border-box;list-style:none;cursor:pointer;pointer-events:auto}
+.am-mission>summary::-webkit-details-marker{display:none}
+.am-mission-top{display:flex;align-items:center;gap:10px}
+.am-mission-top .am-eyebrow{margin-right:auto}
+#am-progress{font-size:9px;color:#b1b8aa;white-space:nowrap}
+.am-mission-chevron{font-size:16px;color:var(--am-gold);line-height:18px;transform:rotate(180deg)}
+.am-mission[open] .am-mission-chevron{transform:none}
+.am-goal-summary{display:block;margin-top:7px;font-size:12px;line-height:1.4;color:var(--am-cream)}
+.am-mission[open] .am-goal-summary{display:none}
+#am-mission-body{padding:0 20px 15px;max-height:calc(100dvh - 185px);overflow:auto;box-sizing:border-box;touch-action:pan-y;pointer-events:auto}
+.am-mission h2{margin-top:5px}
+@media(max-width:760px){
+ .am-camera{top:calc(112px + env(safe-area-inset-top,0px));right:calc(10px + env(safe-area-inset-right,0px));bottom:auto}
+ .am-camera-options{width:min(220px,calc(100vw - 32px));max-height:calc(100dvh - 195px);padding:10px}
+ .am-mission{padding:0}.am-mission>summary{padding:10px 12px}.am-mission-top{gap:6px}
+ .am-mission-top .am-eyebrow{font-size:7px;letter-spacing:.8px}#am-progress{font-size:8px}
+ #am-mission-body{padding:0 12px 12px}.am-mission h2{margin-top:3px}
+}
+@media(max-height:530px) and (orientation:landscape){
+ .am-camera{top:85px;bottom:auto}.am-camera-options{max-height:calc(100dvh - 150px)}
+ .am-mission{padding:0}#am-mission-body{max-height:calc(100dvh - 150px)}
+}
 /* Off-screen app transitions must not make the phone itself scroll sideways. */
 .am-enhanced #phone .ph-screen{overflow:clip}
 .am-enhanced #phone .ph-app{min-width:0;width:100%;box-sizing:border-box}

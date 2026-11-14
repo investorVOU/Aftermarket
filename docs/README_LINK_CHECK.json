@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-13T19:07:30.197Z",
+  "checkedAt": "2026-11-14T00:45:54.315Z",
   "relative": [
     {
       "target": "docs/images/island-exchange-live.png",
@@ -99,6 +99,14 @@
     },
     {
       "target": "docs/README_CLAIMS.md",
+      "exists": true
+    },
+    {
+      "target": "docs/NIGHT_SIDEBAR_VERIFICATION.json",
+      "exists": true
+    },
+    {
+      "target": "docs/CLOCK_CYCLE_VERIFICATION.json",
       "exists": true
     },
     {

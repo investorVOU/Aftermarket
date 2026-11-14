@@ -6,12 +6,21 @@ export function setupNavigation({document,window,Sim,Input,CamRig,Phone,Net,Bus,
   const bounds={x:-105,z:-80,width:220,height:135};
   const places=[['Forest',-30,-17],['Timber Supply',-24,9],['Oak & Iron',24,7],['Trading Post',8,9],['Greenfield Farm',21,-36],['Gold mine',46,-30]];
   let waypoint=null,pressed=null;
+  const camera=$('am-camera-more'),mission=$('am-mission');
+  // Preferences are presentation only. Storage denial must never block entry.
+  try{mission.open=window.localStorage.getItem('aftermarket-mission-collapsed')!=='true';}catch{/* Keep the first-visit guide open. */}
+  function missionState(){
+    $('am-mission-toggle').setAttribute('aria-expanded',String(mission.open));
+    $('am-mission-toggle').setAttribute('aria-label',mission.open?'Collapse your next move':'Expand your next move');
+    try{window.localStorage.setItem('aftermarket-mission-collapsed',String(!mission.open));}catch{/* Session-only preference. */}
+  }
+  missionState();mission.addEventListener('toggle',missionState);
   function releaseInput(){Input.reset();Net.movement={x:0,z:0};}
   function setMap(open,{focus=true}={}) {
     panel.hidden=!open;
     document.body.classList.toggle('map-open',open);
     pressed=null;releaseInput();
-    if(open){Phone.minimize();$('am-market').hidden=true;document.body.classList.remove('market-open');draw();if(focus)$('am-close-map').focus();}
+    if(open){camera.open=false;Phone.minimize();$('am-market').hidden=true;document.body.classList.remove('market-open');draw();if(focus)$('am-close-map').focus();}
     else if(focus&&panel.contains(document.activeElement))Phone.launcher?.focus?.();
   }
   function select(x,z,label='Custom destination') {
@@ -53,10 +62,11 @@ export function setupNavigation({document,window,Sim,Input,CamRig,Phone,Net,Bus,
   // These are click handlers so keyboard, touch and mouse receive the same action.
   const controls={'am-zoom-in':()=>CamRig.adjust({zoom:-.16}),'am-zoom-out':()=>CamRig.adjust({zoom:.16}),'am-camera-reset':()=>CamRig.reset(),'am-orbit-left':()=>CamRig.adjust({yaw:-Math.PI/8}),'am-orbit-right':()=>CamRig.adjust({yaw:Math.PI/8}),'am-tilt-up':()=>CamRig.adjust({pitch:.12}),'am-tilt-down':()=>CamRig.adjust({pitch:-.12})};
   for(const [id,act]of Object.entries(controls))$(id).addEventListener('click',act);
-  for(const element of [panel,$('am-camera')]){
+  for(const element of [panel,$('am-camera'),mission]){
     element.addEventListener('pointerdown',event=>{releaseInput();event.stopPropagation();});
     element.addEventListener('keydown',event=>{if(event.key!=='Escape'&&event.key.toLowerCase()!=='m')event.stopPropagation();});
   }
+  window.addEventListener('pointerdown',event=>{if(camera.open&&!$('am-camera').contains(event.target))camera.open=false;});
   window.addEventListener('keydown',event=>{
     if(event.target?.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(event.target?.tagName))return;
     if(event.key.toLowerCase()==='m'&&!event.repeat){event.preventDefault();event.stopImmediatePropagation();setMap(panel.hidden);}

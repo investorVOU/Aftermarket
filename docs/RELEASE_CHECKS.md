@@ -1,5 +1,31 @@
 # Release verification — November 10, 2026
 
+## November 14 lighting and collapsible controls
+
+Connected the existing island clock to a dawn/day/dusk/night lighting model. The
+existing hemisphere and directional lights are reused; window/lamp materials
+brighten at night without extra dynamic lights, post-processing or shadow maps.
+Lighting/material updates run at most 10 Hz. Night retains navigation fill light.
+
+All zoom/reset/orbit/tilt buttons now live inside the closed-by-default Camera
+side panel. Duplicate mobile camera buttons are hidden; touch sensitivity stays
+available in Phone Settings. The native objective disclosure opens on first use,
+collapses to a compact current goal and remembers its preference independently
+of the saved island. Keyboard activation and Escape camera-close are preserved.
+
+`NIGHT_SIDEBAR_VERIFICATION.json` records local Chrome checks at 1280×800,
+390×844, 320×568 and 844×390: panel fit, reset/zoom/orbit, keyboard toggle,
+preference after reload, phone overlap prevention and Playbook access. Synthetic
+presented clock values were used for those deterministic visual captures. Short
+desktop/mobile viewport day/night samples stayed near 60 FPS, without a claim
+about physical devices. `CLOCK_CYCLE_VERIFICATION.json` separately checks the
+actual development preview clock with no intercepted timestamps.
+
+Build and syntax lint passed (74 modules and two inline scripts). The full suite
+passed: 89 backend/API/DB/client/configuration checks plus 322 original game checks
+(411 total). Public source and browser-bundle configured-credential scans found
+no secrets. No backend, database, authentication or settlement logic changed.
+
 ## November 13 narration brief and branded email templates
 
 Added a factual voice-over feature brief for Rackz, with footage suggestions,

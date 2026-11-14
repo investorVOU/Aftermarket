@@ -1,0 +1,103 @@
+{
+  "at": "2026-11-14T00:43:59.549Z",
+  "scope": "Installed Chrome, local development API, synthetic presented hours 12 and 23. Not a hosted or physical-device performance claim.",
+  "extraDynamicLights": 0,
+  "results": [
+    {
+      "label": "desktop",
+      "width": 1280,
+      "height": 800,
+      "defaultCameraClosed": true,
+      "defaultGuideOpen": true,
+      "collapseRetainedAfterReload": true,
+      "cameraButtonsWork": true,
+      "panelFits": true,
+      "day": {
+        "fps": 60,
+        "p95FrameMs": 16.9,
+        "lightingTotalMs": 3.1
+      },
+      "night": {
+        "hour": 23,
+        "night": 1,
+        "period": "Night",
+        "performance": {
+          "fps": 60,
+          "p95FrameMs": 16.9,
+          "lightingTotalMs": 3.5
+        }
+      },
+      "keyboardGuideToggle": true,
+      "phoneHidesCamera": true,
+      "playbookWorks": true,
+      "errors": []
+    },
+    {
+      "label": "mobile",
+      "width": 390,
+      "height": 844,
+      "defaultCameraClosed": true,
+      "defaultGuideOpen": true,
+      "collapseRetainedAfterReload": true,
+      "cameraButtonsWork": true,
+      "panelFits": true,
+      "day": {
+        "fps": 60,
+        "p95FrameMs": 16.9,
+        "lightingTotalMs": 3.1
+      },
+      "night": {
+        "hour": 23,
+        "night": 1,
+        "period": "Night",
+        "performance": {
+          "fps": 60,
+          "p95FrameMs": 16.9,
+          "lightingTotalMs": 1.8
+        }
+      },
+      "keyboardGuideToggle": true,
+      "phoneHidesCamera": true,
+      "playbookWorks": true,
+      "errors": []
+    },
+    {
+      "label": "small-mobile",
+      "width": 320,
+      "height": 568,
+      "defaultCameraClosed": true,
+      "defaultGuideOpen": true,
+      "collapseRetainedAfterReload": true,
+      "cameraButtonsWork": true,
+      "panelFits": true,
+      "night": {
+        "hour": 23,
+        "night": 1,
+        "period": "Night"
+      },
+      "keyboardGuideToggle": true,
+      "phoneHidesCamera": true,
+      "playbookWorks": true,
+      "errors": []
+    },
+    {
+      "label": "landscape",
+      "width": 844,
+      "height": 390,
+      "defaultCameraClosed": true,
+      "defaultGuideOpen": true,
+      "collapseRetainedAfterReload": true,
+      "cameraButtonsWork": true,
+      "panelFits": true,
+      "night": {
+        "hour": 23,
+        "night": 1,
+        "period": "Night"
+      },
+      "keyboardGuideToggle": true,
+      "phoneHidesCamera": true,
+      "playbookWorks": true,
+      "errors": []
+    }
+  ]
+}
