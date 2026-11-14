@@ -514,7 +514,7 @@ const CamRig=(()=>{
  C.project=(x,y,z,W,H)=>{const fx=C.lx-C.x,fy=C.ly-C.y,fz=C.lz-C.z,fl=Math.hypot(fx,fy,fz),f0=fx/fl,f1=fy/fl,f2=fz/fl;let rx=-f2,rz=f0;const rl=Math.hypot(rx,rz);rx/=rl;rz/=rl;
   const ux=-rz*f1,uy=rz*f0-rx*f2,uz=rx*f1,vx=x-C.x,vy=y-C.y,vz=z-C.z,zc=vx*f0+vy*f1+vz*f2;if(zc<1)return null;const th=Math.tan(C.FOV*Math.PI/360),a=W/H;
   return{x:((vx*rx+vz*rz)/(zc*th*a)*.5+.5)*W,y:(.5-(vx*ux+vy*uy+vz*uz)/(zc*th)*.5)*H,r:Math.max(30,1.9/(zc*th*2)*H*.7)};};
- C.pick=(sx,sy,W,H)=>{let b=null,bd=1e9;Sim.npcs.forEach((n,i)=>{if(!n.vis)return;const p=C.project(n.x,tY(n.x,n.z)+1,n.z,W,H);if(!p)return;const d=Math.hypot(p.x-sx,p.y-sy);if(d<p.r&&d<bd){bd=d;b=i;}});return b;};
+ C.pick=(sx,sy,W,H)=>{let b=null,bd=1e9;Sim.npcs.forEach((n,i)=>{if(!n.vis)return;const pos=Net.enabled?npcViews[i].position:n,p=C.project(pos.x,tY(pos.x,pos.z)+1,pos.z,W,H);if(!p)return;const d=Math.hypot(p.x-sx,p.y-sy);if(d<p.r&&d<bd){bd=d;b=i;}});return b;};
  return C;})();
 const blocked=(x,z,r=.4,npc=false)=>Sim.Col.hit(x,z,r,npc?'ped':'player');
 const gy=(x,z)=>onPier(x,z)?.5:Math.max(tY(x,z),-.3);
@@ -573,8 +573,10 @@ function makeTruck(){const g=new THREE.Group(),cab=M(0xd9822b,.5,{metalness:.2})
  const logs=[],lm=M(0x9b6b3d,1);[[-.75,1.5],[0,1.5],[.75,1.5],[-.75,2.05],[0,2.05],[.75,2.05],[-.38,2.6],[.38,2.6]].forEach(p=>{const c=cyl(.36,.36,6.6,lm,p[0],p[1]+.3,-1.1,g,8);c.rotation.x=Math.PI/2;c.visible=false;logs.push(c);});
  g.userData={wheels:wh,logs};return g;}
 const TG=makeTruck(),TK={g:TG},SH=Sim.ship;S.add(TG);
+const npcPose={x:0,z:0,h:0,v:0,vis:true,mode:'idle'};
 function syncView(dt){clockH=Sim.clock.h;
- Sim.npcs.forEach((n,i)=>{const g=npcViews[i],snap=!Net.enabled||!g.visible||Math.hypot(g.position.x-n.x,g.position.z-n.z)>6;g.visible=n.vis;if(!n.vis)return;const k=snap?1:1-Math.exp(-12*dt);g.position.x+=(n.x-g.position.x)*k;g.position.z+=(n.z-g.position.z)*k;g.position.y=gy(g.position.x,g.position.z);const turn=Math.atan2(Math.sin(n.h-g.rotation.y),Math.cos(n.h-g.rotation.y));g.rotation.y+=turn*k;if(n.near)animChar(g,dt,n.v>.05?n.spd*1.4:0,n.mode);});
+ Net.npcView?.step(performance.now());
+ Sim.npcs.forEach((n,i)=>{const g=npcViews[i],pose=Net.enabled&&Net.npcView?.sample(i,npcPose)?npcPose:n;g.visible=pose.vis;if(!pose.vis)return;g.position.set(pose.x,gy(pose.x,pose.z),pose.z);g.rotation.y=pose.h;if(n.near)animChar(g,dt,Math.min(n.spd*1.5,pose.v)>.05?n.spd*1.4:0,pose.mode);});
  const T=Sim.truck;TG.position.set(T.x,tY(T.x,T.z)+.05,T.z);TG.rotation.y=T.h;TG.userData.wheels.forEach(w=>w.rotation.x+=T.v*dt/.58);TG.userData.logs.forEach((l,i)=>l.visible=i<Eco.truckCargo);CLOGS.forEach((l,i)=>l.visible=i<Eco.crew.inv.timber);
  SHP.position.set(SH.x,-.55+Math.sin(tt*1.1)*.05,SH.z);SHP.rotation.y=SH.h;SHP.userData.conts.forEach((c,i)=>c.visible=i<Math.ceil(Eco.ship.manifest/2));JIB.rotation.y=SH.state==='unloading'?Math.sin(tt*.8)*.9:0;FV.sync(dt);syncCarry();}
 function syncCarry(){Sim.npcs.forEach((n,i)=>{const g=npcViews[i];let m=g.userData.cm;if(n.carry){if(!m)m=g.userData.cm=box(.5,.4,.5,matS(0xe8c24a),0,1.15,.45,g);m.visible=n.vis;m.material.color.setHex(n.carry.item==='maize'?0xe8c24a:n.carry.item==='cassava'?0xb08050:0xf2f2ee);}else if(m)m.visible=false;});}

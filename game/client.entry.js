@@ -1,6 +1,7 @@
 import {createClient} from '@supabase/supabase-js';
 import {setupNavigation} from './navigation.js';
 import MovementView from '../shared/movement-view.js';
+import NpcView from '../shared/npc-view.js';
 import GameSync from '../shared/sync-transport.js';
 import GameHTTP from '../shared/http-client.js';
 
@@ -8,6 +9,7 @@ const A=globalThis.AftermarketApp;
 if(!A)throw new Error('The island renderer could not start.');
 const {Game:G,Net:N,Input,Phone,UI,CamRig}=A,{Eco:E,Sim:S,Bus}=G;
 N.view=new MovementView(S.Col);
+N.npcView=new NpcView(S.Col);
 const money=n=>'$'+(n/100).toFixed(2);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let quotesSignature='',ownershipRequest=0;
@@ -57,7 +59,7 @@ function apply(data,immediate=false){
   // An older polling response must never overwrite a newer action response.
   if(!snapshotOrder.accept(data)){N.diagnostics.ignoredSnapshots++;return;}
   const started=performance.now();if(S.player.x!==data.state.player.x||S.player.z!==data.state.player.z)N.diagnostics.authoritativePositionWrites++;
-  const wasTalking=Boolean(S.Talk.cur);globalThis.GameState.apply(G,data.state);N.revision=data.revision;chainInfo=data.chain;N.chain=data.chain;N.demo=data.demo;N.view.accept(data.state.player,data.movement||{x:0,z:0},data.roundTripMs);normalPhoneRender();
+  const wasTalking=Boolean(S.Talk.cur);globalThis.GameState.apply(G,data.state);N.revision=data.revision;chainInfo=data.chain;N.chain=data.chain;N.demo=data.demo;N.view.accept(data.state.player,data.movement||{x:0,z:0},data.roundTripMs);N.npcView.accept(data.state.npcs,performance.now());normalPhoneRender();
   for(const event of data.events||[])if(event.id>sequence){Bus.emit('notify',event.message);sequence=event.id;}
   if(!wasTalking&&S.Talk.cur)Bus.emit('talk:open',S.Talk.cur.id);
   if(UI.open){const signature=JSON.stringify([UI.tab,E.player.cash,E.player.inv,E.ts,E.ow,E.post,E.farm,E.market,S.Talk.rev]);if(signature!==uiSignature){uiSignature=signature;UI.render();}}else uiSignature='';
