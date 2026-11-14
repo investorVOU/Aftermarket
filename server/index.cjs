@@ -111,7 +111,7 @@ const server=http.createServer(async(req,res)=>{
       if(route==='/api/settlements'&&req.method==='GET')return json(res,200,{settlements:await store.history(user.id)});
       if(route==='/api/ownership'&&req.method==='GET'){
         if(!chain.publicConfig().settlement)throw fail('This island inventory is off-chain.',409);
-        const actor=url.searchParams.get('actor')||'player';if(!['player','ts','ow','post','crew','port','mine','farm','market','lender','jobdesk'].includes(actor))throw fail('Unknown island merchant.');
+        const actor=url.searchParams.get('actor')||'player';if(!['player','ts','ow','post','crew','port','mine','farm','market','lender','jobdesk','customerdesk'].includes(actor))throw fail('Unknown island merchant.');
         const token_ids=['cash','timber','furniture','ore','gold','maize','cassava','milk',`trading-post:${user.id}`],wallet=chain.wallet(user.id,actor);
         return json(res,200,{network:chain.publicConfig().network,contractId:chain.publicConfig().contractId,wallet,actor,identityType:'managed contract-ledger identity',token_ids,balances:await chain.view('mt_batch_balance_of',{account_id:wallet,token_ids})});
       }

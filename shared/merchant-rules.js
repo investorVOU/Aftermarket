@@ -5,6 +5,26 @@
   // A game day is 420 simulation seconds. The timber yard's $90 daily lease
   // makes its thin resale margin matter. Closed operations accrue no new bills.
   const DAILY_COSTS={ts:9000};
+  const SHOP_ITEMS={timber:{price:1800,min:1000,max:2400,capacity:10},furniture:{price:5000,min:4000,max:8000,capacity:6}};
+  const REGULARS={workshop:{business:'ow',npc:11,item:'timber',target:9,quantity:2,purpose:'Keep the furniture line supplied.'},market:{business:'market',npc:null,item:'furniture',target:4,quantity:1,purpose:'Furnish local homes and the community market.'},farm:{business:'farm',npc:24,item:'timber',target:4,quantity:2,purpose:'Repair fences and maintain farm buildings.'}};
+  function calendar(game){
+    const day=Math.floor((game.Sim.time+1e-6)/game.Sim.clock.DAYLEN),phase=Math.floor(day/2)%3;
+    return {key:Math.floor(day/2),day,endsDay:(Math.floor(day/2)+1)*2,phase,
+      title:['Festival preparations','Island furniture festival','Harvest fair'][phase],
+      description:['A furniture festival starts next. Build stock before buyers raise their budgets.','Furniture sale prices and regular-customer budgets are 20% higher. Market demand rises to 8 sets.','Farm retail prices are 20% lower. Shop around for supplies before preparations return.'][phase],
+      next:['Island furniture festival','Harvest fair','Festival preparations'][phase],furnitureFactor:phase===1?1.2:1,produceFactor:phase===2?.8:1};
+  }
+  function regularQuote(game,id){
+    if(!Object.hasOwn(REGULARS,id))throw Error('Unknown regular customer.');const spec=REGULARS[id];
+    const E=game.Eco,B=E[spec.business],c=E.retention?.customers?.[id]||{},filled=c.completed||0,cycle=calendar(game),bonus=filled>=8?.06:filled>=3?.03:0;
+    const target=id==='market'&&cycle.phase===1?8:spec.target,stock=B.inv[spec.item]||0;
+    const quantity=Math.min(target-stock,spec.quantity+Math.min(2,Math.floor(filled/3)));
+    const unit=spec.item==='timber'?E.post.price:(E.post.prices?.[spec.item]||SHOP_ITEMS[spec.item].price);
+    const ceiling=Math.floor((spec.item==='timber'?E.ts.price:5000*cycle.furnitureFactor)*(1+bonus)/25)*25;
+    const reward=Math.max(0,quantity)*unit,rank=filled>=8?'Partner':filled>=3?'Trusted regular':filled>=1?'Regular':'New customer';
+    const reason=E.post.owner!=='player'?'Buy the Trading Post to build a customer book.':c.active?'An agreed order is waiting for stock.':c.lastFilledDay===cycle.day?'Already served today. They can return next island day.':B.closed?'Their business is closed.':quantity<1?'Their stock target is met.':unit>ceiling?'Your shelf price exceeds their budget. Lower it to win the order.':B.cash<reward?'They cannot reserve enough cash.':stock+quantity>(B.cap[spec.item]??Infinity)?'Their storage is full.':null;
+    return {id,...spec,name:B.name,quantity:Math.max(0,quantity),unit,ceiling,reward,rank,completed:filled,subscribed:Boolean(c.subscribed),available:!reason,reason:reason||`${stock}/${target} in stock. ${spec.purpose}${bonus?' Your relationship raises their budget by '+Math.round(bonus*100)+'%.':''}`,active:c.active||null};
+  }
   function event(game,type,message){const E=game.Eco;E.economicEvents=E.economicEvents||[];const entry={id:(E.eventSequence||0)+1,time:game.Sim.time,type,message};E.eventSequence=entry.id;E.economicEvents.push(entry);if(E.economicEvents.length>100)E.economicEvents.shift();E.say(message);}
   function operations(game){
     const E=game.Eco,day=Math.floor((game.Sim.time+1e-6)/game.Sim.clock.DAYLEN);
@@ -35,13 +55,15 @@
   function update(game){
     const E=game.Eco;
     operations(game);
+    const cycle=calendar(game);if(E.calendar&&E.calendar.key!==cycle.key)event(game,'market_calendar',cycle.title+': '+cycle.description);E.calendar=cycle;
     const prior=E.merchants||{};
-    const specs=[['timber','ts','timber',2000,20,false],['workshop','ow','timber',1200,9,true],['furniture','ow','furniture',6500,8,false],['maize','farm','maize',500,25,false],['cassava','farm','cassava',450,25,false],['milk','farm','milk',400,20,false]];
+    const specs=[['timber','ts','timber',2000,20,false],['workshop','ow','timber',1200,9,true],['furniture','ow','furniture',6500*cycle.furnitureFactor,8,false],['maize','farm','maize',500*cycle.produceFactor,25,false],['cassava','farm','cassava',450*cycle.produceFactor,25,false],['milk','farm','milk',400*cycle.produceFactor,20,false]];
     const result={};
     for(const [id,biz,item,base,target,buying] of specs){
       const B=E[biz],p=prior[id];
       const demand=p?Math.max(0,(p.demand||0)*.8+Math.max(0,p.stock-B.inv[item])):0;
       result[id]={...quote({base,stock:B.inv[item],target,demand,cash:B.cash,buying}),biz,item,demand};
+      if(item==='furniture'&&cycle.furnitureFactor!==1||['maize','cassava','milk'].includes(item)&&cycle.produceFactor!==1)result[id].reason+=' '+cycle.title+': '+cycle.description;
       if(B.closed){result[id].closed=true;result[id].reason='Closed after an unpaid operating bill. Arrears: $'+((B.arrears||0)/100).toFixed(2)+'. Invest to pay the bill and restore working capital.';}
     }
     E.merchants=result;
@@ -76,5 +98,5 @@
     if(!E.trade(buyer,seller,item,1,price))return 'Trade rejected by the economy rules.';
     return `Traded 1 ${item} from ${seller.name} to ${buyer.name} at $${(price/100).toFixed(2)}.`;
   }
-  return {quote,update,DAILY_COSTS,agentAction};
+  return {quote,update,DAILY_COSTS,agentAction,SHOP_ITEMS,REGULARS,calendar,regularQuote};
 });

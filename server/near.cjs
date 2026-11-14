@@ -1,7 +1,7 @@
 'use strict';
 const crypto=require('node:crypto');
 const ITEMS=['cash','timber','furniture','ore','gold','maize','cassava','milk'];
-const ACTORS=['player','ts','ow','post','crew','port','mine','farm','market','lender','jobdesk'];
+const ACTORS=['player','ts','ow','post','crew','port','mine','farm','market','lender','jobdesk','customerdesk'];
 class Chain {
   constructor(env){this.env=env;this.network=env.NEAR_NETWORK||'testnet';if(this.network!=='testnet')throw new Error('The hackathon settlement service is testnet-only.');this.ready=Boolean(env.NEAR_CONTRACT_ID&&env.NEAR_SIGNER_ID&&env.NEAR_SIGNER_PRIVATE_KEY&&/^[a-f0-9]{64}$/i.test(env.NEAR_WALLET_MASTER_KEY||''));
     if([env.NEAR_CONTRACT_ID,env.NEAR_SIGNER_ID].some(v=>v&&!v.endsWith('.testnet')))throw new Error('Use named .testnet contract and controller accounts.');}
