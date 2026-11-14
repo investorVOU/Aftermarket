@@ -1,5 +1,28 @@
 # Release verification — November 10, 2026
 
+## November 14 guest capacity and movement correction follow-up
+
+Observed the hosted guest route rejecting entry at exactly 30 demo identities
+created during the preceding rolling 24 hours. Increased the unset/default and
+Blueprint capacity to 200, retained explicit operator quotas, clarified the
+capacity message and exposed the effective limit through public config. Existing
+manual Render environments still need `DEMO_GUEST_DAILY_LIMIT=200`; that setting
+cannot be replaced by a normal code push. No account was deleted or shared.
+
+`SMOOTH_PLAY_PROFILE.json` records before/candidate movement against real hosted
+APIs using one isolated operator-created QA account. GPU-accelerated samples were
+near 60 FPS in both cases; backward correction frames fell from 86 to 3 on desktop
+and 127 to 5 in the mobile viewport. Different scene positions prevent claiming
+a controlled render-time improvement. Input replay and non-reversing corrections
+are covered by regression checks. A server-derived 1–2.5 second movement lease
+tolerates slow links while bounding movement after lost updates. No client
+position, speed, financial balance or ownership is trusted.
+
+Build/lint passed (75 modules, two inline scripts). All 94 backend/API/DB/client
+checks and 322 original game checks passed (416 total). Public guest entry remains
+blocked until the existing Render environment changes from 30 to 200; no Render
+API credentials or usable browser bridge were available to apply it here.
+
 ## November 14 lighting and collapsible controls
 
 Connected the existing island clock to a dawn/day/dusk/night lighting model. The

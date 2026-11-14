@@ -1,4 +1,46 @@
-# November 13 performance and connection check
+# Performance and connection checks
+
+## November 14 movement corrections
+
+[Latest raw samples](SMOOTH_PLAY_PROFILE.json) use a fresh isolated operator-created
+Supabase QA account because the public guest route had reached its configured
+30-account rolling quota. This is not proof that capped public guest entry works.
+The installed Chrome uses Intel UHD / ANGLE D3D11 with GPU acceleration; mobile
+means viewport/touch emulation, not a physical phone. Each sample alternates
+movement for twelve seconds against the real hosted API. Candidate assets are
+intercepted locally. The world, visible geometry and player location evolve
+between runs, so this is not a matched-scene rendering benchmark.
+
+| Observation | Desktop before | Candidate | Mobile viewport before | Candidate |
+|---|---:|---:|---:|---:|
+| FPS | 60.0 | 60.0 | 59.9 | 60.0 |
+| p95 frame interval | 16.9 ms | 16.9 ms | 16.8 ms | 16.9 ms |
+| Backward correction frames | 86 | 3 | 127 | 5 |
+| Median sync round trip | 371 ms | 349 ms | 337 ms | 366 ms |
+| p95 sync round trip | 415 ms | 404 ms | 563 ms | 454 ms |
+| Maximum simultaneous syncs | 1 | 1 | 1 | 1 |
+
+The reproduced problem was late snapshots pulling a moving character backward,
+even at 60 FPS. The client now replays recent input (including turns/stops) over
+the measured round trip using fixed-size buffers and collision checks. Small
+corrections cannot reverse active movement; residual error reconciles when input
+ends, while large divergence still resets. This is presentation prediction only.
+Camera/scene differences and walls can create stationary frames; the raw samples
+retain those counts. No universal FPS or latency improvement is claimed.
+
+For slow links, prediction and the server's direction lease remain bounded at
+2.5 seconds. The server derives its lease from observed packet spacing, ignores
+any client timeout value, validates direction and speed, and stops movement when
+the lease expires. Financial/proximity/ownership checks remain authoritative.
+Slow-trip, reversal, collision, lost-update and server-lease checks are separate
+from the short hosted samples; the final server lease change was not present on
+the host during the candidate profile above.
+
+Rendering remains the largest CPU cost in these samples; state apply, collision
+and camera work were substantially smaller. Adaptive pixel ratio and the existing
+shadow budget remain unchanged. Physical-device performance remains unverified.
+
+## Historical November 13 profile
 
 **Candidate changes are local, not deployed. No push or default-branch change was made for this task.**
 

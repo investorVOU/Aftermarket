@@ -33,7 +33,7 @@ async function runMerchant(user,w,id,question){
   }finally{w.agentBusy=false;}
 }
 // Covers observed hosted RTTs while bounding movement after a lost connection.
-const MOVEMENT_TTL_MS=1000;
+const Movement=require('./movement.cjs');
 const json=(res,status,data)=>{const started=performance.now(),encoded=JSON.stringify(data);res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store','Server-Timing':`app;dur=${(performance.now()-(res.requestStarted||started)).toFixed(2)}, serialize;dur=${(performance.now()-started).toFixed(2)}`});res.end(encoded);};
 function fail(message,status=400){return Object.assign(new Error(message),{status});}
 async function body(req){let text='';for await(const b of req){text+=b;if(text.length>8192)throw fail('Request too large',413);}try{return JSON.parse(text||'{}');}catch{throw fail('Invalid JSON');}}
@@ -60,7 +60,7 @@ async function save(user,w,command=null){
   const revision=await store.save(user.id,w.revision,snapshot,balances,chain.wallet(user.id),payload,command);
   w.revision=revision;w.balances=balances;w.lastSave=Date.now();
 }
-function snapshot(user,w){return {state:State.capture(w.game),revision:w.revision,events:w.events,sequence:w.sequence,wallet:chain.wallet(user.id),chain:chain.publicConfig(),movement:Date.now()-w.movement.at<MOVEMENT_TTL_MS&&!w.game.Sim.harvesting&&!w.game.Sim.Talk.cur?w.movement:{x:0,z:0},demo:{active:w.demoUntil>Date.now(),secondsRemaining:Math.max(0,Math.ceil((w.demoUntil-Date.now())/1000))}};}
+function snapshot(user,w){return {state:State.capture(w.game),revision:w.revision,events:w.events,sequence:w.sequence,wallet:chain.wallet(user.id),chain:chain.publicConfig(),movement:Movement.live(w.movement,Date.now())&&!w.game.Sim.harvesting&&!w.game.Sim.Talk.cur?w.movement:{x:0,z:0},demo:{active:w.demoUntil>Date.now(),secondsRemaining:Math.max(0,Math.ceil((w.demoUntil-Date.now())/1000))}};}
 
 const server=http.createServer(async(req,res)=>{
   res.requestStarted=performance.now();
@@ -74,7 +74,7 @@ const server=http.createServer(async(req,res)=>{
         if(req.headers['content-type']?.split(';')[0]!=='application/json')throw fail('JSON required',415);
         const origin=req.headers.origin;if(origin&&origin!==(env.APP_ORIGIN||env.RENDER_EXTERNAL_URL||`http://localhost:${env.PORT||8080}`))throw fail('Origin not allowed',403);
       }
-      if(route==='/api/config'&&req.method==='GET'){if(store.ready&&chain.ready)guest?.prepare?.();return json(res,200,{mode:development?'development':'connected',supabaseUrl:env.SUPABASE_URL||null,supabaseKey:env.SUPABASE_PUBLISHABLE_KEY||null,configured:store.ready&&chain.ready,googleEnabled:env.SUPABASE_GOOGLE_ENABLED==='true',guestEnabled:Boolean(guest?.ready&&store.ready&&chain.ready),merchantAI:{enabled:merchantAgent.ready},guestBootstrap:true,guestRecovery:true,guestPrewarm:env.DEMO_GUEST_PREWARM!=='false',jobsEnabled:true,release:env.RENDER_GIT_COMMIT?.slice(0,12)||'local',chain:chain.publicConfig()});}
+      if(route==='/api/config'&&req.method==='GET'){if(store.ready&&chain.ready)guest?.prepare?.();return json(res,200,{mode:development?'development':'connected',supabaseUrl:env.SUPABASE_URL||null,supabaseKey:env.SUPABASE_PUBLISHABLE_KEY||null,configured:store.ready&&chain.ready,googleEnabled:env.SUPABASE_GOOGLE_ENABLED==='true',guestEnabled:Boolean(guest?.ready&&store.ready&&chain.ready),guestDailyLimit:guest?.dailyLimit?.()||null,merchantAI:{enabled:merchantAgent.ready},guestBootstrap:true,guestRecovery:true,guestPrewarm:env.DEMO_GUEST_PREWARM!=='false',jobsEnabled:true,release:env.RENDER_GIT_COMMIT?.slice(0,12)||'local',chain:chain.publicConfig()});}
       if(route==='/api/health'&&req.method==='GET')return json(res,200,{ok:true,configured:store.ready&&chain.ready,network:chain.publicConfig().network});
       if(route==='/api/guest'&&req.method==='POST'){
         if(!guest?.ready||!store.ready||!chain.ready)throw fail('Guest entry is not enabled for this island.',403);
@@ -94,7 +94,7 @@ const server=http.createServer(async(req,res)=>{
       if(route==='/api/sync'&&req.method==='POST'){
         const data=await body(req);const x=data.x,z=data.z;
         if(typeof x!=='number'||typeof z!=='number'||!Number.isFinite(x)||!Number.isFinite(z)||Math.hypot(x,z)>1.001)throw fail('Invalid movement');
-        w.movement={x,z,at:Date.now()};return json(res,200,snapshot(user,w));
+        w.movement=Movement.next(w.movement,{x,z},Date.now());return json(res,200,snapshot(user,w));
       }
       if(route==='/api/action'&&req.method==='POST'){
         const data=await body(req);if(typeof data.id!=='string'||!/^[\w-]{8,80}$/.test(data.id))throw fail('Invalid action ID');
@@ -136,7 +136,7 @@ const ticker=setInterval(()=>{const now=Date.now();for(const [id,promise] of wor
   const actual=Math.max(0,(now-w.wallTimestamp)/1000);
   const accelerated=w.demoUntil>w.wallTimestamp?Math.max(0,(Math.min(now,w.demoUntil)-w.wallTimestamp)/1000):0;
   const remaining=actual+accelerated*48;
-  if(!w.demoUntil||w.demoUntil<=now){const m=w.movement;if(now-m.at<MOVEMENT_TTL_MS&&!w.game.Sim.harvesting&&!w.game.Sim.Talk.cur)w.game.Sim.player.move(m.x*6*Math.min(actual,.1),m.z*6*Math.min(actual,.1));}
+  if(!w.demoUntil||w.demoUntil<=now){const m=w.movement;if(Movement.live(m,now)&&!w.game.Sim.harvesting&&!w.game.Sim.Talk.cur)w.game.Sim.player.move(m.x*6*Math.min(actual,.1),m.z*6*Math.min(actual,.1));}
   Simulation.advance(w.game,remaining);w.wallTimestamp=now;
   if(!w.busy&&now-w.lastSave>10000)serial(w,()=>save({id},w),{background:true}).catch(e=>{console.error('Autosave:',e.message);worlds.delete(id);});
 }).catch(e=>{console.error('Simulation stopped:',e.message);worlds.delete(id);});}

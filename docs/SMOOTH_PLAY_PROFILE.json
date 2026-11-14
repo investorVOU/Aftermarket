@@ -1,0 +1,271 @@
+{
+  "environment": {
+    "gpu": [
+      {
+        "vendor": "",
+        "device": "Intel(R) UHD Graphics"
+      },
+      {
+        "vendor": "",
+        "device": "Microsoft Basic Render Driver"
+      }
+    ],
+    "features": {
+      "2d_canvas": "enabled",
+      "direct_rendering_display_compositor": "disabled_off_ok",
+      "gpu_compositing": "enabled",
+      "multiple_raster_threads": "enabled_on",
+      "opengl": "enabled_on",
+      "rasterization": "enabled",
+      "skia_graphite": "disabled_off",
+      "trees_in_viz": "disabled_off",
+      "video_decode": "enabled",
+      "video_encode": "enabled",
+      "webgl": "enabled",
+      "webgpu": "enabled",
+      "webnn": "disabled_off"
+    },
+    "browser": "Installed Chrome headless, desktop/mobile viewport; no physical-device FPS claim",
+    "authentication": "Fresh isolated operator-created test guest while hosted public guest route is capped"
+  },
+  "before": {
+    "at": "2026-11-14T00:56:17.469Z",
+    "scope": "Current hosted game with in-memory timing hooks",
+    "results": [
+      {
+        "label": "desktop",
+        "fps": 60,
+        "p95FrameMs": 16.9,
+        "stationaryFrames": 15,
+        "stalePredictionFrames": 0,
+        "backwardCorrectionFrames": 86,
+        "corrections": 12,
+        "render": {
+          "calls": 628,
+          "triangles": 125171,
+          "geometries": 680,
+          "pixelRatio": 0.9,
+          "shadows": false,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        },
+        "costs": {
+          "collision": {
+            "count": 1337,
+            "medianMs": 0,
+            "p95Ms": 0.1,
+            "totalMs": 14
+          },
+          "farmVisuals": {
+            "count": 721,
+            "medianMs": 0.1,
+            "p95Ms": 0.1,
+            "totalMs": 41
+          },
+          "camera": {
+            "count": 721,
+            "medianMs": 0.2,
+            "p95Ms": 0.4,
+            "totalMs": 161
+          },
+          "render": {
+            "count": 721,
+            "medianMs": 7.2,
+            "p95Ms": 11,
+            "totalMs": 5109
+          },
+          "stateApply": {
+            "count": 28,
+            "medianMs": 0.7,
+            "p95Ms": 0.9,
+            "totalMs": 19
+          }
+        },
+        "sync": {
+          "count": 28,
+          "medianMs": 370.68,
+          "p95Ms": 414.91,
+          "medianBytes": 5673,
+          "maxConcurrent": 1
+        },
+        "errors": []
+      },
+      {
+        "label": "mobile",
+        "fps": 59.9,
+        "p95FrameMs": 16.8,
+        "stationaryFrames": 0,
+        "stalePredictionFrames": 0,
+        "backwardCorrectionFrames": 127,
+        "corrections": 15,
+        "render": {
+          "calls": 309,
+          "triangles": 110488,
+          "geometries": 480,
+          "pixelRatio": 1,
+          "shadows": false,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        },
+        "costs": {
+          "collision": {
+            "count": 1432,
+            "medianMs": 0,
+            "p95Ms": 0.1,
+            "totalMs": 13
+          },
+          "farmVisuals": {
+            "count": 720,
+            "medianMs": 0,
+            "p95Ms": 0.1,
+            "totalMs": 31
+          },
+          "camera": {
+            "count": 720,
+            "medianMs": 0.2,
+            "p95Ms": 0.3,
+            "totalMs": 119
+          },
+          "render": {
+            "count": 720,
+            "medianMs": 3.3,
+            "p95Ms": 5.5,
+            "totalMs": 2535
+          },
+          "stateApply": {
+            "count": 30,
+            "medianMs": 0.5,
+            "p95Ms": 0.7,
+            "totalMs": 14
+          }
+        },
+        "sync": {
+          "count": 30,
+          "medianMs": 336.87,
+          "p95Ms": 562.51,
+          "medianBytes": 6211,
+          "maxConcurrent": 1
+        },
+        "errors": []
+      }
+    ]
+  },
+  "after": {
+    "at": "2026-11-14T01:01:01.819Z",
+    "scope": "Local candidate client/renderer with timing hooks against real hosted APIs; not deployed",
+    "results": [
+      {
+        "label": "desktop",
+        "fps": 60,
+        "p95FrameMs": 16.9,
+        "stationaryFrames": 13,
+        "stalePredictionFrames": 0,
+        "backwardCorrectionFrames": 3,
+        "corrections": 16,
+        "render": {
+          "calls": 354,
+          "triangles": 112693,
+          "geometries": 662,
+          "pixelRatio": 0.9,
+          "shadows": false,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        },
+        "costs": {
+          "collision": {
+            "count": 2113,
+            "medianMs": 0,
+            "p95Ms": 0.1,
+            "totalMs": 13
+          },
+          "farmVisuals": {
+            "count": 721,
+            "medianMs": 0,
+            "p95Ms": 0.1,
+            "totalMs": 38
+          },
+          "camera": {
+            "count": 721,
+            "medianMs": 0.1,
+            "p95Ms": 0.4,
+            "totalMs": 117
+          },
+          "render": {
+            "count": 721,
+            "medianMs": 3.7,
+            "p95Ms": 8.7,
+            "totalMs": 3007
+          },
+          "stateApply": {
+            "count": 31,
+            "medianMs": 0.5,
+            "p95Ms": 0.9,
+            "totalMs": 15
+          }
+        },
+        "sync": {
+          "count": 31,
+          "medianMs": 349.35,
+          "p95Ms": 404.03,
+          "medianBytes": 9670,
+          "maxConcurrent": 1
+        },
+        "errors": []
+      },
+      {
+        "label": "mobile",
+        "fps": 60,
+        "p95FrameMs": 16.9,
+        "stationaryFrames": 45,
+        "stalePredictionFrames": 0,
+        "backwardCorrectionFrames": 5,
+        "corrections": 15,
+        "render": {
+          "calls": 74,
+          "triangles": 98742,
+          "geometries": 327,
+          "pixelRatio": 1,
+          "shadows": false,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        },
+        "costs": {
+          "collision": {
+            "count": 2118,
+            "medianMs": 0,
+            "p95Ms": 0.1,
+            "totalMs": 12
+          },
+          "farmVisuals": {
+            "count": 720,
+            "medianMs": 0,
+            "p95Ms": 0.1,
+            "totalMs": 30
+          },
+          "camera": {
+            "count": 720,
+            "medianMs": 0.1,
+            "p95Ms": 0.3,
+            "totalMs": 98
+          },
+          "render": {
+            "count": 720,
+            "medianMs": 2.5,
+            "p95Ms": 4.3,
+            "totalMs": 1959
+          },
+          "stateApply": {
+            "count": 29,
+            "medianMs": 0.5,
+            "p95Ms": 0.8,
+            "totalMs": 14
+          }
+        },
+        "sync": {
+          "count": 29,
+          "medianMs": 366.09,
+          "p95Ms": 453.6,
+          "medianBytes": 9837,
+          "maxConcurrent": 1
+        },
+        "errors": []
+      }
+    ]
+  }
+}

@@ -40,7 +40,14 @@ carry a private random request ticket; one retry recovers the same response
 instead of creating another identity. The server caches tickets for five minutes,
 within one process. A restart discards this cache. Never log ticket/session values.
 Validation and capacity errors are not automatically retried. For judging traffic,
-review `DEMO_GUEST_DAILY_LIMIT` (maximum 200); the existing Blueprint starts at 30.
+review `DEMO_GUEST_DAILY_LIMIT` (maximum 200); the Blueprint and unset-value
+default now use 200. Existing Render services can retain the older explicit value
+30: change that environment variable to 200 and save/redeploy. A Git push does not
+automatically replace manually configured Render environment variables. The cap
+counts real demo identities created during the preceding rolling 24 hours, not
+calendar-day midnight. Failed public entry at the cap does not mean a database
+outage. Do not delete existing players to reset it. `/api/config` reports the
+effective `guestDailyLimit` without listing accounts or exposing their data.
 An always-on Render instance is still required to avoid free-tier spin-down waits.
 
 [Merchant delivery jobs](JOBS.md) use the existing JSON snapshot and transactional

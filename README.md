@@ -124,6 +124,7 @@ npm run test:contract
 
 - Hosted email delivery was confirmed by Resend and the actual verification link returned to a persistent island. Physical inbox placement and a second physical device remain unverified. Guest entry is a separate demo convenience. Google is disabled; adding OAuth is optional.
 - Each player has a separate persistent island. There is no shared multiplayer/P2P market; one backend instance is supported.
+- New guest accounts have a rolling 24-hour creation quota. The Blueprint defaults to 200; existing Render services must update the older explicit value of 30. Email sign-in remains a separate path. [Guest capacity settings](docs/OPERATIONS.md).
 - Custodial managed keys and a privileged settlement controller; no MPC, user key export or external-transfer indexer. Pending settlement can delay final ownership.
 - Short accelerated Chrome samples do not establish physical-phone FPS or universal smoothness. Render cold starts and upstream service latency affect entry and confirmations. [Measured performance](docs/PERFORMANCE.md).
 - Phone loans have local financial/API/browser verification; no hosted loan receipt is claimed. Groq live operation is owner-reported, not independently reverified here.
